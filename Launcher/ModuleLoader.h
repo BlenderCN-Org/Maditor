@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Shared\moduleinstance.h"
+#include "Serialize\Container\action.h"
 
 namespace Maditor {
 	namespace Launcher {
@@ -17,15 +19,15 @@ public:
 
 private:
 
-	struct ModuleInstance {
-		ModuleInstance(const std::string &name) :
-			mHandle(0),
-			mLoaded(false),
-			mName(name) {}
+	struct ModuleLauncherInstance : public Shared::ModuleInstance {
+		ModuleLauncherInstance(const std::string &name) :
+			ModuleInstance(name),
+			mHandle(0)
+		{
+		}
 
 		HINSTANCE mHandle;
-		bool mLoaded;
-		std::string mName;
+
 
 		std::list<std::string> mEntityComponentNames;
 		std::list<Engine::Scene::BaseSceneComponent*> mSceneComponents;
@@ -36,22 +38,21 @@ private:
 		std::map<std::string, std::list<Engine::Scene::Entity::Entity*>> mStoredComponentEntities;
 	};
 
-	ModuleInstance &addModule(const std::string &name);
+	
+	bool loadModule(ModuleLauncherInstance &module, bool callInit);
+	bool unloadModule(ModuleLauncherInstance &module);
 
-	bool loadModule(ModuleInstance &module, bool callInit);
-	bool unloadModule(ModuleInstance &module);
-
-	std::map<std::string, ModuleInstance> mInstances;
-
+	void setupDoneImpl();
+	
+private:
 	std::string mBinaryDir, mRuntimeDir;
-
-	std::list<std::string> mReloadOrder;
-	//std::mutex mReloadMutex;
 
 	bool mInit;
 
 	bool mReceivingModules;
 
+	Engine::Serialize::ObservableList<ModuleLauncherInstance, std::string> mInstances;
+	Engine::Serialize::Action<> setupDone;
 
 };
 

@@ -16,10 +16,12 @@ include_directories(${MADGINE_INCLUDE_DIRS})
 
 
 set (sources "")
-FolderSources(sources "" "" applicationwindow.cpp applicationwindow.h maditorlib.h main.cpp mainwindow.cpp mainwindow.h mainwindow.ui)
+FolderSources(sources "" "" applicationwindow.cpp applicationwindow.h editorsettingswidget.cpp editorsettingswidget.h editorsettingswidget.ui maditorlib.cpp maditorlib.h main.cpp mainwindow.cpp mainwindow.h mainwindow.ui)
 FolderSources(sources "" Dialogs DialogManager.cpp DialogManager.h ModulePropertiesDialog.cpp ModulePropertiesDialog.h ModulePropertiesDialog.ui NewClassDialog.cpp NewClassDialog.h NewClassDialog.ui NewGuiHandlerDialog.cpp NewGuiHandlerDialog.h NewGuiHandlerDialog.ui NewModuleDialog.cpp NewModuleDialog.h NewModuleDialog.ui settingsdialog.cpp settingsdialog.h settingsdialog.ui settingstab.h)
 
 add_executable(Maditor ${sources})
+
+add_precompiled_header(Maditor maditorlib.h FORCEINCLUDE SOURCE_CXX maditorlib.cpp)
 
 target_link_libraries(Maditor Maditor_Model ${TOOLS_LIBS})
 

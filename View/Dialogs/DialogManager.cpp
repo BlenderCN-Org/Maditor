@@ -50,7 +50,7 @@ namespace Maditor {
 
 			SettingsDialog * DialogManager::settingsDialog()
 			{
-				return nullptr;
+				return mSettingsDialog;
 			}
 
 

@@ -10,7 +10,9 @@ namespace Maditor {
 
 		ModuleLoader::ModuleLoader(Engine::Serialize::TopLevelSerializableUnit *topLevel) :
 			SerializableUnit(topLevel),
-			mInit(false)
+			mInit(false),
+			mInstances(this),
+			setupDone(this, &ModuleLoader::setupDoneImpl)
 		{
 
 		}
@@ -36,8 +38,8 @@ namespace Maditor {
 		void ModuleLoader::cleanup()
 		{
 
-			for (std::pair<const std::string, ModuleInstance> &p : mInstances) {
-				unloadModule(p.second);
+			for (ModuleLauncherInstance &p : mInstances) {
+				unloadModule(p);
 			}
 
 			mInstances.clear();
@@ -52,26 +54,14 @@ namespace Maditor {
 
 
 
-		ModuleLoader::ModuleInstance &ModuleLoader::addModule(const std::string &name)
-		{
-			auto it = mInstances.find(name);
-			if (it == mInstances.end()) {
-				return mInstances.emplace(name, name).first->second;
-			}
-			else {
-				return it->second;
-			}
 
-		}
-
-
-		bool ModuleLoader::unloadModule(ModuleInstance & module)
+		bool ModuleLoader::unloadModule(ModuleLauncherInstance & module)
 		{
 
-			if (!module.mLoaded)
+			if (!module.isLoaded())
 				return true;
 
-			std::cout << "Unloading " << module.mName << std::endl;
+			std::cout << "Unloading " << module.name() << std::endl;
 
 			if (Engine::Scene::SceneManager::getSingleton().isSceneLoaded()) {
 
@@ -109,7 +99,7 @@ namespace Maditor {
 
 			bool result = (FreeLibrary(module.mHandle) != 0);
 			if (result)
-				module.mLoaded = false;
+				module.setLoaded(false);
 			else
 				throw 0;
 
@@ -117,19 +107,18 @@ namespace Maditor {
 		}
 
 
-
-		bool ModuleLoader::loadModule(ModuleInstance & module, bool callInit)
+		bool ModuleLoader::loadModule(ModuleLauncherInstance & module, bool callInit)
 		{
-			if (module.mLoaded)
+			if (module.isLoaded())
 				return true;
 
-			std::cout << "Loading " << module.mName << std::endl;
+			std::cout << "Loading " << module.name() << std::endl;
 
 
-			std::string runtimePath = mRuntimeDir + module.mName + ".dll";
-			std::string runtimePdbPath = mRuntimeDir + module.mName + ".pdb";
-			std::string binaryPath = mBinaryDir + module.mName + ".dll";
-			std::string binaryPdbPath = mBinaryDir + module.mName + ".pdb";
+			std::string runtimePath = mRuntimeDir + module.name() + ".dll";
+			std::string runtimePdbPath = mRuntimeDir + module.name() + ".pdb";
+			std::string binaryPath = mBinaryDir + module.name() + ".dll";
+			std::string binaryPdbPath = mBinaryDir + module.name() + ".pdb";
 
 			{
 				std::ifstream src(binaryPath, std::ios::binary);
@@ -211,9 +200,14 @@ namespace Maditor {
 
 			}
 
-			module.mLoaded = true;
+			module.setLoaded(true);
 
 			return true;
+		}
+
+		void ModuleLoader::setupDoneImpl()
+		{
+			mReceivingModules = false;
 		}
 
 	}

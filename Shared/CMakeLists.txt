@@ -11,7 +11,7 @@ PROJECT(Maditor_Shared)
 include_directories(${BOOST_PATH})
 
 set (sources "")
-FolderSources(sources "" "" AppControl.cpp AppControl.h maditorsharedlib.h maditorsharedforward.h sharedmemory.cpp sharedmemory.h)
+FolderSources(sources "" "" AppControl.cpp AppControl.h maditorsharedlib.cpp maditorsharedlib.h maditorsharedforward.h moduleinstance.cpp moduleinstance.h sharedmemory.cpp sharedmemory.h)
 
 
 include_directories(${MADGINE_INCLUDE_DIRS})
@@ -22,7 +22,7 @@ endif (OGRE_FOUND)
 
 add_library(Maditor_Shared SHARED ${sources})
 
-#add_precompiled_header(Maditor src/maditorlib.h FORCEINCLUDE SOURCE_CXX maditorlib.cpp)
+add_precompiled_header(Maditor_Shared maditorsharedlib.h FORCEINCLUDE SOURCE_CXX maditorsharedlib.cpp)
 
 target_link_libraries(Maditor_Shared Madgine)
 

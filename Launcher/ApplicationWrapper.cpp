@@ -10,7 +10,6 @@
 
 #include "Network\networkmanager.h"
 
-#include "ModuleLoader.h"
 
 namespace Maditor {
 	namespace Launcher {
@@ -18,24 +17,21 @@ namespace Maditor {
 		ApplicationWrapper::ApplicationWrapper() :
 			AppControl(false),
 			mInput(new InputWrapper(sharedMemory().mInput)),
-			mLoader(new ModuleLoader(this)),
+			mLoader(this, this),
 			mRunning(false)
-		{
-
-			
+		{			
 		}
 
 		int ApplicationWrapper::init()
 		{
 			Engine::Network::NetworkManager *net = network();
 
-			net->addTopLevelItem(this);
 			net->startServer(1000);
-			while (net->clientCount() == 0) {
-				net->receiveMessages();
-				net->acceptConnections();
+			if (!net->acceptConnection(2000)) {
+				net->close();
+				return -1;
 			}
-
+			
 			Shared::ApplicationInfo &appInfo = sharedMemory().mAppInfo;
 
 			mSettings.mInput = mInput;
@@ -83,6 +79,7 @@ namespace Maditor {
 				net->receiveMessages();
 			}
 			if (net->clientCount() != 1 || !mRunning) {
+				net->close();
 				return -1;
 			}
 

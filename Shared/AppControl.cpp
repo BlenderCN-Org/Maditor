@@ -21,6 +21,7 @@ Maditor::Shared::AppControl::AppControl(bool isLauncher) :
 	else {
 		mMemory = new SharedMemory(SharedMemory::open);
 	}
+	mNetwork->addTopLevelItem(this);
 }
 
 AppControl::~AppControl()

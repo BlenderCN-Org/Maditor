@@ -18,13 +18,29 @@ public:
     explicit MainWindow(Model::Maditor *model);
     ~MainWindow();
 
+	virtual void closeEvent(QCloseEvent * event) override;
+
+public slots:
+	void clearRecentProjects();
+
 private slots:
 	void onProjectOpened(Model::Project *project);
+
+	void updateRecentProjects(const QStringList &list);
+	void recentProjectClicked(QAction *action);
+
 
 private:
     Ui::MainWindow *ui;
 
 	Dialogs::DialogManager *mDialogManager;
+
+	Model::Maditor *mModel;
+
+	int mRecentProjectInitialActionCount;
+
+	EditorSettingsWidget *mEditorSettingsWidget;
+
 };
 
 

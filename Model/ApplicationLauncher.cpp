@@ -8,7 +8,6 @@
 
 #include "Network\networkmanager.h"
 
-#include "ModuleLoader.h"
 
 namespace Maditor {
 	namespace Model {
@@ -16,7 +15,7 @@ namespace Maditor {
 			AppControl(true),
 			mWindow(new OgreWindow),
 			mPath(path),
-			mLoader(new ModuleLoader(path + "debug/bin/", modules)),
+			mLoader(this, this, path + "debug/bin/", modules),
 			mPID(0)
 		{
 			startTimer(500);
@@ -69,14 +68,13 @@ namespace Maditor {
 			}*/
 
 			Engine::Network::NetworkManager *net = network();
-
-			net->addTopLevelItem(this);
 			
 			if (!net->connect("127.0.0.1", 1000, 2000)) {
 				shutdown();
+				return;
 			}
 
-
+			mLoader->setup();
 			//shutdown();
 			
 		}

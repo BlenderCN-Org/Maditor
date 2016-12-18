@@ -5,6 +5,9 @@
 #include "App\appsettings.h"
 #include "App/Application.h"
 
+#include "ModuleLoader.h"
+#include "Serialize\Container\serialized.h"
+
 namespace Maditor {
 	namespace Launcher {
 
@@ -15,7 +18,6 @@ namespace Maditor {
 
 			int init();
 			
-
 		protected:
 			// Inherited via AppControl
 			virtual void shutdownImpl() override;
@@ -25,11 +27,9 @@ namespace Maditor {
 			Engine::App::Application mApplication;
 
 			InputWrapper *mInput;
-			ModuleLoader *mLoader;
+			Engine::Serialize::Serialized<ModuleLoader> mLoader;
 
-			bool mRunning = true;
-
-			
+			bool mRunning;			
 		};
 
 	}

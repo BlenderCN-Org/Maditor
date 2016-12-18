@@ -6,6 +6,7 @@ namespace Maditor {
 		class SharedMemory;
 		class Shared;
 		class InputShared;
+		class ModuleInstance;
 
 	}
 }

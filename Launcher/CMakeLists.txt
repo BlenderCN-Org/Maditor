@@ -8,7 +8,7 @@ PROJECT(Maditor_Launcher)
 
 
 set (sources "")
-FolderSources(sources "" "" ApplicationWrapper.cpp ApplicationWrapper.h InputWrapper.cpp InputWrapper.h maditorlauncherlib.h maditorlauncherforward.h main.cpp ModuleLoader.cpp ModuleLoader.h)
+FolderSources(sources "" "" ApplicationWrapper.cpp ApplicationWrapper.h InputWrapper.cpp InputWrapper.h maditorlauncherlib.cpp maditorlauncherlib.h maditorlauncherforward.h main.cpp ModuleLoader.cpp ModuleLoader.h)
 
 include_directories(${BOOST_PATH})
 include_directories(${CMAKE_SOURCE_DIR})
@@ -20,6 +20,6 @@ endif (OGRE_FOUND)
 
 add_executable(Maditor_Launcher ${sources})
 
-#add_precompiled_header(Maditor_Launcher madgineinclude.h FORCEINCLUDE SOURCE_CXX madgineinclude.cpp)
+add_precompiled_header(Maditor_Launcher maditorlauncherlib.h FORCEINCLUDE SOURCE_CXX maditorlauncherlib.cpp)
 
 target_link_libraries(Maditor_Launcher Madgine Maditor_Shared)

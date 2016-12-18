@@ -28,3 +28,4 @@
 #include <QDebug>
 #include <QApplication>
 #include <QStyle>
+#include <QSettings>

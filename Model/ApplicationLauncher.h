@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Shared/AppControl.h"
+#include "ModuleLoader.h"
+#include "Serialize\Container\serialized.h"
 
 namespace Maditor {
 	namespace Model {
@@ -37,7 +39,7 @@ namespace Maditor {
 			DWORD mPID;
 			HANDLE mHandle;
 
-			ModuleLoader *mLoader;
+			Engine::Serialize::Serialized<ModuleLoader> mLoader;
 			
 
 		};

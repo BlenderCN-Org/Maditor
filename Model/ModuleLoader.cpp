@@ -8,21 +8,23 @@
 
 #include "Model\Project\ModuleList.h"
 
+#include "ApplicationLauncher.h"
 
 namespace Maditor {
 	namespace Model {
 
 
-		ModuleLoader::ModuleLoader(const QString & binaryDir, const ModuleList &moduleList) :
+		ModuleLoader::ModuleLoader(ApplicationLauncher *launcher, const QString & binaryDir, const ModuleList &moduleList) :
+			SerializableUnit(launcher),
 			mBinaryDir(binaryDir),
-			mModules(moduleList)
+			mModules(moduleList),
+			mInstances(this),
+			setupDone(this, &ModuleLoader::setupDoneImpl)
 		{
 						
-
 			QDir dir(binaryDir);
 			mFiles = QSet<QString>::fromList(dir.entryList({ "*.dll" }, QDir::NoDotAndDotDot | QDir::Files));
 
-			
 
 			connect(&mWatcher, &QFileSystemWatcher::fileChanged, this, &ModuleLoader::onFileChanged);
 			connect(&mWatcher, &QFileSystemWatcher::directoryChanged, this, &ModuleLoader::onFolderChanged);
@@ -38,8 +40,8 @@ namespace Maditor {
 
 			std::list<const Module*> reloadOrder;
 
-			for (const std::pair<const Module* const, ModuleInstance> &p : mInstances) {
-				mWatcher.removePath(mBinaryDir + p.first->name() + ".dll");
+			for (const Shared::ModuleInstance &mod : mInstances) {
+				mWatcher.removePath(mBinaryDir + QString::fromStdString(mod.name()) + ".dll");
 			}
 
 			mInstances.clear();
@@ -49,12 +51,12 @@ namespace Maditor {
 		void ModuleLoader::onFileChanged(const QString &path) {
 			QFileInfo f(path);
 			const Module *m = mModules.getModule(f.baseName());
-			auto it = mInstances.find(m);
+			auto it = mMap.find(m);
 			//if (it == mInstances.end())
 			//	return;
-			ModuleInstance &module = it->second;
-			module.mExists = f.exists();
-			if (module.mExists) {
+			Shared::ModuleInstance &module = *it->second;
+			module.setExists(f.exists());
+			if (module.exists()) {
 				qDebug() << path << "Changed!";
 				reload(m);
 			}
@@ -97,14 +99,16 @@ namespace Maditor {
 			QString path = mBinaryDir + module->name() + ".dll";
 			QFile file(path);
 
-			ModuleInstance &mod = mInstances.emplace(module, module->name()).first->second;
-			mod.mExists = file.exists();
+			Shared::ModuleInstance &mod = mInstances.emplace_back(module->name().toStdString());
+			mMap[module] = &mod;
+			mod.setExists(file.exists());
 
-			if (mod.mExists)
+			if (mod.exists())
 				mWatcher.addPath(path);			
 		}
 
-		void ModuleLoader::sendAll()
+
+		void ModuleLoader::setup()
 		{
 			std::list<const Module*> reloadOrder;
 			for (const std::unique_ptr<Module> &module : mModules) {
@@ -115,10 +119,12 @@ namespace Maditor {
 			reloadOrder.reverse();
 
 			for (const Module *m : reloadOrder) {
-				ModuleInstance &instance = mInstances.at(m);
+				Shared::ModuleInstance &instance = *mMap.at(m);
 
 				//loadModule(instance, false);
 			}
+
+			setupDone();
 
 			/*ModuleLoaderMsg msg;
 			msg.mCmd = Init;
@@ -131,7 +137,7 @@ namespace Maditor {
 			module->fillReloadOrder(reloadOrder);
 
 			for (const Module *m : reloadOrder) {
-				ModuleInstance &instance = mInstances.at(m);
+				Shared::ModuleInstance &instance = *mMap.at(m);
 
 				//unloadModule(instance);
 			}
@@ -139,14 +145,15 @@ namespace Maditor {
 			reloadOrder.reverse();
 
 			for (const Module *m : reloadOrder) {
-				ModuleInstance &instance = mInstances.at(m);
+				Shared::ModuleInstance &instance = *mMap.at(m);
 
 				//loadModule(instance, true);
 			}
 		}
 
-
-		
+		void ModuleLoader::setupDoneImpl()
+		{
+		}		
 
 	}
 }
