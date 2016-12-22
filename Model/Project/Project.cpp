@@ -181,7 +181,7 @@ namespace Maditor {
 			return this;
 		}
 
-		int Project::childCount() {
+		int Project::childCount() const {
 			return 1;
 		}
 

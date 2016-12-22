@@ -1,4 +1,4 @@
-#include "maditorlib.h"
+#include "maditorviewlib.h"
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -9,6 +9,8 @@
 #include "Dialogs\settingsdialog.h"
 
 #include "editorsettingswidget.h"
+
+#include "Model\Addons\Addon.h"
 
 namespace Maditor {
 namespace View {
@@ -43,6 +45,8 @@ namespace View {
 
 	connect(model, &Model::Maditor::projectOpened, this, &MainWindow::onProjectOpened);
 
+	model->addons()->setWindow(this);
+
 	QSettings &settings = mModel->settings();
 	settings.beginGroup("Window");
 	restoreGeometry(settings.value("geometry").toByteArray());
@@ -70,6 +74,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	settings.endGroup();
 
 	event->accept();
+}
+
+Dialogs::DialogManager * MainWindow::dialogs()
+{
+	return mDialogManager;
 }
 
 void MainWindow::onProjectOpened(Model::Project *project) {

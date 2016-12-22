@@ -9,7 +9,9 @@ namespace Maditor {
 		ModuleInstance::ModuleInstance(const std::string & name) :
 			mExists(false),
 			mName(name),
-			mLoaded(false)
+			mLoaded(false),
+			mDependencies(this),
+			reload(this, &ModuleInstance::reloadImpl)
 		{
 		}
 
@@ -37,10 +39,29 @@ namespace Maditor {
 		{
 			mLoaded = b;
 		}
+
+		void ModuleInstance::addDependency(ModuleInstance * dep)
+		{
+			mDependencies.push_back(dep);
+		}
+
+		void ModuleInstance::removeDependency(ModuleInstance * dep)
+		{
+			mDependencies.remove(dep);
+		}
 		
 		void ModuleInstance::writeCreationData(Engine::Serialize::SerializeOutStream & out) const
 		{
 			out << mName;
+		}
+
+		const Engine::Serialize::ObservableList<ModuleInstance*> &ModuleInstance::dependencies()
+		{
+			return mDependencies;
+		}
+
+		void ModuleInstance::reloadImpl()
+		{
 		}
 	}
 }

@@ -23,8 +23,14 @@ namespace Maditor {
 	}
 
 	namespace View {
+		class MainWindow;
 		namespace Dialogs {
 			class SettingsDialog;
 		}
 	}
+
+	namespace Addons {
+		class AddonCollector;
+	}
+
 }

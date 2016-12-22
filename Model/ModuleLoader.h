@@ -14,11 +14,14 @@ namespace Maditor {
 			Q_OBJECT
 
 		public:
-			ModuleLoader(ApplicationLauncher *launcher, const QString &binaryDir, const ModuleList &moduleList);
+			ModuleLoader(const QString &binaryDir, const ModuleList &moduleList);
 			~ModuleLoader();
 
 
 			void setup();
+			void setup2();
+
+			bool done();
 
 
 		private slots:
@@ -27,9 +30,7 @@ namespace Maditor {
 
 		private:
 			void addModule(Module *module);
-			
-			void loadModule(Shared::ModuleInstance &module, bool callInit);
-			void unloadModule(Shared::ModuleInstance &module);
+
 			void reload(const Module *module);
 
 			void setupDoneImpl();

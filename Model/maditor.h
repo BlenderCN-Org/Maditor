@@ -26,6 +26,8 @@ namespace Maditor {
 			
 			Project *project();
 
+			Addons::AddonCollector *addons();
+
 		signals:
 			void projectOpened(Project *project);
 			void recentProjectsChanged(const QStringList &list);
@@ -38,10 +40,13 @@ namespace Maditor {
 			QStringList mRecentProjects;
 			bool mReloadProject;
 
+			QSettings mSettings;
+
+			Addons::AddonCollector *mAddons;
 
 			std::unique_ptr<Project> mProject;
 
-			QSettings mSettings;
+			
 		};
 
 	}

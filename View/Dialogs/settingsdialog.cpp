@@ -1,4 +1,4 @@
-#include "maditorlib.h"
+#include "maditorviewlib.h"
 
 #include "settingsdialog.h"
 #include "ui_settingsdialog.h"

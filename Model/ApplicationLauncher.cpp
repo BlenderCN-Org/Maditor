@@ -15,7 +15,7 @@ namespace Maditor {
 			AppControl(true),
 			mWindow(new OgreWindow),
 			mPath(path),
-			mLoader(this, this, path + "debug/bin/", modules),
+			mLoader(this, path + "debug/bin/", modules),
 			mPID(0)
 		{
 			startTimer(500);
@@ -63,9 +63,9 @@ namespace Maditor {
 			mHandle = pi.hProcess;
 			CloseHandle(pi.hThread);
 
-			/*for (const auto& f : mProcessListener) {
+			for (const auto& f : mProcessListener) {
 				f(mPID);
-			}*/
+			}
 
 			Engine::Network::NetworkManager *net = network();
 			
@@ -75,12 +75,48 @@ namespace Maditor {
 			}
 
 			mLoader->setup();
+			while (!mLoader->done())
+				net->receiveMessages();
+			mLoader->setup2();
 			//shutdown();
 			
 		}
+		void ApplicationLauncher::start()
+		{
+			AppControl::start();
+		}
+		void ApplicationLauncher::pause()
+		{
+			AppControl::pause();
+		}
+		void ApplicationLauncher::stop()
+		{
+			AppControl::stop();
+		}
+
+		void ApplicationLauncher::startImpl()
+		{
+		}
+		void ApplicationLauncher::stopImpl()
+		{
+		}
+		void ApplicationLauncher::pauseImpl()
+		{
+		}
+
 		OgreWindow * ApplicationLauncher::window()
 		{
 			return mWindow;
+		}
+
+		void ApplicationLauncher::addProcessListener(std::function<void(DWORD)> f)
+		{
+			mProcessListener.push_back(f);
+		}
+
+		DWORD ApplicationLauncher::pid()
+		{
+			return mPID;
 		}
 
 		void ApplicationLauncher::timerEvent(QTimerEvent * te)
@@ -93,6 +129,7 @@ namespace Maditor {
 					cleanup();
 					return;
 				}
+				network()->receiveMessages();
 			}
 		}
 
@@ -100,7 +137,6 @@ namespace Maditor {
 		{
 			if (mPID) {
 				AppControl::shutdown();
-				network()->close();
 			}
 			cleanup();
 		}
@@ -112,11 +148,18 @@ namespace Maditor {
 				CloseHandle(mHandle);
 				emit applicationShutdown();
 			}
+			network()->close();
 		}
 
 		void ApplicationLauncher::shutdownImpl()
 		{
 			 
+		}
+
+
+		void ApplicationLauncher::onApplicationInitialized()
+		{
+			emit applicationInitialized();
 		}
 
 	}

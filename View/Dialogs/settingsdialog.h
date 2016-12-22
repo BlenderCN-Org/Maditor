@@ -11,7 +11,7 @@ namespace Maditor {
 				class SettingsDialog;
 			}
 
-class SettingsDialog : public QDialog
+class MADITOR_VIEW_EXPORT SettingsDialog : public QDialog
 {
     Q_OBJECT
 

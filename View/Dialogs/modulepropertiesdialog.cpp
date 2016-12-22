@@ -1,4 +1,4 @@
-#include "maditorlib.h"
+#include "maditorviewlib.h"
 
 #include "modulepropertiesdialog.h"
 #include "ui_modulepropertiesdialog.h"

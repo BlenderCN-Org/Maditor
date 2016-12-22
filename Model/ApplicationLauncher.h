@@ -15,8 +15,15 @@ namespace Maditor {
 			virtual ~ApplicationLauncher();
 
 			void init();
+			void start();
+			void pause();
+			void stop();
 			
 			OgreWindow *window();
+
+			void addProcessListener(std::function<void(DWORD)> f);
+
+			DWORD pid();
 
 		protected:
 			virtual void timerEvent(QTimerEvent * te) override;
@@ -27,8 +34,20 @@ namespace Maditor {
 			// Inherited via AppControl
 			virtual void shutdownImpl() override;
 
+
+			// Inherited via AppControl
+			virtual void startImpl() override;
+
+			virtual void stopImpl() override;
+
+			virtual void pauseImpl() override;
+
+			// Inherited via AppControl
+			virtual void onApplicationInitialized() override;
+
 		signals:
 			void applicationInitializing();
+			void applicationInitialized();
 			void applicationShutdown();
 
 		private:
@@ -41,6 +60,10 @@ namespace Maditor {
 
 			Engine::Serialize::Serialized<ModuleLoader> mLoader;
 			
+
+			std::list<std::function<void(DWORD)>> mProcessListener;
+			
+
 
 		};
 

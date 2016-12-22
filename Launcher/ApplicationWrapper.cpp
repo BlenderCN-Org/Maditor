@@ -17,7 +17,7 @@ namespace Maditor {
 		ApplicationWrapper::ApplicationWrapper() :
 			AppControl(false),
 			mInput(new InputWrapper(sharedMemory().mInput)),
-			mLoader(this, this),
+			mLoader(this),
 			mRunning(false)
 		{			
 		}
@@ -30,6 +30,11 @@ namespace Maditor {
 			if (!net->acceptConnection(2000)) {
 				net->close();
 				return -1;
+			}
+
+			while (!::IsDebuggerPresent() && !::GetAsyncKeyState(VK_F10))
+			{
+				::Sleep(100);
 			}
 			
 			Shared::ApplicationInfo &appInfo = sharedMemory().mAppInfo;
@@ -73,26 +78,30 @@ namespace Maditor {
 
 			mInput->setSystem(&Engine::GUI::GUISystem::getSingleton());
 			std::string project = appInfo.mProjectDir.c_str();
-			
+
 			mLoader->setup(project + "debug/bin/", project + "debug/runtime/");
 			while (mLoader->receiving() && mRunning && net->clientCount() == 1) {
 				net->receiveMessages();
 			}
 			if (net->clientCount() != 1 || !mRunning) {
-				net->close();
+				//net->close();
 				return -1;
 			}
 
 			mApplication.init();
-			//sendMsg(APP_INITIALIZED);
 
-			//mNetwork.addTopLevelItem(&Engine::Scene::SceneManager::getSingleton());
+			applicationInitialized();
 
+			Ogre::Root::getSingleton().addFrameListener(this);
 
+			while (mRunning) {
+				net->receiveMessages();
+				if (net->clientCount() != 1) {
+					//net->close();
+					return -1;
+				}
 
-
-			//Ogre::Root::getSingleton().addFrameListener(this);
-
+			}
 
 			return 0;
 		}
@@ -101,6 +110,34 @@ namespace Maditor {
 		{
 			mRunning = false;
 			mApplication.shutdown();
+		}
+
+		void ApplicationWrapper::onApplicationInitialized()
+		{
+
+		}
+
+		bool ApplicationWrapper::frameRenderingQueued(const Ogre::FrameEvent & evt)
+		{
+			network()->receiveMessages();
+			if (network()->clientCount() != 1) {
+				shutdownImpl();
+			}
+			return mRunning;
+		}
+
+
+		void ApplicationWrapper::startImpl()
+		{
+			mApplication.go();
+		}
+		void ApplicationWrapper::stopImpl()
+		{
+			mApplication.shutdown();
+		}
+		void ApplicationWrapper::pauseImpl()
+		{
+
 		}
 
 	}

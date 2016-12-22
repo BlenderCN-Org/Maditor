@@ -9,7 +9,7 @@ namespace Maditor {
 class ModuleLoader : public Engine::Serialize::SerializableUnit{
 
 public:
-	ModuleLoader(Engine::Serialize::TopLevelSerializableUnit *topLevel);
+	ModuleLoader();
 	~ModuleLoader();
 
 	void setup(const std::string &binaryDir, const std::string &runtimeDir);
@@ -17,17 +17,27 @@ public:
 			
 	bool receiving();
 
+	const std::string &binaryDir();
+	const std::string &runtimeDir();
+
 private:
 
-	struct ModuleLauncherInstance : public Shared::ModuleInstance {
-		ModuleLauncherInstance(const std::string &name) :
-			ModuleInstance(name),
-			mHandle(0)
-		{
-		}
+	class ModuleLauncherInstance : public Shared::ModuleInstance {
+	public:
+		ModuleLauncherInstance(ModuleLoader *parent, const std::string &name);
 
+		~ModuleLauncherInstance();
+
+		void createDependencies();
+		bool load(bool callInit);
+		bool unload();
+
+		virtual void reloadImpl() override;
+
+	private:
 		HINSTANCE mHandle;
 
+		std::list<ModuleLauncherInstance *> mDependedBy;
 
 		std::list<std::string> mEntityComponentNames;
 		std::list<Engine::Scene::BaseSceneComponent*> mSceneComponents;
@@ -36,14 +46,15 @@ private:
 		std::list<Engine::Scripting::BaseGlobalAPIComponent*> mGlobalAPIComponents;
 		std::list<Engine::Scene::SceneListener*> mSceneListeners;
 		std::map<std::string, std::list<Engine::Scene::Entity::Entity*>> mStoredComponentEntities;
-	};
 
-	
-	bool loadModule(ModuleLauncherInstance &module, bool callInit);
-	bool unloadModule(ModuleLauncherInstance &module);
+		ModuleLoader *mParent;
+	};
 
 	void setupDoneImpl();
 	
+private:
+	std::tuple<ModuleLoader *, std::string> createModule(const std::string &name);
+
 private:
 	std::string mBinaryDir, mRuntimeDir;
 
@@ -51,7 +62,7 @@ private:
 
 	bool mReceivingModules;
 
-	Engine::Serialize::ObservableList<ModuleLauncherInstance, std::string> mInstances;
+	Engine::Serialize::ObservableList<ModuleLauncherInstance, ModuleLoader *, std::string> mInstances;
 	Engine::Serialize::Action<> setupDone;
 
 };

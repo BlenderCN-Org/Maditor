@@ -13,7 +13,11 @@ namespace Maditor {
 Maditor::Shared::AppControl::AppControl(bool isLauncher) :
 	TopLevelSerializableUnit(Engine::Serialize::MADITOR),
 	mNetwork(new Engine::Network::NetworkManager),
-	shutdown(this, &AppControl::shutdownImpl)
+	shutdown(this, &AppControl::shutdownImpl),
+	start(this, &AppControl::startImpl),
+	stop(this, &AppControl::stopImpl),
+	pause(this, &AppControl::pauseImpl),
+	applicationInitialized(this, &AppControl::onApplicationInitialized)
 {
 	if (isLauncher) {
 		mMemory = new SharedMemory(SharedMemory::create);

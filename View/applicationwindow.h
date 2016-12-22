@@ -22,6 +22,7 @@ public:
 private slots:
 	void onApplicationInitializing();
 	void onApplicationShutdown();
+	void onApplicationInitialized();
 
 private:
 	Ui::MainWindow *mUi;

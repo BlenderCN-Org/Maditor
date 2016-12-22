@@ -10,7 +10,7 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MADITOR_VIEW_EXPORT MainWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -19,6 +19,8 @@ public:
     ~MainWindow();
 
 	virtual void closeEvent(QCloseEvent * event) override;
+
+	Dialogs::DialogManager *dialogs();
 
 public slots:
 	void clearRecentProjects();

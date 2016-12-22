@@ -14,8 +14,7 @@ namespace Maditor {
 	namespace Model {
 
 
-		ModuleLoader::ModuleLoader(ApplicationLauncher *launcher, const QString & binaryDir, const ModuleList &moduleList) :
-			SerializableUnit(launcher),
+		ModuleLoader::ModuleLoader(const QString & binaryDir, const ModuleList &moduleList) :			
 			mBinaryDir(binaryDir),
 			mModules(moduleList),
 			mInstances(this),
@@ -96,59 +95,47 @@ namespace Maditor {
 
 		void ModuleLoader::addModule(Module *module)
 		{
-			QString path = mBinaryDir + module->name() + ".dll";
-			QFile file(path);
+			
+			mInstances.emplace_back_safe([=](const decltype(mInstances)::iterator &it) {
+				QString path = mBinaryDir + module->name() + ".dll";
+				QFile file(path);
+				
+				mMap[module] = &*it;
+				it->setExists(file.exists());
 
-			Shared::ModuleInstance &mod = mInstances.emplace_back(module->name().toStdString());
-			mMap[module] = &mod;
-			mod.setExists(file.exists());
+				if (file.exists())
+					mWatcher.addPath(path);
 
-			if (mod.exists())
-				mWatcher.addPath(path);			
+			}, module->name().toStdString());
 		}
 
 
 		void ModuleLoader::setup()
 		{
-			std::list<const Module*> reloadOrder;
 			for (const std::unique_ptr<Module> &module : mModules) {
 				addModule(module.get());
-				module->fillReloadOrder(reloadOrder);
 			}
 
-			reloadOrder.reverse();
+		}
 
-			for (const Module *m : reloadOrder) {
-				Shared::ModuleInstance &instance = *mMap.at(m);
-
-				//loadModule(instance, false);
+		void ModuleLoader::setup2()
+		{
+			for (const std::pair<const Model::Module *, Shared::ModuleInstance *> &module : mMap) {
+				for (const QString &dep : module.first->dependencies()) {
+					module.second->addDependency(mMap.at(mModules.getModule(dep)));
+				}
 			}
-
 			setupDone();
+		}
 
-			/*ModuleLoaderMsg msg;
-			msg.mCmd = Init;
-
-			sendMsg(msg, "Loader");*/
+		bool ModuleLoader::done()
+		{
+			return mInstances.size() == mModules.childCount();
 		}
 
 		void ModuleLoader::reload(const Module *module) {
-			std::list<const Module*> reloadOrder;
-			module->fillReloadOrder(reloadOrder);
 
-			for (const Module *m : reloadOrder) {
-				Shared::ModuleInstance &instance = *mMap.at(m);
-
-				//unloadModule(instance);
-			}
-			
-			reloadOrder.reverse();
-
-			for (const Module *m : reloadOrder) {
-				Shared::ModuleInstance &instance = *mMap.at(m);
-
-				//loadModule(instance, true);
-			}
+			mMap.at(module)->reload();
 		}
 
 		void ModuleLoader::setupDoneImpl()

@@ -153,7 +153,7 @@ namespace Maditor {
 			
 		}
 
-		const QStringList & Module::dependencies()
+		const QStringList & Module::dependencies() const
 		{
 			return mCmake.dependencies();
 		}
@@ -182,7 +182,7 @@ namespace Maditor {
 			}
 		}
 
-		int Module::childCount() {
+		int Module::childCount() const {
 			return mClasses.size();
 		}
 

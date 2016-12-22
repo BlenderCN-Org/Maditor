@@ -70,7 +70,7 @@ namespace Maditor {
 				mLibraryDependencies << dependency;
 			}
 
-			const QStringList & CmakeGenerator::dependencies()
+			const QStringList & CmakeGenerator::dependencies() const
 			{
 				return mDependencies;
 			}

@@ -1,4 +1,4 @@
-#include "maditorlib.h"
+#include "maditorviewlib.h"
 
 #include "editorsettingswidget.h"
 #include "ui_editorsettingswidget.h"

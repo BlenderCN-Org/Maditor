@@ -88,7 +88,7 @@ namespace Maditor {
 				});
 			}
 
-			int ClassGenerator::childCount()
+			int ClassGenerator::childCount() const
 			{
 				return 0;
 			}

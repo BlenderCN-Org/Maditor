@@ -27,7 +27,7 @@ namespace Maditor {
 				void removeDependency(const QString &dependency);
 				void addLibraryDependency(const QString &dependency);
 
-				const QStringList &dependencies();
+				const QStringList &dependencies() const;
 
 				QStringList subProjects();
 

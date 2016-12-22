@@ -147,7 +147,7 @@ namespace Maditor {
 			return mModules.end();
 		}
 
-		int ModuleList::childCount() {
+		int ModuleList::childCount() const {
 			return mModules.size();
 		}
 

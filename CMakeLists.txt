@@ -33,7 +33,7 @@ add_subdirectory(Launcher)
 
 add_subdirectory(Model)
 
-#add_subdirectory(Tools)
+add_subdirectory(Tools)
 
 add_subdirectory(View)
 
@@ -41,4 +41,10 @@ add_subdirectory(View)
 if (BUILD_TESTS)
 	add_subdirectory(test)
 endif(BUILD_TESTS)
+
+include_directories(${MADGINE_INCLUDE_DIRS})
+
+add_executable(Maditor main.cpp)
+add_dependencies(Maditor Maditor_Launcher ${TOOLS_LIBS})
+target_link_libraries(Maditor Maditor_Model Maditor_View)
 

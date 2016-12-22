@@ -1,4 +1,4 @@
-#include "maditorlib.h"
+#include "maditorviewlib.h"
 
 #include "newguihandlerdialog.h"
 #include "ui_newguihandlerdialog.h"

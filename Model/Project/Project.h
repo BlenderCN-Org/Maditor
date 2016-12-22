@@ -32,7 +32,7 @@ namespace Maditor {
 			virtual Project *project() override;
 
 			// Inherited via ProjectElement
-			virtual int childCount() override;
+			virtual int childCount() const override;
 
 			virtual ProjectElement* child(int i) override;
 

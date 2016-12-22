@@ -1,4 +1,4 @@
-#include "maditorlib.h"
+#include "maditorviewlib.h"
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -31,6 +31,9 @@ namespace View {
 
 		QList<QAction*> result;
 		result.push_back(ui->actionInit);
+		result.push_back(ui->actionStart);
+		result.push_back(ui->actionPause);
+		result.push_back(ui->actionStop);
 		toolbar->addActions(result);
 
 		window->addToolBar(toolbar);
@@ -45,14 +48,27 @@ namespace View {
 
 		mUi->actionInit->setEnabled(true);
 		connect(mUi->actionInit, &QAction::triggered, app, &Model::ApplicationLauncher::init);
+		connect(mUi->actionStart, &QAction::triggered, app, &Model::ApplicationLauncher::start);
+		connect(mUi->actionPause, &QAction::triggered, app, &Model::ApplicationLauncher::pause);
+		connect(mUi->actionStop, &QAction::triggered, app, &Model::ApplicationLauncher::stop);
 		connect(app, &Model::ApplicationLauncher::applicationInitializing, this, &ApplicationWindow::onApplicationInitializing);
 		connect(app, &Model::ApplicationLauncher::applicationShutdown, this, &ApplicationWindow::onApplicationShutdown);
+		connect(app, &Model::ApplicationLauncher::applicationInitialized, this, &ApplicationWindow::onApplicationInitialized);
 	}
 
 	void ApplicationWindow::onApplicationShutdown()
 	{
 		setCurrentIndex(0);
 		mUi->actionInit->setEnabled(true);
+		mUi->actionStart->setEnabled(false);
+		mUi->actionStop->setEnabled(false);
+		mUi->actionPause->setEnabled(false);
+	}
+
+	void ApplicationWindow::onApplicationInitialized()
+	{
+		setCurrentIndex(1);
+		mUi->actionStart->setEnabled(true);
 	}
 
 	void ApplicationWindow::onApplicationInitializing() {

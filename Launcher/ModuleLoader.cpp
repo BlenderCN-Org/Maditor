@@ -8,10 +8,9 @@ namespace Maditor {
 	namespace Launcher {
 
 
-		ModuleLoader::ModuleLoader(Engine::Serialize::TopLevelSerializableUnit *topLevel) :
-			SerializableUnit(topLevel),
+		ModuleLoader::ModuleLoader() :
 			mInit(false),
-			mInstances(this),
+			mInstances(this, &ModuleLoader::createModule),
 			setupDone(this, &ModuleLoader::setupDoneImpl)
 		{
 
@@ -38,10 +37,6 @@ namespace Maditor {
 		void ModuleLoader::cleanup()
 		{
 
-			for (ModuleLauncherInstance &p : mInstances) {
-				unloadModule(p);
-			}
-
 			mInstances.clear();
 
 			mInit = false;
@@ -52,73 +47,84 @@ namespace Maditor {
 			return mReceivingModules;
 		}
 
-
-
-
-		bool ModuleLoader::unloadModule(ModuleLauncherInstance & module)
+		const std::string & ModuleLoader::binaryDir()
 		{
+			return mBinaryDir;
+		}
 
-			if (!module.isLoaded())
-				return true;
+		const std::string & ModuleLoader::runtimeDir()
+		{
+			return mRuntimeDir;
+		}
 
-			std::cout << "Unloading " << module.name() << std::endl;
-
-			if (Engine::Scene::SceneManager::getSingleton().isSceneLoaded()) {
-
-				const std::list<Engine::Scene::Entity::Entity*> &entities = Engine::Scene::SceneManager::getSingleton().entities();
-
-
-				for (const std::string &comp : module.mEntityComponentNames) {
-					std::list<Engine::Scene::Entity::Entity*> &componentEntities = module.mStoredComponentEntities[comp];
-					for (Engine::Scene::Entity::Entity* e : entities) {
-						if (e->hasComponent(comp)) {
-							componentEntities.push_back(e);
-							e->removeComponent(comp);
-						}
-					}
-				}
-
-
-				for (Engine::Scene::SceneListener *listener : module.mSceneListeners) {
-					listener->beforeSceneClear();
-					listener->onSceneClear();
-				}
+		void ModuleLoader::setupDoneImpl()
+		{
+			for (ModuleLauncherInstance &instance : mInstances) {
+				instance.createDependencies();
+				instance.load(false);
 			}
+			mReceivingModules = false;
+		}
 
-			for (Engine::Scripting::BaseGlobalAPIComponent *api : module.mGlobalAPIComponents) {
-				api->finalize();
-			}
-
-			for (int i = -1; i < Engine::UI::UIManager::sMaxInitOrder; ++i)
-				for (Engine::UI::GuiHandlerBase *h : module.mGuiHandlers)
-					h->finalize(i);
-
-			for (Engine::UI::GameHandlerBase *h : module.mGameHandlers) {
-				h->finalize();
-			}
-
-			bool result = (FreeLibrary(module.mHandle) != 0);
-			if (result)
-				module.setLoaded(false);
-			else
-				throw 0;
-
-			return result;
+		std::tuple<ModuleLoader*, std::string> ModuleLoader::createModule(const std::string & name)
+		{
+			return{ this, name };
 		}
 
 
-		bool ModuleLoader::loadModule(ModuleLauncherInstance & module, bool callInit)
+		ModuleLoader::ModuleLauncherInstance::ModuleLauncherInstance(ModuleLoader * parent, const std::string & name) :
+			ModuleInstance(name),
+			mHandle(0),
+			mParent(parent)
 		{
-			if (module.isLoaded())
+
+		}
+
+		ModuleLoader::ModuleLauncherInstance::~ModuleLauncherInstance()
+		{
+			unload();
+			for (ModuleInstance *dep : dependencies()) {
+				ModuleLauncherInstance *d = dynamic_cast<ModuleLauncherInstance*>(dep);
+				if (!d)
+					throw 0;
+				d->mDependedBy.remove(this);
+			}
+			for (ModuleLauncherInstance *dep : mDependedBy) {
+				dep->removeDependency(this);
+			}
+
+		}
+
+		void ModuleLoader::ModuleLauncherInstance::createDependencies()
+		{
+			for (ModuleInstance *dep : dependencies()) {
+				ModuleLauncherInstance *d = dynamic_cast<ModuleLauncherInstance*>(dep);
+				if (!d)
+					throw 0;
+				d->mDependedBy.push_back(this);
+			}
+		}
+
+		bool ModuleLoader::ModuleLauncherInstance::load(bool callInit)
+		{
+			if (isLoaded())
 				return true;
 
-			std::cout << "Loading " << module.name() << std::endl;
+			for (ModuleInstance *dep : dependencies()) {
+				ModuleLauncherInstance *d = dynamic_cast<ModuleLauncherInstance*>(dep);
+				if (!d)
+					throw 0;
+				if (!d->load(callInit))
+					return false;
+			}
+
+			std::cout << "Loading " << name() << std::endl;
 
 
-			std::string runtimePath = mRuntimeDir + module.name() + ".dll";
-			std::string runtimePdbPath = mRuntimeDir + module.name() + ".pdb";
-			std::string binaryPath = mBinaryDir + module.name() + ".dll";
-			std::string binaryPdbPath = mBinaryDir + module.name() + ".pdb";
+			std::string runtimePath = mParent->runtimeDir() + name() + ".dll";
+			std::string runtimePdbPath = mParent->runtimeDir() + name() + ".pdb";
+			std::string binaryPath = mParent->binaryDir() + name() + ".dll";
+			std::string binaryPdbPath = mParent->binaryDir() + name() + ".pdb";
 
 			{
 				std::ifstream src(binaryPath, std::ios::binary);
@@ -127,12 +133,12 @@ namespace Maditor {
 				dst << src.rdbuf();
 			}
 
-			module.mEntityComponentNames.clear();
-			module.mSceneComponents.clear();
-			module.mGameHandlers.clear();
-			module.mGuiHandlers.clear();
-			module.mGlobalAPIComponents.clear();
-			module.mSceneListeners.clear();
+			mEntityComponentNames.clear();
+			mSceneComponents.clear();
+			mGameHandlers.clear();
+			mGuiHandlers.clear();
+			mGlobalAPIComponents.clear();
+			mSceneListeners.clear();
 			std::set<std::string> beforeEntityComponents = Engine::Scene::Entity::Entity::registeredComponentNames();
 			std::set<Engine::Scene::BaseSceneComponent*> beforeSceneComponents = Engine::Scene::SceneManager::getSingleton().getComponents();
 			std::set<Engine::UI::GameHandlerBase*> beforeGameHandlers = Engine::UI::UIManager::getSingleton().getGameHandlers();
@@ -143,71 +149,128 @@ namespace Maditor {
 			UINT errorMode = GetErrorMode();
 			SetErrorMode(SEM_FAILCRITICALERRORS);
 			try {
-				module.mHandle = LoadLibrary(runtimePath.c_str());
+				mHandle = LoadLibrary(runtimePath.c_str());
 			}
 			catch (...) {
-				module.mHandle = 0;
+				mHandle = 0;
 			}
 			SetErrorMode(errorMode);
 
-			if (!module.mHandle)
+			if (!mHandle)
 				return false;
 
 			std::set<std::string> afterEntityComponents = Engine::Scene::Entity::Entity::registeredComponentNames();
-			std::set_difference(afterEntityComponents.begin(), afterEntityComponents.end(), beforeEntityComponents.begin(), beforeEntityComponents.end(), std::inserter(module.mEntityComponentNames, module.mEntityComponentNames.end()));
+			std::set_difference(afterEntityComponents.begin(), afterEntityComponents.end(), beforeEntityComponents.begin(), beforeEntityComponents.end(), std::inserter(mEntityComponentNames, mEntityComponentNames.end()));
 			std::set<Engine::Scene::BaseSceneComponent*> afterSceneComponents = Engine::Scene::SceneManager::getSingleton().getComponents();
-			std::set_difference(afterSceneComponents.begin(), afterSceneComponents.end(), beforeSceneComponents.begin(), beforeSceneComponents.end(), std::inserter(module.mSceneComponents, module.mSceneComponents.end()));
+			std::set_difference(afterSceneComponents.begin(), afterSceneComponents.end(), beforeSceneComponents.begin(), beforeSceneComponents.end(), std::inserter(mSceneComponents, mSceneComponents.end()));
 			std::set<Engine::UI::GameHandlerBase*> afterGameHandlers = Engine::UI::UIManager::getSingleton().getGameHandlers();
-			std::set_difference(afterGameHandlers.begin(), afterGameHandlers.end(), beforeGameHandlers.begin(), beforeGameHandlers.end(), std::inserter(module.mGameHandlers, module.mGameHandlers.end()));
+			std::set_difference(afterGameHandlers.begin(), afterGameHandlers.end(), beforeGameHandlers.begin(), beforeGameHandlers.end(), std::inserter(mGameHandlers, mGameHandlers.end()));
 			std::set<Engine::UI::GuiHandlerBase*> afterGuiHandlers = Engine::UI::UIManager::getSingleton().getGuiHandlers();
-			std::set_difference(afterGuiHandlers.begin(), afterGuiHandlers.end(), beforeGuiHandlers.begin(), beforeGuiHandlers.end(), std::inserter(module.mGuiHandlers, module.mGuiHandlers.end()));
+			std::set_difference(afterGuiHandlers.begin(), afterGuiHandlers.end(), beforeGuiHandlers.begin(), beforeGuiHandlers.end(), std::inserter(mGuiHandlers, mGuiHandlers.end()));
 			std::set<Engine::Scripting::BaseGlobalAPIComponent*> afterAPIComponents = Engine::Scripting::GlobalScope::getSingleton().getGlobalAPIComponents();
-			std::set_difference(afterAPIComponents.begin(), afterAPIComponents.end(), beforeAPIComponents.begin(), beforeAPIComponents.end(), std::inserter(module.mGlobalAPIComponents, module.mGlobalAPIComponents.end()));
+			std::set_difference(afterAPIComponents.begin(), afterAPIComponents.end(), beforeAPIComponents.begin(), beforeAPIComponents.end(), std::inserter(mGlobalAPIComponents, mGlobalAPIComponents.end()));
 			std::set<Engine::Scene::SceneListener*> afterSceneListeners = Engine::Scene::SceneManager::getSingleton().getListeners();
-			std::set_difference(afterSceneListeners.begin(), afterSceneListeners.end(), beforeSceneListeners.begin(), beforeSceneListeners.end(), std::inserter(module.mSceneListeners, module.mSceneListeners.end()));
+			std::set_difference(afterSceneListeners.begin(), afterSceneListeners.end(), beforeSceneListeners.begin(), beforeSceneListeners.end(), std::inserter(mSceneListeners, mSceneListeners.end()));
 
 			if (callInit) {
 
 				for (int i = 0; i < Engine::UI::UIManager::sMaxInitOrder; ++i)
-					for (Engine::UI::GuiHandlerBase *h : module.mGuiHandlers)
+					for (Engine::UI::GuiHandlerBase *h : mGuiHandlers)
 						h->init(i);
 
-				for (Engine::UI::GameHandlerBase *h : module.mGameHandlers) {
+				for (Engine::UI::GameHandlerBase *h : mGameHandlers) {
 					h->init();
 				}
 
 
-				for (Engine::Scene::BaseSceneComponent *c : module.mSceneComponents) {
+				for (Engine::Scene::BaseSceneComponent *c : mSceneComponents) {
 					c->init();
 				}
 
-				for (Engine::Scripting::BaseGlobalAPIComponent *api : module.mGlobalAPIComponents) {
+				for (Engine::Scripting::BaseGlobalAPIComponent *api : mGlobalAPIComponents) {
 					api->init();
 				}
 
 				if (Engine::Scene::SceneManager::getSingleton().isSceneLoaded()) {
-					for (Engine::Scene::SceneListener *listener : module.mSceneListeners) {
+					for (Engine::Scene::SceneListener *listener : mSceneListeners) {
 						listener->onSceneLoad();
 					}
 
-					for (const std::pair<const std::string, std::list<Engine::Scene::Entity::Entity*>> &ents : module.mStoredComponentEntities) {
+					for (const std::pair<const std::string, std::list<Engine::Scene::Entity::Entity*>> &ents : mStoredComponentEntities) {
 						for (Engine::Scene::Entity::Entity* e : ents.second) {
 							e->addComponent(ents.first);
 						}
 					}
-					module.mStoredComponentEntities.clear();
+					mStoredComponentEntities.clear();
 				}
 
 			}
 
-			module.setLoaded(true);
+			setLoaded(true);
 
 			return true;
 		}
 
-		void ModuleLoader::setupDoneImpl()
+		bool ModuleLoader::ModuleLauncherInstance::unload()
 		{
-			mReceivingModules = false;
+			if (!isLoaded())
+				return true;
+
+			for (ModuleLauncherInstance *dep : mDependedBy) {
+				if (!dep->unload())
+					return false;
+			}
+
+			std::cout << "Unloading " << name() << std::endl;
+
+			if (Engine::Scene::SceneManager::getSingleton().isSceneLoaded()) {
+
+				const std::list<Engine::Scene::Entity::Entity*> &entities = Engine::Scene::SceneManager::getSingleton().entities();
+
+
+				for (const std::string &comp : mEntityComponentNames) {
+					std::list<Engine::Scene::Entity::Entity*> &componentEntities = mStoredComponentEntities[comp];
+					for (Engine::Scene::Entity::Entity* e : entities) {
+						if (e->hasComponent(comp)) {
+							componentEntities.push_back(e);
+							e->removeComponent(comp);
+						}
+					}
+				}
+
+
+				for (Engine::Scene::SceneListener *listener : mSceneListeners) {
+					listener->beforeSceneClear();
+					listener->onSceneClear();
+				}
+			}
+
+			for (Engine::Scripting::BaseGlobalAPIComponent *api : mGlobalAPIComponents) {
+				api->finalize();
+			}
+
+			for (int i = -1; i < Engine::UI::UIManager::sMaxInitOrder; ++i)
+				for (Engine::UI::GuiHandlerBase *h : mGuiHandlers)
+					h->finalize(i);
+
+			for (Engine::UI::GameHandlerBase *h : mGameHandlers) {
+				h->finalize();
+			}
+
+			bool result = (FreeLibrary(mHandle) != 0);
+			if (result)
+				setLoaded(false);
+			else
+				throw 0;
+
+			return result;
+		}
+
+		void ModuleLoader::ModuleLauncherInstance::reloadImpl()
+		{
+			if (isLoaded() && unload()) {
+				load(true);
+			}
 		}
 
 	}

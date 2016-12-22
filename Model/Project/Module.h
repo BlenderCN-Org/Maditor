@@ -27,7 +27,7 @@ namespace Maditor {
 
 			bool addDependency(const QString &dep);
 			void removeDependency(const QString &dep);
-			const QStringList &dependencies();
+			const QStringList &dependencies() const;
 			const std::set<Module *> &dependencyModules();
 			void initDependencies();
 
@@ -36,7 +36,7 @@ namespace Maditor {
 			ModuleList *parent();
 
 			// Inherited via ProjectElement
-			virtual int childCount() override;
+			virtual int childCount() const override;
 
 			virtual Generators::ClassGenerator * child(int i) override;
 

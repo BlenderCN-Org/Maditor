@@ -24,7 +24,7 @@ namespace Maditor {
 				virtual QString path() const override;
 
 				// Inherited via ProjectElement
-				virtual int childCount() override;
+				virtual int childCount() const override;
 
 				virtual TreeItem* child(int i) override;
 

@@ -40,7 +40,7 @@ namespace Maditor {
 			virtual Project *project() override;
 
 			// Inherited via ProjectElement
-			virtual int childCount() override;
+			virtual int childCount() const override;
 
 			virtual Module * child(int i) override;
 

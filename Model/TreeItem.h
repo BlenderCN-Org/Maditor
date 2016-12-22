@@ -9,7 +9,7 @@ class TreeItem
 public:
 	virtual ~TreeItem() = default;
 
-	virtual int childCount() = 0;
+	virtual int childCount() const = 0;
 	virtual int parentIndex();
 	virtual TreeItem *child(int i) = 0;
 

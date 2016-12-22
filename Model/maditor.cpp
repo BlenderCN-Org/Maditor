@@ -4,19 +4,24 @@
 
 #include "DialogManager.h"
 
+#include "Addons\Addon.h"
+
 namespace Maditor {
 	namespace Model {
 
 		DialogManager *DialogManager::sSingleton = 0;
 
 		Maditor::Maditor() :
-			mSettings("MadMan Studios", "Maditor")			
+			mSettings("MadMan Studios", "Maditor"),
+			mAddons(new Addons::AddonCollector(this))
 		{
 
 			mSettings.beginGroup("Editor");
 			mRecentProjects = mSettings.value("recentProjects").toStringList();
 			mReloadProject = mSettings.value("reloadProject").toBool();
 			mSettings.endGroup();
+
+			connect(this, &Maditor::projectOpened, mAddons, &Addons::AddonCollector::onProjectOpened);
 
 			if (mReloadProject && !mRecentProjects.isEmpty()) {
 				loadProject(mRecentProjects.front());
@@ -98,6 +103,11 @@ namespace Maditor {
 		Project * Maditor::project()
 		{
 			return mProject.get();
+		}
+
+		Addons::AddonCollector * Maditor::addons()
+		{
+			return mAddons;
 		}
 
 	}
