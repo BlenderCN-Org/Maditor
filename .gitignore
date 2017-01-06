@@ -246,5 +246,7 @@ html/
 packages/
 
 *.pyc
-Maditor/Tools/blender/.idea/workspace.xml
-*.pyc
+
+.idea/*
+
+!Tools/VSLink/Plugin/MaditorPlugin/app.config
