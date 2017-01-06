@@ -21,6 +21,8 @@ namespace View {
 	{
 		mUi = ui;
 
+
+
 		/*createToolbar(window, "ApplicationToolbar", {
 			{ ui->actionInit, &Model::Project::init },
 			{ ui->actionInit_No_Debug, &Model::ApplicationLauncher::initNoDebug },

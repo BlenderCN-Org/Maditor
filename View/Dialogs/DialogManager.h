@@ -21,28 +21,27 @@ namespace Maditor {
 
 				virtual SettingsDialog *settingsDialog() override;
 
-			public slots:
 				virtual void onProjectOpened(Model::Project *project) override;
 				virtual void onModuleAdded(Model::Module *module) override;
 				virtual void onClassAdded(Model::Generators::ClassGenerator * generator) override;
 
-				virtual void showNewProjectDialog() override;
-				virtual void showLoadProjectDialog() override;
-				virtual void showNewModuleDialog() override;
-				virtual void showNewClassDialog() override;
+				virtual bool showNewProjectDialog(QString &path, QString &name) override;
+				virtual bool showLoadProjectDialog(QString &path) override;
+				virtual bool showNewModuleDialog(Model::ModuleList *list, QString &name) override;
+				virtual bool showNewClassDialog(Model::Module *module, QString &name, Model::Generators::ClassGeneratorFactory::ClassType &type) override;
 
-				virtual void showNewGuiHandlerDialog(Model::Module *module, const QString &name) override;
-				virtual void showNewGlobalAPIDialog(Model::Module *module, const QString &name) override;
-				virtual void showNewEntityComponentDialog(Model::Module *module, const QString &name) override;
-				virtual void showNewSceneComponentDialog(Model::Module *module, const QString &name) override;
-				virtual void showNewGameHandlerDialog(Model::Module *module, const QString &name) override;
-				virtual void showNewOtherClassDialog(Model::Module *module, const QString &name) override;
+				virtual bool showNewGuiHandlerDialog(Model::Module *module, const QString &name, QString &window, int &type, bool &hasLayout) override;
+				virtual bool showNewGlobalAPIDialog(Model::Module *module, const QString &name) override;
+				virtual bool showNewEntityComponentDialog(Model::Module *module, const QString &name, QString &componentName) override;
+				virtual bool showNewSceneComponentDialog(Model::Module *module, const QString &name) override;
+				virtual bool showNewGameHandlerDialog(Model::Module *module, const QString &name) override;
+				virtual bool showNewOtherClassDialog(Model::Module *module, const QString &name) override;
 
 				virtual void showModulePropertiesDialog(Model::Module *module) override;
 
 				virtual void showSettingsDialog() override;
 
-				virtual void showDeleteClassDialog() override;
+				virtual bool showDeleteClassDialog(Model::Generators::ClassGenerator *generator, bool &deleteFiles) override;
 
 			private:
 				SettingsDialog *mSettingsDialog;

@@ -191,6 +191,8 @@
     </widget>
     <addaction name="menuRecentProjects"/>
     <addaction name="actionSettings"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -455,6 +457,11 @@
    </property>
    <property name="text">
     <string>Finalize</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
    </property>
   </action>
  </widget>

@@ -55,8 +55,6 @@ namespace Maditor {
 
 
 			void DialogManager::onProjectOpened(Model::Project *project) {
-				connect(project->moduleList(), &Model::ModuleList::newModuleRequest, this, &DialogManager::showNewModuleDialog);
-				connect(this, &DialogManager::newModuleDialogAccepted, project->moduleList(), &Model::ModuleList::createModule);
 				connect(project->moduleList(), &Model::ModuleList::moduleAdded, this, &DialogManager::onModuleAdded);
 
 				for (const std::unique_ptr<Model::Module> &module : *project->moduleList()) {
@@ -66,8 +64,8 @@ namespace Maditor {
 
 			void DialogManager::onModuleAdded(Model::Module * module)
 			{
-				connect(module, &Model::Module::newClassRequest, this, &DialogManager::showNewClassDialog);
-				connect(module, &Model::Module::propertiesDialogRequest, this, &DialogManager::showModulePropertiesDialog);
+				//connect(module, &Model::Module::newClassRequest, this, &DialogManager::showNewClassDialog);
+				//connect(module, &Model::Module::propertiesDialogRequest, this, &DialogManager::showModulePropertiesDialog);
 				connect(module, &Model::Module::classAdded, this, &DialogManager::onClassAdded);
 
 				for (const std::unique_ptr<Model::Generators::ClassGenerator> &gen : module->getClasses()) {
@@ -77,72 +75,89 @@ namespace Maditor {
 
 			void DialogManager::onClassAdded(Model::Generators::ClassGenerator *generator)
 			{
-				connect(generator, &Model::Generators::ClassGenerator::deleteClassRequest, this, &DialogManager::showDeleteClassDialog);
+				//connect(generator, &Model::Generators::ClassGenerator::deleteClassRequest, this, &DialogManager::showDeleteClassDialog);
 			}
 			
-			void DialogManager::showNewProjectDialog() {
-				emit newProjectDialogAccepted("C:/Users/schue/Desktop/GitHub/", "TT");
+			bool DialogManager::showNewProjectDialog(QString &path, QString &name) {
+				path = "C:/Users/schue/Desktop/GitHub/";
+				name = "TT";
+				return true;
 			}
 			
-			void DialogManager::showLoadProjectDialog()
+			bool DialogManager::showLoadProjectDialog(QString &path)
 			{
-				QString path = QFileDialog::getExistingDirectory(nullptr, "Project Path", QString(), QFileDialog::ShowDirsOnly );
+				path = QFileDialog::getExistingDirectory(nullptr, "Project Path", QString(), QFileDialog::ShowDirsOnly );
 				
-				if (!path.isEmpty())
-					emit loadProjectDialogAccepted(path + "/");
+				return !path.isEmpty();
 			}
 
-			void DialogManager::showNewModuleDialog()
+			bool DialogManager::showNewModuleDialog(Model::ModuleList *list, QString &name)
 			{
-				Model::ModuleList *list = static_cast<Model::ModuleList*>(sender());
-
 				NewModuleDialog dialog(list);
 
-				if (dialog.exec() == QDialog::Accepted)
-					emit newModuleDialogAccepted(dialog.name());
+				int result = dialog.exec();
+				if (result == QDialog::Accepted) {
+					name = dialog.name();
+					return true;
+				}
+				return false;
 			}
 
-			void DialogManager::showNewClassDialog()
+			bool DialogManager::showNewClassDialog(Model::Module *module, QString &name, Model::Generators::ClassGeneratorFactory::ClassType &type)
 			{
-				Model::Module *module = static_cast<Model::Module*>(sender());
-
 				NewClassDialog dialog(module);
 
-				if (dialog.exec() == QDialog::Accepted)
-					emit newClassDialogAccepted(module, dialog.name(), dialog.type());
+				int result = dialog.exec();
+				if (result == QDialog::Accepted) {
+					name = dialog.name();
+					type = dialog.type();
+					return true;
+				}
+				else {
+					return false;
+				}
 			}
 
-			void DialogManager::showNewGuiHandlerDialog(Model::Module * module, const QString & name)
+			bool DialogManager::showNewGuiHandlerDialog(Model::Module * module, const QString & name, QString &window, int &type, bool &hasLayout)
 			{
 				NewGuiHandlerDialog dialog;
 
-				if (dialog.exec() == QDialog::Accepted)
-					emit newGuiHandlerDialogAccepted(module, name, dialog.window(), dialog.type(), dialog.layoutFile());
+				int result = dialog.exec();
+				if (result == QDialog::Accepted) {
+					window = dialog.window();
+					type = dialog.type();
+					hasLayout = dialog.layoutFile();
+					return true;
+				}
+				else {
+					return false;
+				}
 			}
 
-			void DialogManager::showNewGlobalAPIDialog(Model::Module * module, const QString & name)
+			bool DialogManager::showNewGlobalAPIDialog(Model::Module * module, const QString & name)
 			{
-				emit newGlobalAPIDialogAccepted(module, name);
+				return true;
 			}
 
-			void DialogManager::showNewEntityComponentDialog(Model::Module * module, const QString & name)
+			bool DialogManager::showNewEntityComponentDialog(Model::Module * module, const QString & name, QString &componentName)
 			{
-				emit newEntityComponentDialogAccepted(module, name, name);
+				componentName = name;
+				return true;
 			}
 
-			void DialogManager::showNewSceneComponentDialog(Model::Module * module, const QString & name)
+			bool DialogManager::showNewSceneComponentDialog(Model::Module * module, const QString & name)
 			{
-				emit newSceneComponentDialogAccepted(module, name);
+				return true;
 			}
 
-			void DialogManager::showNewGameHandlerDialog(Model::Module * module, const QString & name)
+			bool DialogManager::showNewGameHandlerDialog(Model::Module * module, const QString & name)
 			{
-				emit newGameHandlerDialogAccepted(module, name);
+				return true;
 			}
 
-			void DialogManager::showNewOtherClassDialog(Model::Module * module, const QString & name)
+			bool DialogManager::showNewOtherClassDialog(Model::Module * module, const QString & name)
 			{
-				emit newOtherClassDialogAccepted(module, name);
+				return true;
 			}
 
 			void DialogManager::showModulePropertiesDialog(Model::Module * module)
@@ -164,10 +179,8 @@ namespace Maditor {
 				mSettingsDialog->open();
 			}
 
-			void DialogManager::showDeleteClassDialog()
+			bool DialogManager::showDeleteClassDialog(Model::Generators::ClassGenerator *generator, bool &deleteFiles)
 			{
-				Model::Generators::ClassGenerator *generator = static_cast<Model::Generators::ClassGenerator*>(sender());
-
 				QMessageBox msgBox(QMessageBox::Icon::Question, "Delete Class?", QString("Do you really want to delete class <i>%1</i>?").arg(generator->name()), QMessageBox::No | QMessageBox::Yes);
 
 				QCheckBox cb("Delete Files");
@@ -176,8 +189,14 @@ namespace Maditor {
 
 				msgBox.exec();
 
-				if (msgBox.result() == QMessageBox::Yes)
-					emit deleteClassDialogAccepted(generator, cb.isChecked());
+
+				if (msgBox.result() == QMessageBox::Yes) {
+					deleteFiles = cb.isChecked();
+					return true;
+				}
+				else {
+					return false;
+				}
 			}
 
 		}

@@ -2,6 +2,8 @@
 #define MADITOR_VIEW_MAINWINDOW_H
 
 #include <QMainWindow>
+#include "ComponentView.h"
+#include "Model\maditor.h"
 
 namespace Maditor {
 namespace View {
@@ -10,7 +12,7 @@ namespace Ui {
 class MainWindow;
 }
 
-class MADITOR_VIEW_EXPORT MainWindow : public QMainWindow
+class MADITOR_VIEW_EXPORT MainWindow : public QMainWindow, ComponentView<Model::Maditor>
 {
     Q_OBJECT
 
@@ -21,6 +23,9 @@ public:
 	virtual void closeEvent(QCloseEvent * event) override;
 
 	Dialogs::DialogManager *dialogs();
+
+protected:
+	void setupUi();
 
 public slots:
 	void clearRecentProjects();
@@ -37,11 +42,7 @@ private:
 
 	Dialogs::DialogManager *mDialogManager;
 
-	Model::Maditor *mModel;
-
 	int mRecentProjectInitialActionCount;
-
-	EditorSettingsWidget *mEditorSettingsWidget;
 
 	ApplicationView *mApplication;
 	LogsView *mLogs;

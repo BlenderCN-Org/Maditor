@@ -3,8 +3,16 @@
 #include "Module.h"
 #include "Project.h"
 #include "Generators\HeaderGuardGenerator.h"
-#include "Generators\ClassGeneratorFactory.h"
 #include "ModuleList.h"
+#include "DialogManager.h"
+
+#include "Generators\GuiHandlerGenerator.h"
+#include "Generators\GameHandlerGenerator.h"
+#include "Generators\GlobalAPIGenerator.h"
+#include "Generators\SceneComponentGenerator.h"
+#include "Generators\OtherClassGenerator.h"
+#include "Generators\EntityComponentGenerator.h"
+
 
 namespace Maditor {
 	namespace Model {
@@ -49,8 +57,8 @@ namespace Maditor {
 		void Module::init()
 		{
 			setContextMenuItems({ 
-				{ "New Class", [this]() {emit newClassRequest(); } },
-				{ "Properties", [this]() {emit propertiesDialogRequest(this); }}
+				{ "New Class", [this]() {newClass(); } },
+				{ "Properties", [this]() {showPropertiesDialog(); }}
 			});
 
 			mCmake.addFile(Generators::HeaderGuardGenerator::fileName(mName));
@@ -59,6 +67,55 @@ namespace Maditor {
 		QString Module::path() const
 		{
 			return mParent->path() + mName + "/";
+		}
+		void Module::newClass()
+		{
+			Generators::ClassGeneratorFactory::ClassType type;
+			QString name;
+			if (DialogManager::showNewClassDialogStatic(this, name, type)) {
+				switch (type) {
+				case Generators::ClassGeneratorFactory::GUI_HANDLER:
+				{
+					QString window;
+					int type;
+					bool hasLayout;
+					if (DialogManager::showNewGuiHandlerDialogStatic(this, name, window, type, hasLayout)) {
+						addClass(new Generators::GuiHandlerGenerator(this, name, window, type, hasLayout));
+					}
+				}
+					break;
+				case Generators::ClassGeneratorFactory::GAME_HANDLER:
+					if (DialogManager::showNewGameHandlerDialogStatic(this, name)) {
+						addClass(new Generators::GameHandlerGenerator(this, name));
+					}
+					break;
+				case Generators::ClassGeneratorFactory::ENTITY_COMPONENT:
+				{
+					QString componentName;
+					if (DialogManager::showNewEntityComponentDialogStatic(this, name, componentName)) {
+						addClass(new Generators::EntityComponentGenerator(this, name, componentName));
+					}
+				}
+					break;
+				case Generators::ClassGeneratorFactory::SCENE_COMPONENT:
+					if (DialogManager::showNewSceneComponentDialogStatic(this, name)) {
+						addClass(new Generators::SceneComponentGenerator(this, name));
+					}
+					break;
+				case Generators::ClassGeneratorFactory::GLOBAL_API:
+					if (DialogManager::showNewGlobalAPIDialogStatic(this, name)) {
+						addClass(new Generators::GlobalAPIGenerator(this, name));
+					}
+					break;
+				case Generators::ClassGeneratorFactory::OTHER_CLASS:
+					if (DialogManager::showNewOtherClassDialogStatic(this, name)) {
+						addClass(new Generators::OtherClassGenerator(this, name));
+					}
+					break;
+				default:
+					throw 0;
+				}
+			}
 		}
 		void Module::addClass(Generators::ClassGenerator * generator)
 		{
@@ -90,6 +147,11 @@ namespace Maditor {
 		bool Module::hasClass(const QString & name)
 		{
 			return std::find_if(mClasses.begin(), mClasses.end(), [&](const std::unique_ptr<Generators::ClassGenerator> &ptr) {return ptr->name() == name; }) != mClasses.end();
+		}
+
+		void Module::showPropertiesDialog()
+		{
+			DialogManager::showModulePropertiesDialogStatic(this);
 		}
 
 		QVariant Module::icon() const
@@ -200,6 +262,13 @@ namespace Maditor {
 		const std::list<std::unique_ptr<Generators::ClassGenerator>> &Module::getClasses()
 		{
 			return mClasses;
+		}
+
+		void Module::deleteClass(Generators::ClassGenerator * generator)
+		{
+			bool deleteFiles;
+			if (DialogManager::showDeleteClassDialogStatic(generator, deleteFiles)) {
+			}
 		}
 
 		void Module::removeClass(Generators::ClassGenerator * generator)

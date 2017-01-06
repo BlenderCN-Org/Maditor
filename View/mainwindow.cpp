@@ -24,53 +24,47 @@ namespace View {
 		mDialogManager(new Dialogs::DialogManager),
 		mApplication(new ApplicationView),
 		mLogs(new LogsView),
-		mProject(new ProjectView),
-		mEditorSettingsWidget(new EditorSettingsWidget(model)),
-		mModel(model)
-{
-    ui->setupUi(this);
+		mProject(new ProjectView)
+	{
+		ui->setupUi(this);
+
+		setModel(model);
+		setupUi();
+
+		model->setDialogManager(mDialogManager);
+
+		mRecentProjectInitialActionCount = ui->menuRecentProjects->actions().count();
+
+		updateRecentProjects(model->recentProjects());
+
+		createSettingsTab(mDialogManager, new EditorSettingsWidget(model), "Projects");
+
+		setConnections({
+			{ui->actionNewProject, &Model::Maditor::newProject},
+			{ui->actionLoadProject, &Model::Maditor::loadProject}
+		});
+
+		connect(model, &Model::Maditor::recentProjectsChanged, this, &MainWindow::updateRecentProjects);
+		connect(ui->menuRecentProjects, &QMenu::triggered, this, &MainWindow::recentProjectClicked);
+
+		connect(ui->actionSettings, &QAction::triggered, mDialogManager, &Dialogs::DialogManager::showSettingsDialog);
+
+		connect(model, &Model::Maditor::projectOpened, this, &MainWindow::onProjectOpened);
+
+		mLogs->setModel(model->logs());
 
 
-	mRecentProjectInitialActionCount = ui->menuRecentProjects->actions().count();
+		QSettings &settings = model->settings();
+		settings.beginGroup("Window");
+		restoreGeometry(settings.value("geometry").toByteArray());
+		restoreState(settings.value("state").toByteArray(), 0);
+		settings.endGroup();
 
-	updateRecentProjects(mModel->recentProjects());
+		if (model->project()) {
+			onProjectOpened(model->project());
+		}
 
-	mDialogManager->settingsDialog()->addSettingsTab(mEditorSettingsWidget, "Projects");
-
-	connect(mModel, &Model::Maditor::recentProjectsChanged, this, &MainWindow::updateRecentProjects);
-	connect(ui->menuRecentProjects, &QMenu::triggered, this, &MainWindow::recentProjectClicked);
-
-	mApplication->setupUi(ui, this);
-
-	connect(ui->actionNewProject, &QAction::triggered, mDialogManager, &Dialogs::DialogManager::showNewProjectDialog);
-	connect(ui->actionLoadProject, &QAction::triggered, mDialogManager, &Dialogs::DialogManager::showLoadProjectDialog);
-
-	connect(ui->actionSettings, &QAction::triggered, mDialogManager, &Dialogs::DialogManager::showSettingsDialog);
-
-	connect(mDialogManager, &Dialogs::DialogManager::newProjectDialogAccepted, model, &Model::Maditor::newProject);
-	connect(mDialogManager, &Dialogs::DialogManager::loadProjectDialogAccepted, model, &Model::Maditor::loadProject);
-
-	connect(model, &Model::Maditor::projectOpened, this, &MainWindow::onProjectOpened);
-
-	mLogs->setupUi(ui, this);
-
-	mLogs->setModel(mModel->logs());
-
-	mProject->setupUi(ui, this);
-
-	model->addons()->setupUi(ui, this);
-
-	QSettings &settings = mModel->settings();
-	settings.beginGroup("Window");
-	restoreGeometry(settings.value("geometry").toByteArray());
-	restoreState(settings.value("state").toByteArray(), 0);
-	settings.endGroup();
-
-	if (mModel->project()) {
-		onProjectOpened(mModel->project());
 	}
-
-}
 
 MainWindow::~MainWindow()
 {
@@ -85,7 +79,7 @@ MainWindow::~MainWindow()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
 
-	QSettings &settings = mModel->settings();
+	QSettings &settings = model()->settings();
 	settings.beginGroup("Window");
 	settings.setValue("geometry", saveGeometry());
 	settings.setValue("state", saveState(0));
@@ -99,6 +93,14 @@ Dialogs::DialogManager * MainWindow::dialogs()
 	return mDialogManager;
 }
 
+void MainWindow::setupUi()
+{
+	mApplication->setupUi(ui, this);
+	mLogs->setupUi(ui, this);
+	mProject->setupUi(ui, this);
+	model()->addons()->setupUi(ui, this);
+}
+
 void MainWindow::onProjectOpened(Model::Project *project) {
 	mApplication->setModel(project->application());
 	mProject->setModel(project);
@@ -106,7 +108,7 @@ void MainWindow::onProjectOpened(Model::Project *project) {
 
 void MainWindow::clearRecentProjects()
 {
-	mModel->clearRecentProjects();
+	model()->clearRecentProjects();
 }
 
 void MainWindow::updateRecentProjects(const QStringList & list)
@@ -124,7 +126,7 @@ void MainWindow::updateRecentProjects(const QStringList & list)
 void MainWindow::recentProjectClicked(QAction * action)
 {
 	if (ui->menuRecentProjects->actions().indexOf(action) >= mRecentProjectInitialActionCount)
-		mModel->loadProject(action->text());
+		model()->loadProject(action->text());
 }
 
 

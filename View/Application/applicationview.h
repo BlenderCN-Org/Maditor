@@ -17,7 +17,7 @@ public:
 
 	ApplicationView();
 	
-	void setupUi(Ui::MainWindow *ui, QMainWindow *window);
+	void setupUi(Ui::MainWindow *ui, MainWindow *window);
 	virtual void setModel(Model::ApplicationLauncher *app) override;
 
 private slots:

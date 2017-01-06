@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Dialogs\DialogManager.h"
+#include "Dialogs\settingsdialog.h"
 
 namespace Maditor {
 namespace View {
@@ -15,36 +17,35 @@ public:
 
 	virtual void setModel(T *model) {
 		mModel = model;
-		for (const std::list<std::pair<QAction*, void(T::*)()>> &toolbar : mToolbars) {
-			setupToolbar(toolbar);
-		}
+		setupConnections();
+	}
+
+protected:
+	void setConnections(const std::list<std::pair<QAction*, void(T::*)()>> &connections) {
+		mConnections = connections;
+		if (mModel)
+			setupConnections();
 	}
 
 private:
-	void setupToolbar(const std::list<std::pair<QAction*, void(T::*)()>> &toolbar) {
-		for (const std::pair<QAction*, void(T::*)()> &p : toolbar) {
+	void setupConnections() {
+		for (const std::pair<QAction*, void(T::*)()> &p : mConnections) {
 			QObject::connect(p.first, &QAction::triggered, mModel, p.second);
 		}
 	}
 
 protected:
-	void createToolbar(QMainWindow *window, const QString &name, const std::list<std::pair<QAction *, void (T::*)()>> &actions) {
+	void createToolbar(QMainWindow *window, const QString &name, const QList<QAction *> &actions) {
 		QToolBar *toolbar = new QToolBar;
 		toolbar->setObjectName(name);
 
-		QList<QAction*> qactions;
-		for (const std::pair<QAction*, void (T::*)()> &p : actions) {
-			qactions.push_back(p.first);
-		}
-
-		toolbar->addActions(qactions);
+		toolbar->addActions(actions);
 
 		window->addToolBar(toolbar);
+	}
 
-		mToolbars.push_back(actions);
-
-		if (mModel)
-			setupToolbar(actions);
+	void createSettingsTab(Dialogs::DialogManager *dialogs, Dialogs::SettingsTab *tab, const QString &name) {
+		dialogs->settingsDialog()->addSettingsTab(tab, name);
 	}
 
 	T *model() {
@@ -52,7 +53,7 @@ protected:
 	}
 
 private:
-	std::list<std::list<std::pair<QAction *, void (T::*)()>>> mToolbars;
+	std::list<std::pair<QAction *, void (T::*)()>> mConnections;
 
 	T *mModel;
 };

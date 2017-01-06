@@ -84,7 +84,7 @@ namespace Maditor {
 				};
 
 				setContextMenuItems({
-					{ "Delete", [this]() {emit deleteClassRequest(); } }
+					{ "Delete", [this]() {mModule->deleteClass(this); } }
 				});
 			}
 

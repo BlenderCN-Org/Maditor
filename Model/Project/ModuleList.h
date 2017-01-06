@@ -53,10 +53,9 @@ namespace Maditor {
 			void init();
 
 			void addModule(Module *module);
-
+			void newModule();
 
 		signals:
-			void newModuleRequest();
 			void moduleAdded(Module *);
 
 

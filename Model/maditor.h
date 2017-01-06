@@ -16,6 +16,7 @@ namespace Maditor {
 
 			void newProject(const QString &path, const QString &name);
 			void loadProject(const QString &path);
+			
 
 			void clearRecentProjects();
 
@@ -30,6 +31,13 @@ namespace Maditor {
 			LogsModel *logs();
 
 			Addons::AddonCollector *addons();
+
+			void setDialogManager(DialogManager *manager);
+
+		public slots:
+			void loadProject();
+			void newProject();
+
 
 		signals:
 			void projectOpened(Project *project);
@@ -52,6 +60,8 @@ namespace Maditor {
 			Log mLog;
 			LogsModel mLogs;
 			
+			DialogManager *mDialogManager;
+
 		};
 
 	}

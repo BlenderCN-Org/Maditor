@@ -6,6 +6,8 @@
 
 #include "Generators\DotGenerator.h"
 
+#include "DialogManager.h"
+
 namespace Maditor {
 	namespace Model {
 
@@ -46,7 +48,7 @@ namespace Maditor {
 		void ModuleList::init()
 		{
 			setContextMenuItems({
-				{ "New Module", [=]() {emit newModuleRequest(); } },
+				{ "New Module", [=]() {newModule(); } },
 				{ "Rebuild Structure", [=]() {generate(); } },
 				{ "Draw Dependencies", [=]() {drawDependenciesGraph(); } }
 			});
@@ -59,6 +61,14 @@ namespace Maditor {
 			//endInsertRows();
 
 			emit moduleAdded(module);
+		}
+
+		void ModuleList::newModule()
+		{
+			QString name;
+			if (DialogManager::showNewModuleDialogStatic(this, name)) {
+				createModule(name);
+			}
 		}
 
 		void ModuleList::drawDependenciesGraph()

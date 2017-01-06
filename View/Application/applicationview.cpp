@@ -17,17 +17,26 @@ namespace View {
 
 	}
 
-	void ApplicationView::setupUi(Ui::MainWindow * ui, QMainWindow * window)
+	void ApplicationView::setupUi(Ui::MainWindow * ui, MainWindow * window)
 	{
 		mUi = ui;
 
-		createToolbar(window, "ApplicationToolbar", {
+		setConnections({
 			{ ui->actionInit, &Model::ApplicationLauncher::init },
 			{ ui->actionInit_No_Debug, &Model::ApplicationLauncher::initNoDebug },
 			{ ui->actionFinalize, &Model::ApplicationLauncher::finalize },
 			{ ui->actionStart, &Model::ApplicationLauncher::start },
 			{ ui->actionPause, &Model::ApplicationLauncher::pause },
 			{ ui->actionStop, &Model::ApplicationLauncher::stop },
+		});
+
+		createToolbar(window, "ApplicationToolbar", {
+			ui->actionInit,
+			ui->actionInit_No_Debug,
+			ui->actionFinalize,
+			ui->actionStart,
+			ui->actionPause,
+			ui->actionStop
 		});
 
 	}

@@ -119,6 +119,26 @@ namespace Maditor {
 			return mAddons;
 		}
 
+		void Maditor::setDialogManager(DialogManager *manager) {
+			mDialogManager = manager;
+		}
+
+		void Maditor::newProject()
+		{
+			QString path, name;
+			if (mDialogManager->showNewProjectDialog(path, name)) {
+				newProject(path, name);
+			}
+		}
+
+		void Maditor::loadProject()
+		{
+			QString path;
+			if (mDialogManager->showLoadProjectDialog(path)) {
+				loadProject(path);
+			}
+		}
+
 	}
 }
 

@@ -27,6 +27,8 @@ namespace Maditor {
 		class Log;
 		class LogTableModel;
 
+		class DialogManager;
+
 		namespace Generators {
 			class CmakeSubProject;
 			class ClassGenerator;

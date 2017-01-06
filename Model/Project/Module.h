@@ -44,7 +44,9 @@ namespace Maditor {
 
 			const std::list<std::unique_ptr<Generators::ClassGenerator>> &getClasses();
 
+			void newClass();
 			void addClass(Generators::ClassGenerator *generator);
+			void deleteClass(Generators::ClassGenerator *generator);
 			void removeClass(Generators::ClassGenerator *generator);
 
 		private:
@@ -52,9 +54,9 @@ namespace Maditor {
 
 			void init();
 
+			void showPropertiesDialog();
+
 		signals:
-			void newClassRequest();
-			void propertiesDialogRequest(Module *);
 
 			void classAdded(Generators::ClassGenerator *generator);
 
