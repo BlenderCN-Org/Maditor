@@ -1,6 +1,6 @@
 cmake_policy(SET CMP0011 OLD)
 cmake_policy(SET CMP0054 NEW)
-cmake_policy(SET CMP0049 NEW)
+cmake_policy(SET CMP0049 OLD)
 
 function(FolderSources VARNAME PATHVAR FOLDER )
   
@@ -12,14 +12,14 @@ function(FolderSources VARNAME PATHVAR FOLDER )
 	if("${PATH}" STREQUAL "")
 	  set (FULLFOLDER ${FOLDER})
 	else()
-	  set (FULLFOLDER ${PATH}/${FOLDER})
+	  set (FULLFOLDER ${PATH}\\\\${FOLDER})
 	endif()
   endif()
 
   if("${FULLFOLDER}" STREQUAL "")
     set (FULLPATH "")
   else()
-	set (FULLPATH ${FULLFOLDER}/) 
+	set (FULLPATH ${FULLFOLDER}\\\\) 
   endif()
   
   set (_sources "")

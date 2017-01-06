@@ -29,3 +29,5 @@
 #include <QApplication>
 #include <QStyle>
 #include <QSettings>
+#include <QKeyEvent>
+#include <QTime>

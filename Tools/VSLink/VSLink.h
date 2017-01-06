@@ -1,7 +1,5 @@
 #pragma once
 
-#include <maditormodellib.h>
-
 #include "../ProcessTalker.h"
 
 #include <Addons\Addon.h>
@@ -10,7 +8,7 @@
 
 #include "VSMsg.h"
 
-class VSSettingsWidget;
+class VSLinkView;
 
 class VSLink : public QObject, public ProcessTalker<VSMsg>, public Maditor::Addons::Addon {
 
@@ -23,7 +21,7 @@ public:
 	// Inherited via ProcessTalker
 	virtual void receiveMessage(const VSMsg & msg) override;
 
-	virtual void addActions(Maditor::View::MainWindow *window) override;
+	virtual void setupUi(Maditor::View::Ui::MainWindow *ui, Maditor::View::MainWindow *window) override;
 
 	virtual QStringList supportedFileExtensions() override;
 	virtual void openFile(const QString &path, int lineNr) override;
@@ -45,7 +43,7 @@ private:
 
 	void sendPID(DWORD pid);
 
-	void onProcessStarted(DWORD pid);
+	void onProcessStarted(DWORD pid, const Maditor::Shared::ApplicationInfo &info);
 
 	VSMsg mEnqueuedMsg;
 	bool mMessageEnqueued;
@@ -54,7 +52,8 @@ private:
 
 	Maditor::Model::Maditor *mEditor;
 
-	VSSettingsWidget *mSettingsWidget;
+	VSLinkView *mView;
+
 };
 	
 extern "C" __declspec(dllexport) Maditor::Addons::Addon *createAddon(Maditor::Model::Maditor *editor);

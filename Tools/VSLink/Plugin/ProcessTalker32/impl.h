@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ProcessTalkerImpl.h"
-#include "..\..\..\..\Common\ProcessTalker.h"
+#include "..\..\..\ProcessTalker.h"
 
 namespace ProjectTalker {
 

@@ -16,8 +16,11 @@ include_directories(${MADGINE_INCLUDE_DIRS})
 
 
 set (sources "")
-FolderSources(sources "" "" applicationwindow.cpp applicationwindow.h editorsettingswidget.cpp editorsettingswidget.h editorsettingswidget.ui maditorviewlib.cpp maditorviewlib.h mainwindow.cpp mainwindow.h mainwindow.ui resources.qrc)
-FolderSources(sources "" Dialogs DialogManager.cpp DialogManager.h ModulePropertiesDialog.cpp ModulePropertiesDialog.h ModulePropertiesDialog.ui NewClassDialog.cpp NewClassDialog.h NewClassDialog.ui NewGuiHandlerDialog.cpp NewGuiHandlerDialog.h NewGuiHandlerDialog.ui NewModuleDialog.cpp NewModuleDialog.h NewModuleDialog.ui settingsdialog.cpp settingsdialog.h settingsdialog.ui settingstab.h)
+FolderSources(sources "" "" componentview.h editorsettingswidget.cpp editorsettingswidget.h editorsettingswidget.ui maditorviewforward.h maditorviewlib.cpp maditorviewlib.h mainwindow.cpp mainwindow.h mainwindow.ui resources.qrc TreeView.cpp TreeView.h)
+	FolderSources(sources "" Application ApplicationView.cpp ApplicationView.h ApplicationWindow.cpp ApplicationWindow.h)
+	FolderSources(sources "" Dialogs DialogManager.cpp DialogManager.h ModulePropertiesDialog.cpp ModulePropertiesDialog.h ModulePropertiesDialog.ui NewClassDialog.cpp NewClassDialog.h NewClassDialog.ui NewGuiHandlerDialog.cpp NewGuiHandlerDialog.h NewGuiHandlerDialog.ui NewModuleDialog.cpp NewModuleDialog.h NewModuleDialog.ui settingsdialog.cpp settingsdialog.h settingsdialog.ui settingstab.h)
+	FolderSources(sources "" Logs LogsTabWidget.cpp LogsTabWidget.h LogsView.cpp LogsView.h LogWidget.cpp LogWidget.h)
+	FolderSources(sources "" Project FilesView.cpp FilesView.h ProjectView.cpp ProjectView.h)
 
 add_library(Maditor_View SHARED ${sources})
 

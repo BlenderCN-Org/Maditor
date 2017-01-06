@@ -14,8 +14,6 @@ namespace Maditor {
 			mSorter.setDynamicSortFilter(true);
 			mSorter.setSourceModel(this);	
 
-			/*connect(this, &TreeModel::insertRowsQueued, this, &TreeModel::performRowsInsert);
-			connect(this, &TreeModel::removeRowsQueued, this, &TreeModel::performRowsRemove);*/
 			connect(&mSorter, &TreeSorter::doubleClicked, this, &TreeModel::itemDoubleClicked);
 		}
 
@@ -32,7 +30,6 @@ namespace Maditor {
 				it = item(parent);
 			}
 
-
 			if (it->childCount() > row) {
 				return createIndex(row, column, it->child(row));
 			}
@@ -47,11 +44,11 @@ namespace Maditor {
 				return QModelIndex();
 
 
-			TreeItem *i = item(child);
-			if (i->parentItem() == mRoot)
+			TreeItem *parent = item(child)->parentItem();
+			if (parent == mRoot)
 				return QModelIndex();
 
-			return createIndex(i->parentItem()->parentIndex(), 0, i->parentItem());
+			return createIndex(parent->parentIndex(), 0, parent);
 		}
 
 		Q_INVOKABLE int TreeModel::rowCount(const QModelIndex & parent) const
@@ -90,6 +87,17 @@ namespace Maditor {
 			}
 		}
 
+		inline QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const
+		{
+			if (role != Qt::DisplayRole)
+				return QVariant();
+
+			if (orientation == Qt::Horizontal)
+				return header(section);
+			else
+				return QVariant();
+		}
+
 		TreeSorter * TreeModel::sorted()
 		{
 			return &mSorter;
@@ -98,24 +106,7 @@ namespace Maditor {
 		TreeItem * TreeModel::item(const QModelIndex & index) const
 		{
 			return static_cast<TreeItem*>(index.internalPointer());
-		}
-
-		/*void TreeModel::performRowsInsert(const QModelIndex & parent, int start, int end)
-		{
-			beginInsertRows(parent, start, end);
-			endInsertRows();
-			QModelIndex i = index(start, 0, parent);
-			qDebug() << "Inserted" << (end - start + 1) << "items starting with " << data(i) << "at" << i;
-			if (i.parent().isValid())
-				qDebug() << "at Parent" << data(i.parent());
-		}
-
-		void TreeModel::performRowsRemove(const QModelIndex & parent, int start, int end)
-		{
-			beginRemoveRows(parent, start, end);
-			endRemoveRows();
-		}*/
-	
+		}	
 
 		void TreeModel::handleContextMenuRequest(const QModelIndex & p, QMenu & menu)
 		{
@@ -128,6 +119,12 @@ namespace Maditor {
 			if (index.isValid()) {
 				item(index)->doubleClicked();
 			}
+		}
+
+
+		QVariant TreeModel::header(int section) const
+		{
+			return QVariant();
 		}
 
 	}

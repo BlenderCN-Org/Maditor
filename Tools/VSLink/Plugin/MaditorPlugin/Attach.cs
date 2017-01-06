@@ -23,9 +23,11 @@ namespace MaditorPlugin
         /// Command ID.
         /// </summary>
         public const int EnableId = 0x0100;
-        public const int AttachId = 0x0101;
+        public const int DisableId = 0x0101;
+        public const int AttachId = 0x0102;
 
         private OleMenuCommand enableCommand;
+        private OleMenuCommand disableCommand;
 
         /// <summary>
         /// Command menu group (command set GUID).
@@ -57,6 +59,11 @@ namespace MaditorPlugin
                 var enableCommandID = new CommandID(CommandSet, EnableId);
                 enableCommand = new OleMenuCommand(this.Enable, enableCommandID);                
                 commandService.AddCommand(enableCommand);
+
+                var disableCommandID = new CommandID(CommandSet, DisableId);
+                disableCommand = new OleMenuCommand(this.Disable, disableCommandID);
+                disableCommand.BeforeQueryStatus += QueryDefaultButtonStatus;
+                commandService.AddCommand(disableCommand);
 
                 var attachCommandID = new CommandID(CommandSet, AttachId);
                 var attachItem = new OleMenuCommand(this.AttachToMaditor, attachCommandID);
@@ -127,6 +134,12 @@ namespace MaditorPlugin
         {
             package.Enable();
             enableCommand.Enabled = false;
+        }
+
+        private void Disable(object sender, EventArgs e)
+        {
+            package.Disable();
+            enableCommand.Enabled = true;
         }
 
     }

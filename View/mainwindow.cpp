@@ -12,12 +12,19 @@
 
 #include "Model\Addons\Addon.h"
 
+#include "Application\applicationview.h"
+#include "Logs\logsview.h"
+#include "Project\projectview.h"
+
 namespace Maditor {
 namespace View {
 
 	MainWindow::MainWindow(Model::Maditor *model) :
 		ui(new Ui::MainWindow),
 		mDialogManager(new Dialogs::DialogManager),
+		mApplication(new ApplicationView),
+		mLogs(new LogsView),
+		mProject(new ProjectView),
 		mEditorSettingsWidget(new EditorSettingsWidget(model)),
 		mModel(model)
 {
@@ -33,7 +40,7 @@ namespace View {
 	connect(mModel, &Model::Maditor::recentProjectsChanged, this, &MainWindow::updateRecentProjects);
 	connect(ui->menuRecentProjects, &QMenu::triggered, this, &MainWindow::recentProjectClicked);
 
-	ui->game->setupUi(ui, this);
+	mApplication->setupUi(ui, this);
 
 	connect(ui->actionNewProject, &QAction::triggered, mDialogManager, &Dialogs::DialogManager::showNewProjectDialog);
 	connect(ui->actionLoadProject, &QAction::triggered, mDialogManager, &Dialogs::DialogManager::showLoadProjectDialog);
@@ -45,7 +52,13 @@ namespace View {
 
 	connect(model, &Model::Maditor::projectOpened, this, &MainWindow::onProjectOpened);
 
-	model->addons()->setWindow(this);
+	mLogs->setupUi(ui, this);
+
+	mLogs->setModel(mModel->logs());
+
+	mProject->setupUi(ui, this);
+
+	model->addons()->setupUi(ui, this);
 
 	QSettings &settings = mModel->settings();
 	settings.beginGroup("Window");
@@ -62,6 +75,11 @@ namespace View {
 MainWindow::~MainWindow()
 {
     delete ui;
+
+	delete mApplication;
+	delete mLogs;
+	delete mProject;
+	delete mDialogManager;
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -82,7 +100,8 @@ Dialogs::DialogManager * MainWindow::dialogs()
 }
 
 void MainWindow::onProjectOpened(Model::Project *project) {
-	ui->game->setModel(project->application());
+	mApplication->setModel(project->application());
+	mProject->setModel(project);
 }
 
 void MainWindow::clearRecentProjects()

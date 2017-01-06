@@ -21,7 +21,7 @@ void Addon::update()
 {
 }
 
-void Addon::addActions(View::MainWindow * window)
+void Addon::setupUi(View::Ui::MainWindow *ui, View::MainWindow * window)
 {
 }
 
@@ -107,10 +107,10 @@ std::list<Addon*>::const_iterator AddonCollector::end()
 	return mAddons.end();
 }
 
-void AddonCollector::setWindow(View::MainWindow * window)
+void AddonCollector::setupUi(View::Ui::MainWindow *ui, View::MainWindow * window)
 {
 	for (Addon *addon : mAddons) {
-		addon->addActions(window);
+		addon->setupUi(ui, window);
 	}
 }
 

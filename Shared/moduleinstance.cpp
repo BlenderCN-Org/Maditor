@@ -9,7 +9,7 @@ namespace Maditor {
 		ModuleInstance::ModuleInstance(const std::string & name) :
 			mExists(false),
 			mName(name),
-			mLoaded(false),
+			mLoaded(this, false),
 			mDependencies(this),
 			reload(this, &ModuleInstance::reloadImpl)
 		{

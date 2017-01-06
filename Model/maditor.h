@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Project/Project.h"
+#include "Logs\log.h"
+#include "Logs\LogsModel.h"
 
 namespace Maditor {
 	namespace Model {
@@ -25,6 +27,7 @@ namespace Maditor {
 			void setReloadProjectProperty(bool b);
 			
 			Project *project();
+			LogsModel *logs();
 
 			Addons::AddonCollector *addons();
 
@@ -46,6 +49,8 @@ namespace Maditor {
 
 			std::unique_ptr<Project> mProject;
 
+			Log mLog;
+			LogsModel mLogs;
 			
 		};
 

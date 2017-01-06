@@ -13,7 +13,8 @@ namespace Maditor {
 
 		Maditor::Maditor() :
 			mSettings("MadMan Studios", "Maditor"),
-			mAddons(new Addons::AddonCollector(this))
+			mAddons(new Addons::AddonCollector(this)),
+			mLog("Madgine", Log::GuiLog)
 		{
 
 			mSettings.beginGroup("Editor");
@@ -22,6 +23,8 @@ namespace Maditor {
 			mSettings.endGroup();
 
 			connect(this, &Maditor::projectOpened, mAddons, &Addons::AddonCollector::onProjectOpened);
+
+			mLogs.addLog(&mLog);
 
 			if (mReloadProject && !mRecentProjects.isEmpty()) {
 				loadProject(mRecentProjects.front());
@@ -32,6 +35,7 @@ namespace Maditor {
 
 		Maditor::~Maditor()
 		{
+			delete mAddons;
 			mSettings.beginGroup("Editor");
 			mSettings.setValue("recentProjects", mRecentProjects);
 			mSettings.setValue("reloadProject", mReloadProject);
@@ -103,6 +107,11 @@ namespace Maditor {
 		Project * Maditor::project()
 		{
 			return mProject.get();
+		}
+
+		LogsModel * Maditor::logs()
+		{
+			return &mLogs;
 		}
 
 		Addons::AddonCollector * Maditor::addons()

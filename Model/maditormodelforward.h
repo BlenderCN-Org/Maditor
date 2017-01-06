@@ -15,6 +15,18 @@ namespace Maditor {
 
 		class ModuleLoader;
 
+		class InputWrapper;
+
+		class TreeItem;
+		class TreeUnit;
+		class TreeModel;
+
+		class ProfilerModel;
+
+		class LogsModel;
+		class Log;
+		class LogTableModel;
+
 		namespace Generators {
 			class CmakeSubProject;
 			class ClassGenerator;
@@ -26,6 +38,9 @@ namespace Maditor {
 		class MainWindow;
 		namespace Dialogs {
 			class SettingsDialog;
+		}
+		namespace Ui {
+			class MainWindow;
 		}
 	}
 

@@ -3,6 +3,7 @@
 #include "Serialize\serializableunit.h"
 #include "Serialize\Container\list.h"
 #include "Serialize\Container\action.h"
+#include "Serialize\Container\observed.h"
 
 namespace Maditor {
 	namespace Shared {
@@ -29,6 +30,8 @@ namespace Maditor {
 
 			const Engine::Serialize::ObservableList<ModuleInstance*> &dependencies();
 
+		protected:
+			Engine::Serialize::Observed<bool> mLoaded;
 
 		private:
 			virtual void reloadImpl();
@@ -36,7 +39,7 @@ namespace Maditor {
 		private:
 			bool mExists;
 			std::string mName;
-			bool mLoaded;
+
 
 			Engine::Serialize::ObservableList<ModuleInstance*> mDependencies;
 

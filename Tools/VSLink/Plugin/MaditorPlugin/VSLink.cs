@@ -20,10 +20,12 @@ namespace MaditorPlugin
         private BoolCarrier mRunning;
         private DTE mDTE;
         private AttachPackage mPackage;
+        private bool mDisposed;
 
         public VSLink(DTE dte, AttachPackage package) :
             base("VSLink", "VSInstance")
         {
+            mDisposed = false;
             mDTE = dte;
             mPackage = package;
             mRunning = new BoolCarrier();
@@ -34,8 +36,15 @@ namespace MaditorPlugin
 
         protected override void Dispose(bool b)
         {
-            mRunning.bValue = false;
-            mWorkerThread.Join();
+            if (!mDisposed)
+            {
+                if (b)
+                {
+                    mRunning.bValue = false;
+                    mWorkerThread.Join();
+                }
+                mDisposed = true;
+            }
             base.Dispose(b);
         }
 

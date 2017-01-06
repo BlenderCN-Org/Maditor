@@ -10,6 +10,7 @@
 
 #include "Network\networkmanager.h"
 
+#include "Util\Util.h"
 
 namespace Maditor {
 	namespace Launcher {
@@ -18,7 +19,8 @@ namespace Maditor {
 			AppControl(false),
 			mInput(new InputWrapper(sharedMemory().mInput)),
 			mLoader(this),
-			mRunning(false)
+			mRunning(false),
+			mStartRequested(false)
 		{			
 		}
 
@@ -32,13 +34,19 @@ namespace Maditor {
 				return -1;
 			}
 
-			while (!::IsDebuggerPresent() && !::GetAsyncKeyState(VK_F10))
-			{
-				::Sleep(100);
-			}
-			
 			Shared::ApplicationInfo &appInfo = sharedMemory().mAppInfo;
 
+			size_t j = 0;
+			while (appInfo.mDebugged &&
+				!IsDebuggerPresent() &&
+				!GetAsyncKeyState(VK_F10))
+			{
+				::Sleep(100);
+				if (++j > 50) {
+					return -1;
+				}
+			}
+			
 			mSettings.mInput = mInput;
 			mSettings.mUseExternalSettings = true;
 			mSettings.mWindowName = "QtOgre";
@@ -88,6 +96,8 @@ namespace Maditor {
 				return -1;
 			}
 
+			net->addTopLevelItem(&Engine::Util::Util::getSingleton());
+
 			mApplication.init();
 
 			applicationInitialized();
@@ -97,11 +107,19 @@ namespace Maditor {
 			while (mRunning) {
 				net->receiveMessages();
 				if (net->clientCount() != 1) {
+					net->removeTopLevelItem(&Engine::Util::Util::getSingleton());
 					//net->close();
 					return -1;
 				}
+				if (mStartRequested) {
+					mApplication.go();
+					mStartRequested = false;
+					stop();
+				}
 
 			}
+
+			net->removeTopLevelItem(&Engine::Util::Util::getSingleton());
 
 			return 0;
 		}
@@ -129,7 +147,7 @@ namespace Maditor {
 
 		void ApplicationWrapper::startImpl()
 		{
-			mApplication.go();
+			mStartRequested = true;
 		}
 		void ApplicationWrapper::stopImpl()
 		{

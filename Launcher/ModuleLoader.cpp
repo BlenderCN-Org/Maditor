@@ -118,7 +118,7 @@ namespace Maditor {
 					return false;
 			}
 
-			std::cout << "Loading " << name() << std::endl;
+			std::cout << "Loading " << name() << "..." << std::endl;
 
 
 			std::string runtimePath = mParent->runtimeDir() + name() + ".dll";
@@ -156,8 +156,11 @@ namespace Maditor {
 			}
 			SetErrorMode(errorMode);
 
-			if (!mHandle)
+			if (!mHandle) {
+				std::cout << "failed!" << std::endl;
 				return false;
+			}
+			std::cout << "success" << std::endl;
 
 			std::set<std::string> afterEntityComponents = Engine::Scene::Entity::Entity::registeredComponentNames();
 			std::set_difference(afterEntityComponents.begin(), afterEntityComponents.end(), beforeEntityComponents.begin(), beforeEntityComponents.end(), std::inserter(mEntityComponentNames, mEntityComponentNames.end()));

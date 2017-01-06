@@ -84,14 +84,23 @@ namespace MaditorPlugin
 
         protected override void Dispose(bool disposing)
         {
+            Disable();
             base.Dispose(disposing);
-            mTalker.Dispose();
         }
 
         internal void Enable()
         {
             EnvDTE.DTE dte = this.GetService(typeof(Microsoft.VisualStudio.Shell.Interop.SDTE)) as EnvDTE.DTE;
             mTalker = new VSLink(dte, this);
+        }
+
+        internal void Disable()
+        {
+            if (mTalker != null)
+            {
+                mTalker.Dispose();
+                mTalker = null;
+            }
         }
 
         #endregion

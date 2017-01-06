@@ -2,7 +2,7 @@
 
 #include "Project.h"
 
-#include "ApplicationLauncher.h"
+#include "Application/ApplicationLauncher.h"
 
 #include "DialogManager.h"
 

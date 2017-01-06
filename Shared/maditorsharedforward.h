@@ -4,9 +4,10 @@ namespace Maditor {
 	namespace Shared {
 
 		class SharedMemory;
-		class Shared;
-		class InputShared;
+		struct Shared;
+		struct InputShared;
 		class ModuleInstance;
+		struct ApplicationInfo;
 
 	}
 }

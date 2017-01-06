@@ -32,6 +32,7 @@ namespace Maditor {
 			size_t mWindowHandle;
 			SharedString mMediaDir;
 			SharedString mProjectDir;
+			bool mDebugged;
 		};
 
 		struct ApplicationMsg {

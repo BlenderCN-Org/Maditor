@@ -11,11 +11,12 @@ namespace Maditor {
 			if (parentItem()) {
 				parentItem()->extendContextMenu(menu);
 			}
-			if (mContextMenuItems.empty()) return;
-			if (!menu.actions().isEmpty())
-				menu.addSeparator();
-			for (const std::pair<QString, std::function<void()>> &p : mContextMenuItems) {
-				menu.addAction(p.first, p.second);
+			if (!mContextMenuItems.empty()) {
+				if (!menu.actions().isEmpty())
+					menu.addSeparator();
+				for (const std::pair<QString, std::function<void()>> &p : mContextMenuItems) {
+					menu.addAction(p.first, p.second);
+				}
 			}
 		}
 
@@ -31,8 +32,10 @@ namespace Maditor {
 		int TreeItem::parentIndex()
 		{
 			int i;
-			for (i = 0; i < parentItem()->childCount(); ++i) {
-				if (parentItem()->child(i) == this)
+			TreeItem *parent = parentItem();
+			int count = parent->childCount();
+			for (i = 0; i < count; ++i) {
+				if (parent->child(i) == this)
 					return i;
 			}
 			throw 0;
@@ -42,6 +45,7 @@ namespace Maditor {
 		{
 			return QVariant();
 		}
+		
 
 	}
 }

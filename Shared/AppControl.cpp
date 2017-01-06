@@ -10,7 +10,7 @@
 namespace Maditor {
 	namespace Shared {
 
-Maditor::Shared::AppControl::AppControl(bool isLauncher) :
+AppControl::AppControl(bool isLauncher) :
 	TopLevelSerializableUnit(Engine::Serialize::MADITOR),
 	mNetwork(new Engine::Network::NetworkManager),
 	shutdown(this, &AppControl::shutdownImpl),

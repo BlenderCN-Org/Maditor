@@ -1,7 +1,5 @@
 #include <maditorviewlib.h>
 
-#include <QToolbar>
-
 #include "VSLink.h"
 
 #include <Windows.h>
@@ -11,13 +9,14 @@
 #include "View\mainwindow.h"
 #include "View\Dialogs\DialogManager.h"
 #include "Model\Maditor.h"
-#include "Model\ApplicationLauncher.h"
+#include "Model\Application\ApplicationLauncher.h"
 
 #include "Model\Project\ModuleList.h"
 
-#include "vssettingswidget.h"
+#include "VSLinkView.h"
 
-#include "View\Dialogs\settingsdialog.h"
+#include "Shared\ApplicationInfo.h"
+
 
 Maditor::Addons::Addon *createAddon(Maditor::Model::Maditor *editor) {
 	return new VSLink(editor);
@@ -26,15 +25,21 @@ Maditor::Addons::Addon *createAddon(Maditor::Model::Maditor *editor) {
 VSLink::VSLink(Maditor::Model::Maditor *editor) :
 	ProcessTalker("VSLink", "Maditor"),
 	mEditor(editor),
-	mSettingsWidget(0){
-
-	
-
+	mView(new VSLinkView(this))
+{
 	QSettings &settings = editor->settings();
 	settings.beginGroup("VSLink");
 	mAutoAttachDebugger = settings.value("AutoAttachDebugger").toBool();
 	settings.endGroup();
+}
 
+
+VSLink::~VSLink()
+{
+	QSettings &settings = mEditor->settings();
+	settings.beginGroup("VSLink");
+	settings.setValue("AutoAttachDebugger", mAutoAttachDebugger);
+	settings.endGroup();
 }
 
 void VSLink::openSolution() {
@@ -78,21 +83,13 @@ void VSLink::sendPID(DWORD pid)
 		sendMsg({ VSCommands::PIDAnswer, "", pid }, "VSInstance");
 }
 
-void VSLink::onProcessStarted(DWORD pid)
+void VSLink::onProcessStarted(DWORD pid, const Maditor::Shared::ApplicationInfo &info)
 {
-	if (mAutoAttachDebugger) {
+	if (mAutoAttachDebugger && info.mDebugged) {
 		sendPID(pid);
 	}
 }
 
-VSLink::~VSLink()
-{
-
-	QSettings &settings = mEditor->settings();
-	settings.beginGroup("VSLink");
-	settings.setValue("AutoAttachDebugger", mAutoAttachDebugger);
-	settings.endGroup();
-}
 
 void VSLink::receiveMessage(const VSMsg & msg)
 {
@@ -101,23 +98,9 @@ void VSLink::receiveMessage(const VSMsg & msg)
 }
 
 
-void VSLink::addActions(Maditor::View::MainWindow * window)
+void VSLink::setupUi(Maditor::View::Ui::MainWindow *ui, Maditor::View::MainWindow * window)
 {
-	QToolBar *toolbar = new QToolBar;
-	toolbar->setObjectName("VSLink_Toolbar");
-
-	QList<QAction*> result;
-	QAction *openAction = new QAction("OpenSolution");
-	result.push_back(openAction);
-	connect(openAction, &QAction::triggered, this, &VSLink::openSolution);
-
-	toolbar->addActions(result);
-
-	window->addToolBar(toolbar);
-
-	mSettingsWidget = new VSSettingsWidget(this);
-	Maditor::View::Dialogs::SettingsDialog *settings = window->dialogs()->settingsDialog();
-	settings->addSettingsTab(mSettingsWidget, "Visual Studio");
+	mView->setupUi(ui, window);
 
 }
 
@@ -138,7 +121,7 @@ QString VSLink::resourceGroupName()
 
 void VSLink::onProjectOpened(Maditor::Model::Project * project)
 {
-	project->application()->addProcessListener([this](DWORD pid) {onProcessStarted(pid); });
+	project->application()->addProcessListener([this](DWORD pid, const Maditor::Shared::ApplicationInfo &info) {onProcessStarted(pid, info); });
 }
 
 bool VSLink::autoAttachDebugger()

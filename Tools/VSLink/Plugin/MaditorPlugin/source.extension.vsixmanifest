@@ -2,8 +2,13 @@
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
     <Identity Id="MaditorPlugin.Martin Schütz.54e81553-8d7c-4c19-b128-4e51f136da61" Version="1.0" Language="en-US" Publisher="Martin Schütz" />
-    <DisplayName>MaditorPlugin</DisplayName>
-    <Description>Empty VSIX Project.</Description>
+    <DisplayName>Maditor Plugin</DisplayName>
+    <Description xml:space="preserve">Maditor-Plugin
+Simplifies Madgine-Game Development:
+- Automatic Debugger Attach
+- Fromatted Debugger Output
+- Editor-Integration
+</Description>
   </Metadata>
   <Installation>
     <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[14.0]" />
@@ -14,5 +19,6 @@
   </Dependencies>
   <Assets>
     <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+    <Asset Type="NativeVisualizer" Path="Madgine.natvis"/>
   </Assets>
 </PackageManifest>

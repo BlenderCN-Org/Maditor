@@ -43,6 +43,10 @@ private:
 
 	EditorSettingsWidget *mEditorSettingsWidget;
 
+	ApplicationView *mApplication;
+	LogsView *mLogs;
+	ProjectView *mProject;
+
 };
 
 

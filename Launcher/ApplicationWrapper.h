@@ -41,6 +41,7 @@ namespace Maditor {
 			Engine::Serialize::Serialized<ModuleLoader> mLoader;
 
 			bool mRunning;			
+			bool mStartRequested;
 
 			
 		};

@@ -5,7 +5,7 @@ namespace Maditor {
 	namespace Model {
 
 
-class TreeSorter : public QSortFilterProxyModel
+class MADITOR_MODEL_EXPORT TreeSorter : public QSortFilterProxyModel
 {
 	Q_OBJECT
 

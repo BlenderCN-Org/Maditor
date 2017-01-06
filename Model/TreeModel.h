@@ -6,7 +6,7 @@ namespace Maditor {
 	namespace Model {
 
 
-class TreeModel : public QAbstractItemModel
+class MADITOR_MODEL_EXPORT TreeModel : public QAbstractItemModel
 {
 	Q_OBJECT
 
@@ -24,8 +24,9 @@ public:
 
 	virtual Q_INVOKABLE int columnCount(const QModelIndex & parent = QModelIndex()) const override;
 
-	virtual Q_INVOKABLE QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const override;
+	virtual Q_INVOKABLE QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const override final;
 
+	virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
 	TreeSorter *sorted();
 
@@ -36,17 +37,11 @@ public:
 
 protected:
 	TreeItem *item(const QModelIndex &index) const;
+	virtual QVariant header(int section) const;
 
 public slots:
 	void itemDoubleClicked(const QModelIndex &index);
 
-signals:
-	//void insertRowsQueued(const QModelIndex &parent, int start, int end);
-	//void removeRowsQueued(const QModelIndex &parent, int start, int end);
-
-protected slots:
-	//void performRowsInsert(const QModelIndex &parent, int start, int end);
-	//virtual void performRowsRemove(const QModelIndex &parent, int start, int end);
 
 private:
 	TreeItem *mRoot;

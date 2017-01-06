@@ -2,7 +2,7 @@
 
 #include <string>
 
-/*
+
 namespace boost {
 	namespace interprocess {
 
@@ -19,7 +19,7 @@ namespace boost {
 
 	}
 }
-*/
+
 
 #define BOOST_DATE_TIME_NO_LIB
 #include <boost\interprocess\ipc\message_queue.hpp>
@@ -33,7 +33,7 @@ public:
 	ProcessTalker(const std::string &processId, const std::string &name) :
 		mFullName(processId + "-" + name),
 		mProcessId(processId),
-		mReadQueue((/*boost::interprocess::message_queue::remove(mFullName.c_str()), */boost::interprocess::open_or_create), mFullName.c_str(), 100, sizeof(T))
+		mReadQueue((boost::interprocess::message_queue::remove(mFullName.c_str()), boost::interprocess::create_only), mFullName.c_str(), 100, sizeof(T))
 	{
 	}
 

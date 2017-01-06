@@ -73,6 +73,15 @@
           <CommandName>Enable Plugin</CommandName>
         </Strings>
       </Button>
+      <Button guid="guidMaditorCmdSet" id="DisableId" priority="0x0100" type="Button">
+        <Parent guid="guidMaditorCmdSet" id="contextMenuGroup" />
+        <Icon guid="guidImages" id="bmpPicX" />
+        <CommandFlag>DefaultDisabled</CommandFlag>
+        <Strings>
+          <ButtonText>Disable Plugin</ButtonText>
+          <CommandName>Disable Plugin</CommandName>
+        </Strings>
+      </Button>
       <Button guid="guidMaditorCmdSet" id="AttachId" priority="0x0100" type="Button">
         <Parent guid="guidMaditorCmdSet" id="contextMenuGroup" />
         <Icon guid="guidImages" id="bmpPic1" />
@@ -105,7 +114,8 @@
       <IDSymbol name="contextMenu" value="0x2020" />
       <IDSymbol name="contextMenuGroup" value="0x1021"/>
       <IDSymbol name="EnableId" value="0x100"/>
-      <IDSymbol name="AttachId" value="0x101"/>
+      <IDSymbol name="DisableId" value="0x101"/>
+      <IDSymbol name="AttachId" value="0x102"/>
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{967b91f8-ed16-4a62-a1ea-8e47d9ace0ed}" >

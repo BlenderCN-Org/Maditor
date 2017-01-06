@@ -14,14 +14,11 @@ namespace Maditor {
 			AppControl(bool isLauncher);
 			virtual ~AppControl();
 
-
-			Engine::Serialize::Action<> shutdown;
-
 		protected:
-
 
 			virtual void onApplicationInitialized() = 0;
 
+			Engine::Serialize::Action<> shutdown;
 			Engine::Serialize::Action<> applicationInitialized;
 			Engine::Serialize::Action<> start, stop, pause;
 
