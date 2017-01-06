@@ -61,7 +61,7 @@ def runCustom(report, export, context):
         statics = []
         lights = []
         entities = {}
-        id = 1
+        id = 10
         for ob in context.scene.objects:
             if ob.type == "LAMP":
                 lights.append(ob)
@@ -114,6 +114,10 @@ def runCustom(report, export, context):
             writeChar(2)
             writeInt64(i)
 
+        def writeBool(b):
+            writeChar(0)
+            writeChar(b)
+
         def writeString(s):
             writeChar(6)
             writeInt64(len(s))
@@ -125,7 +129,19 @@ def runCustom(report, export, context):
 
         def writeValue(v):
             if type(v) is str:
-                writeString(v)
+                if v[0] == '#':
+                    found = False
+                    for key, ob in entities.items():
+                        if ob.name == v[1:]:
+                            found = True
+                            writeId(key)
+                            break
+                    if not found:
+                        raise Exception("Unknown entity: " + v[1:])
+                elif v in ["true", "false"]:
+                    writeBool(v == "true")
+                else:
+                    writeString(v)
             elif type(v) is int:
                 writeInt(v)
             elif type(v) is float:
@@ -190,11 +206,13 @@ def runCustom(report, export, context):
             writeString(getMesh(ob))
             writeString(ob["Behaviour"])
 
+            writeId(key)
+
             v = ob.location
             writeVector([v[0], v[2], -v[1]])
             v = mathutils.Quaternion(ob.rotation_euler)
-            writeFloat(v[0])
-            writeVector([v[1], v[3], v[2]])
+            writeFloat(-v[0])
+            writeVector([v[1], -v[3], v[2]])
 
             v = ob.scale
             writeVector([v[0], v[2], -v[1]])
@@ -211,9 +229,6 @@ def runCustom(report, export, context):
 
             #Components
             writeEOL()
-
-            writeId(key)
-
 
         writeEOL() #close Entity-List
 
