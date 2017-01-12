@@ -120,6 +120,7 @@ namespace Maditor {
 
 			std::cout << "Loading " << name() << "..." << std::endl;
 
+			CreateDirectory(mParent->runtimeDir().c_str(), NULL);
 
 			std::string runtimePath = mParent->runtimeDir() + name() + ".dll";
 			std::string runtimePdbPath = mParent->runtimeDir() + name() + ".pdb";
@@ -151,7 +152,8 @@ namespace Maditor {
 			try {
 				mHandle = LoadLibrary(runtimePath.c_str());
 			}
-			catch (...) {
+			catch (const std::exception &e) {
+				std::cout << "Load-time error: " << e.what() << std::endl;
 				mHandle = 0;
 			}
 			SetErrorMode(errorMode);

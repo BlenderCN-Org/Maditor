@@ -6,6 +6,7 @@
 
 #include "newmoduledialog.h"
 #include "newclassdialog.h"
+#include "newprojectdialog.h"
 
 #include "newguihandlerdialog.h"
 
@@ -52,33 +53,19 @@ namespace Maditor {
 			{
 				return mSettingsDialog;
 			}
-
-
-			void DialogManager::onProjectOpened(Model::Project *project) {
-				connect(project->moduleList(), &Model::ModuleList::moduleAdded, this, &DialogManager::onModuleAdded);
-
-				for (const std::unique_ptr<Model::Module> &module : *project->moduleList()) {
-					onModuleAdded(module.get());
-				}
-			}
-
-			void DialogManager::onModuleAdded(Model::Module * module)
-			{
-				//connect(module, &Model::Module::newClassRequest, this, &DialogManager::showNewClassDialog);
-				//connect(module, &Model::Module::propertiesDialogRequest, this, &DialogManager::showModulePropertiesDialog);
-				connect(module, &Model::Module::classAdded, this, &DialogManager::onClassAdded);
-
-				for (const std::unique_ptr<Model::Generators::ClassGenerator> &gen : module->getClasses()) {
-					onClassAdded(gen.get());
-				}
-			}
-
-			void DialogManager::onClassAdded(Model::Generators::ClassGenerator *generator)
-			{
-				//connect(generator, &Model::Generators::ClassGenerator::deleteClassRequest, this, &DialogManager::showDeleteClassDialog);
-			}
 			
-			bool DialogManager::showNewProjectDialog(QString &path, QString &name) {
+			bool DialogManager::showNewProjectDialog(QString &path, QString &name)
+			{
+				NewProjectDialog dialog;
+
+				int result = dialog.exec();
+				if (result == QDialog::Accepted) {
+					path = dialog.path();
+					name = dialog.name();
+					return true;
+				}
+				return false;
+
 				path = "C:/Users/schue/Desktop/GitHub/";
 				name = "TT";
 				return true;

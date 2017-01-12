@@ -21,10 +21,6 @@ namespace Maditor {
 
 				virtual SettingsDialog *settingsDialog() override;
 
-				virtual void onProjectOpened(Model::Project *project) override;
-				virtual void onModuleAdded(Model::Module *module) override;
-				virtual void onClassAdded(Model::Generators::ClassGenerator * generator) override;
-
 				virtual bool showNewProjectDialog(QString &path, QString &name) override;
 				virtual bool showLoadProjectDialog(QString &path) override;
 				virtual bool showNewModuleDialog(Model::ModuleList *list, QString &name) override;
