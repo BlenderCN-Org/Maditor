@@ -26,7 +26,7 @@ namespace Maditor {
 
 		private:
 			Engine::Serialize::Observed<size_t> mDuration;
-			Engine::Serialize::ObservableMap<ProfilerItem, ProfilerItem*, std::string> mChildren;
+			Engine::Serialize::ObservableMap<ProfilerItem, Engine::Serialize::ContainerPolicy::masterOnly, ProfilerItem*, std::string> mChildren;
 
 
 
@@ -56,7 +56,7 @@ namespace Maditor {
 			std::tuple<std::string, TreeUnitItem*, std::string> createNode(const std::string &name);
 
 		private:
-			Engine::Serialize::ObservableMap<ProfilerItem, TreeUnitItem*, std::string> mTopLevelItems;
+			Engine::Serialize::ObservableMap<ProfilerItem, Engine::Serialize::ContainerPolicy::masterOnly, TreeUnitItem*, std::string> mTopLevelItems;
 
 
 

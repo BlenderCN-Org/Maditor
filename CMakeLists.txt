@@ -57,7 +57,7 @@ endforeach()
 
 MESSAGE(STATUS ${addons})
 
-file(GENERATE OUTPUT addons.txt CONTENT ${addons})
+#file(GENERATE OUTPUT addons.txt CONTENT ${addons})
 
 #install(FILES addons.txt
 #        DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG})

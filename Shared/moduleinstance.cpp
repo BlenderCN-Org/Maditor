@@ -55,7 +55,7 @@ namespace Maditor {
 			out << mName;
 		}
 
-		const Engine::Serialize::ObservableList<ModuleInstance*> &ModuleInstance::dependencies()
+		const Engine::Serialize::ObservableList<ModuleInstance*, Engine::Serialize::ContainerPolicy::allowAll> &ModuleInstance::dependencies()
 		{
 			return mDependencies;
 		}

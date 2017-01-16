@@ -60,6 +60,8 @@ namespace Maditor {
 		}
 
 		void ModuleLoader::onFileChanged(const QString &path) {
+			return;
+
 			QFileInfo f(path);
 			const Module *m = mModules.getModule(f.baseName());
 			auto it = mMap.find(m);
@@ -79,6 +81,7 @@ namespace Maditor {
 
 		void ModuleLoader::onFolderChanged(const QString & path)
 		{
+			return;
 			
 			const QDir dir(path);
 

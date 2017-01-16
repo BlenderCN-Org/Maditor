@@ -26,9 +26,9 @@ namespace Maditor {
 
 			virtual void writeCreationData(Engine::Serialize::SerializeOutStream &out) const override;
 
-			Engine::Serialize::Action<> reload;
+			Engine::Serialize::Action<Engine::Serialize::ActionPolicy::standard> reload;
 
-			const Engine::Serialize::ObservableList<ModuleInstance*> &dependencies();
+			const Engine::Serialize::ObservableList<ModuleInstance*, Engine::Serialize::ContainerPolicy::allowAll> &dependencies();
 
 		protected:
 			Engine::Serialize::Observed<bool> mLoaded;
@@ -41,7 +41,7 @@ namespace Maditor {
 			std::string mName;
 
 
-			Engine::Serialize::ObservableList<ModuleInstance*> mDependencies;
+			Engine::Serialize::ObservableList<ModuleInstance*, Engine::Serialize::ContainerPolicy::allowAll> mDependencies;
 
 		};
 

@@ -27,26 +27,6 @@ namespace Maditor {
 				virtual View::Dialogs::SettingsDialog *settingsDialog() = 0;
 					
 
-/*			signals:
-				void newProjectDialogAccepted(const QString &path, const QString &name);
-				void loadProjectDialogAccepted(const QString &path);
-				void newModuleDialogAccepted(const QString &name);
-				void newClassDialogAccepted(Model::Module *module, const QString &name, Model::Generators::ClassGeneratorFactory::ClassType type);
-
-				void newGuiHandlerDialogAccepted(Model::Module *module, const QString &name, const QString &window, int type, bool hasLayoutFile);
-				void newGlobalAPIDialogAccepted(Model::Module *module, const QString &name);
-				void newEntityComponentDialogAccepted(Model::Module *module, const QString &name, const QString &componentName);
-				void newSceneComponentDialogAccepted(Model::Module *module, const QString &name);
-				void newGameHandlerDialogAccepted(Model::Module *module, const QString &name);
-				void newOtherClassDialogAccepted(Model::Module *module, const QString &name);
-
-				void deleteClassDialogAccepted(Model::Generators::ClassGenerator *generator, bool deleteFiles);
-				*/
-			//public slots:
-				virtual void onProjectOpened(Model::Project *project) = 0;
-				virtual void onModuleAdded(Model::Module *module) = 0;
-				virtual void onClassAdded(Model::Generators::ClassGenerator * generator) = 0;
-
 				virtual bool showNewProjectDialog(QString &path, QString &name) = 0;
 				virtual bool showLoadProjectDialog(QString &path) = 0;
 				virtual bool showNewModuleDialog(Model::ModuleList *list, QString &name) = 0;

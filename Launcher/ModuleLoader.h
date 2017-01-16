@@ -62,8 +62,8 @@ private:
 
 	bool mReceivingModules;
 
-	Engine::Serialize::ObservableList<ModuleLauncherInstance, ModuleLoader *, std::string> mInstances;
-	Engine::Serialize::Action<> setupDone;
+	Engine::Serialize::ObservableList<ModuleLauncherInstance, Engine::Serialize::ContainerPolicy::allowAll, ModuleLoader *, std::string> mInstances;
+	Engine::Serialize::Action<Engine::Serialize::ActionPolicy::standard> setupDone;
 
 };
 
