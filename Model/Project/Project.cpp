@@ -16,7 +16,7 @@ namespace Maditor {
 
 		const QString Project::sProjectFileName = "project.mad";
 
-		Project::Project(const QString & path, const QString & name, QDomDocument doc) :
+		Project::Project(LogsModel *logs, const QString & path, const QString & name, QDomDocument doc) :
 			ProjectElement(name, "MadProject", doc),
 			TreeModel(this, 1),
 			Generator(false),
@@ -24,7 +24,7 @@ namespace Maditor {
 			mPath(QDir(path + name).absolutePath() + "/"),
 			mModules(new ModuleList(this)),
 			mValid(false),
-			mApplication(new ApplicationLauncher(mPath, *mModules))
+			mApplication(new ApplicationLauncher(mPath, *mModules, logs))
 		{
 			init();
 
@@ -48,21 +48,21 @@ namespace Maditor {
 		}
 
 
-		Project::Project(QDomDocument doc, const QString &path) :
+		Project::Project(LogsModel *logs, QDomDocument doc, const QString &path) :
 			ProjectElement(doc.documentElement()),
 			TreeModel(this, 1),
 			mDocument(doc),
 			mPath(QDir(path).absolutePath() + "/"),
 			mModules(new ModuleList(element().firstChildElement("Modules"), this)),
 			mValid(true),
-			mApplication(new ApplicationLauncher(mPath, *mModules))
+			mApplication(new ApplicationLauncher(mPath, *mModules, logs))
 		{
 			init();		
 
 		}
 
 		Project::~Project()
-		{			
+		{	
 		}
 
 		void Project::mediaDoubleClicked(const QModelIndex & index)
@@ -80,7 +80,7 @@ namespace Maditor {
 		void Project::copyTemplate(QMessageBox::StandardButton *answer)
 		{
 			QStringList templateFiles;
-			QString templatePath("C:/Users/schue/Desktop/GitHub/Madgine/Maditor/templateproject/");
+			QString templatePath("C:/Users/schue/Desktop/GitHub/Maditor/templateproject/");
 			QDir dir(templatePath);
 
 			QDirIterator it(templatePath, QDir::NoDotAndDotDot | QDir::Files | QDir::Dirs, QDirIterator::Subdirectories);
@@ -122,7 +122,7 @@ namespace Maditor {
 
 		ApplicationLauncher * Project::application()
 		{
-			return mApplication;
+			return mApplication.get();
 		}
 
 		QString Project::path() const
@@ -130,14 +130,14 @@ namespace Maditor {
 			return mPath;
 		}
 
-		Project * Project::load(const QString & path)
+		Project * Project::load(LogsModel *logs, const QString & path)
 		{
 			QFile file(path + sProjectFileName);
 			file.open(QIODevice::ReadOnly);
 			QDomDocument doc;
 			doc.setContent(&file);
 			file.close();
-			return new Project(doc, path);
+			return new Project(logs, doc, path);
 		}
 		
 		bool Project::isValid()
@@ -173,7 +173,7 @@ namespace Maditor {
 
 		ModuleList * Project::moduleList()
 		{
-			return mModules;
+			return mModules.get();
 		}
 
 		Project * Project::project()
@@ -188,7 +188,7 @@ namespace Maditor {
 		ProjectElement * Project::child(int i) {
 			switch (i) {
 			case 0:
-				return mModules;
+				return mModules.get();
 			default:
 				throw 0;
 			}

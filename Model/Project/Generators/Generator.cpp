@@ -50,7 +50,7 @@ namespace Maditor {
 
 			QString Generator::templateFile(const QString & name)
 			{
-				QString path = QString("C:/Users/schue/Desktop/GitHub/Madgine/Maditor/templates/") + name;
+				QString path = QString("C:/Users/schue/Desktop/GitHub/Maditor/templates/") + name;
 				QFile file(path);
 				if (!file.open(QFile::ReadOnly | QFile::Text)) {
 					throw std::exception((std::string("Could not open File: ") + path.toStdString()).c_str());

@@ -11,9 +11,9 @@ namespace Maditor {
 			{				
 			}
 
-			void LogTableModel::addMessage(const QString &msg, MessageType level, const Traceback &traceback, const QString &fullTraceback) {
+			void LogTableModel::addMessage(const QString &msg, MessageType level, const QString &traceback, const std::string &fileName, int lineNr) {
 				beginInsertRows(QModelIndex(), 0, 0);
-				mItems.emplace_front(level, msg, fullTraceback, traceback);
+				mItems.emplace_front(level, msg, traceback, fileName, lineNr);
 				endInsertRows();
 			}
 
@@ -22,9 +22,9 @@ namespace Maditor {
 				auto it = mItems.begin();
 				std::advance(it, index.row());
 
-				Traceback &traceback = std::get<3>(*it);
+				const std::string &fileName = std::get<3>(*it);
 			
-				if (std::string(traceback.mFile) == "<unknown>")
+				if (fileName == "<unknown>")
 					return;
 
 				//Editors::EditorManager::getSingleton().openByExtension(traceback.mFile, traceback.mLineNr);

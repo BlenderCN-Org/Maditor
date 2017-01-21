@@ -8,7 +8,7 @@ PROJECT(Maditor_Launcher)
 
 
 set (sources "")
-FolderSources(sources "" "" ApplicationWrapper.cpp ApplicationWrapper.h InputWrapper.cpp InputWrapper.h maditorlauncherlib.cpp maditorlauncherlib.h maditorlauncherforward.h main.cpp ModuleLoader.cpp ModuleLoader.h)
+FolderSources(sources "" "" ApplicationWrapper.cpp ApplicationWrapper.h InputWrapper.cpp InputWrapper.h LogListener.cpp LogListener.h maditorlauncherlib.cpp maditorlauncherlib.h maditorlauncherforward.h main.cpp ModuleLoader.cpp ModuleLoader.h)
 
 include_directories(${BOOST_PATH})
 include_directories(${CMAKE_SOURCE_DIR})

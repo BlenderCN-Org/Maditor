@@ -32,6 +32,7 @@ namespace Maditor {
 		void LogsTabWidget::addLog(Model::Log *log) {
 			if (log->type() == Model::Log::TextLog) {
 				QPlainTextEdit *edit = new QPlainTextEdit;
+				edit->setReadOnly(true);
 				mTabs[log] = edit;
 				addTab(edit, QString::fromStdString(log->name()));
 				connect(log, &Model::Log::messageReceived, edit, &QPlainTextEdit::appendPlainText);

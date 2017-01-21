@@ -20,7 +20,8 @@ namespace Maditor {
 			mInput(new InputWrapper(sharedMemory().mInput)),
 			mLoader(this),
 			mRunning(false),
-			mStartRequested(false)
+			mStartRequested(false),
+			mLog(this)
 		{			
 		}
 
@@ -83,6 +84,10 @@ namespace Maditor {
 
 			mRunning = true;
 			mApplication.setup(mSettings);
+
+			Ogre::LogManager::getSingleton().getLog("Scripting.log")->addListener(mLog.ptr());
+			Ogre::LogManager::getSingleton().getLog("Madgine.log")->addListener(mLog.ptr());
+			Ogre::LogManager::getSingleton().getLog("Ogre.log")->addListener(mLog.ptr());
 
 			mInput->setSystem(&Engine::GUI::GUISystem::getSingleton());
 			std::string project = appInfo.mProjectDir.c_str();

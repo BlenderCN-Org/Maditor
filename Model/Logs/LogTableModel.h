@@ -1,7 +1,6 @@
 #pragma once
 
 #include "OgreLog.h"
-#include "Util\Traceback.h"
 
 
 namespace Maditor {
@@ -13,13 +12,6 @@ namespace Maditor {
 			LOG_TYPE
 		};
 
-		struct Traceback {
-
-			char mFile[1024];
-			char mFunction[512];
-			int32_t mLineNr;
-		};
-
 			class LogTableModel : public QAbstractTableModel {
 				Q_OBJECT
 
@@ -27,7 +19,7 @@ namespace Maditor {
 				LogTableModel();
 
 			public slots:
-				void addMessage(const QString &msg, MessageType level, const Traceback &traceback, const QString &fullTraceback);
+				void addMessage(const QString &msg, MessageType level, const QString &traceback, const std::string &fileName, int lineNr);
 				void doubleClicked(const QModelIndex &index);
 				void clear();
 
@@ -42,7 +34,7 @@ namespace Maditor {
 
 
 			private:
-				std::list<std::tuple<MessageType, QString, QString, Traceback>> mItems;
+				std::list<std::tuple<MessageType, QString, QString, std::string, int>> mItems;
 				
 			};
 

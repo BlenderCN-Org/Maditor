@@ -48,16 +48,3 @@ include_directories(${MADGINE_INCLUDE_DIRS})
 add_executable(Maditor main.cpp)
 add_dependencies(Maditor Maditor_Launcher ${TOOLS_LIBS})
 target_link_libraries(Maditor Maditor_Model Maditor_View)
-
-set(addons "")
-# Call the "cat" function for each input file
-foreach(TOOL_LIB ${TOOLS_LIBS})
-  set(addons ${addons}$<TARGET_FILE:${TOOL_LIB}>\n)
-endforeach()
-
-MESSAGE(STATUS ${addons})
-
-file(GENERATE OUTPUT addons.txt CONTENT ${addons})
-
-#install(FILES addons.txt
-#        DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG})

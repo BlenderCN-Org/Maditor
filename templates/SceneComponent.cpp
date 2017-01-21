@@ -1,6 +1,6 @@
 #pragma once
 
-#include <libinclude.h>
+#include <madginelib.h>
 #include "%header"
 
 API_IMPL(%game::%module::%name);

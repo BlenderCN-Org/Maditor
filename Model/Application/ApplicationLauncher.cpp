@@ -13,13 +13,14 @@
 
 namespace Maditor {
 	namespace Model {
-		ApplicationLauncher::ApplicationLauncher(const QString &path, const ModuleList &modules) :
+		ApplicationLauncher::ApplicationLauncher(const QString &path, const ModuleList &modules, LogsModel *logs) :
 			AppControl(true),
 			mInput(new InputWrapper(sharedMemory().mInput)),
-			mWindow(new OgreWindow(mInput)),
+			mWindow(new OgreWindow(mInput.get())),
 			mPath(path),
 			mLoader(this, path + "debug/bin/", modules),
-			mPID(0)
+			mPID(0),
+			mLog(this, logs)
 		{
 			network()->addTopLevelItem(&mUtil);
 
@@ -29,8 +30,6 @@ namespace Maditor {
 		ApplicationLauncher::~ApplicationLauncher()
 		{
 			shutdown();
-			delete mWindow;
-			delete mInput;
 		}
 
 		void ApplicationLauncher::init()

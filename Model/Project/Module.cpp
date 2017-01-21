@@ -268,6 +268,13 @@ namespace Maditor {
 		{
 			bool deleteFiles;
 			if (DialogManager::showDeleteClassDialogStatic(generator, deleteFiles)) {
+				if (deleteFiles) {
+					for (const QString &file : generator->filePaths()) {
+						QFile f(file);
+						f.remove();
+					}
+				}
+				removeClass(generator);
 			}
 		}
 

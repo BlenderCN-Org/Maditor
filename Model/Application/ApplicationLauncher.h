@@ -4,6 +4,7 @@
 #include "ModuleLoader.h"
 #include "Serialize\Container\serialized.h"
 #include "UtilModel.h"
+#include "OgreLogReader.h"
 
 namespace Maditor {
 	namespace Model {
@@ -12,7 +13,7 @@ namespace Maditor {
 			Q_OBJECT
 
 		public:
-			ApplicationLauncher(const QString &path, const ModuleList &modules);
+			ApplicationLauncher(const QString &path, const ModuleList &modules, LogsModel *logs);
 			virtual ~ApplicationLauncher();
 
 			void init();
@@ -59,7 +60,7 @@ namespace Maditor {
 			void applicationShutdown();
 
 		private:
-			InputWrapper *mInput;
+			std::unique_ptr<InputWrapper> mInput;
 			OgreWindow *mWindow;
 
 			QString mPath;
@@ -67,6 +68,7 @@ namespace Maditor {
 			DWORD mPID;
 			HANDLE mHandle;
 
+			Engine::Serialize::Serialized<OgreLogReader> mLog;
 			Engine::Serialize::Serialized<ModuleLoader> mLoader;
 			UtilModel mUtil;
 			

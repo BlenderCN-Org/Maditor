@@ -1,5 +1,6 @@
 #pragma once
 
+#include "LogTableModel.h"
 
 namespace Maditor {
 	namespace Model {
@@ -20,6 +21,8 @@ namespace Maditor {
 			Type type() const;
 			const std::string &name() const;
 			LogTableModel *model();
+
+			void log(const std::string &msg, MessageType type = LOG_TYPE, const std::string &traceback = "", const std::string &fileName = "", int lineNr = -1);
 
 		signals:
 			void messageReceived(const QString &msg);

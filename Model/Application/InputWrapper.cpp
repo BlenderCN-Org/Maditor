@@ -27,19 +27,23 @@ namespace Maditor {
 
 			void InputWrapper::mouseMoveEvent(QMouseEvent * ev)
 			{
-				boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(mShared.mMutex);
-				mShared.mAccumulativeMouseMove.moveDelta.x += ev->x() - mShared.mAccumulativeMouseMove.position.x;
-				mShared.mAccumulativeMouseMove.moveDelta.y += ev->y() - mShared.mAccumulativeMouseMove.position.y;
-				mShared.mAccumulativeMouseMove.position.x = ev->x();
-				mShared.mAccumulativeMouseMove.position.y = ev->y();
-				mShared.mMove = true;
+				boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(mShared.mMutex, boost::interprocess::try_to_lock);
+				if (lock.owns()) {
+					mShared.mAccumulativeMouseMove.moveDelta.x += ev->x() - mShared.mAccumulativeMouseMove.position.x;
+					mShared.mAccumulativeMouseMove.moveDelta.y += ev->y() - mShared.mAccumulativeMouseMove.position.y;
+					mShared.mAccumulativeMouseMove.position.x = ev->x();
+					mShared.mAccumulativeMouseMove.position.y = ev->y();
+					mShared.mMove = true;
+				}
 			}
 
 			void InputWrapper::wheelEvent(QWheelEvent * ev)
 			{
-				boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(mShared.mMutex);
-				mShared.mAccumulativeMouseMove.scrollWheel += ev->angleDelta().y() / 120.0f;
-				mShared.mMove = true;
+				boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(mShared.mMutex, boost::interprocess::try_to_lock);
+				if (lock.owns()) {
+					mShared.mAccumulativeMouseMove.scrollWheel += ev->angleDelta().y() / 120.0f;
+					mShared.mMove = true;
+				}
 			}
 
 			void InputWrapper::mousePressEvent(QMouseEvent * ev)
@@ -54,10 +58,12 @@ namespace Maditor {
 
 			void InputWrapper::resetAccumulativeMouseMove()
 			{
-				boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(mShared.mMutex);
-				mShared.mMove = false;
-				mShared.mAccumulativeMouseMove.moveDelta = { 0,0 };
-				mShared.mAccumulativeMouseMove.scrollWheel = 0;
+				boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(mShared.mMutex, boost::interprocess::try_to_lock);
+				if (lock.owns()) {
+					mShared.mMove = false;
+					mShared.mAccumulativeMouseMove.moveDelta = { 0,0 };
+					mShared.mAccumulativeMouseMove.scrollWheel = 0;
+				}
 			}
 
 			Engine::GUI::MouseButton::MouseButton InputWrapper::convertMouseButton(Qt::MouseButton id)

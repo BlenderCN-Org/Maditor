@@ -6,6 +6,7 @@
 #include "App/Application.h"
 
 #include "ModuleLoader.h"
+#include "LogListener.h"
 #include "Serialize\Container\serialized.h"
 
 namespace Maditor {
@@ -34,15 +35,17 @@ namespace Maditor {
 			void pauseImpl();
 
 		private:
+			Engine::Serialize::Serialized<LogListener> mLog;
+
 			Engine::App::AppSettings mSettings;
 			Engine::App::Application mApplication;
 
 			InputWrapper *mInput;
+
 			Engine::Serialize::Serialized<ModuleLoader> mLoader;
 
 			bool mRunning;			
 			bool mStartRequested;
-
 			
 		};
 

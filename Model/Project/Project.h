@@ -13,11 +13,11 @@ namespace Maditor {
 			Q_OBJECT
 
 		public:
-			Project(const QString &path, const QString &name, QDomDocument doc = QDomDocument());
-			Project(QDomDocument doc, const QString &path);
+			Project(LogsModel *logs, const QString &path, const QString &name, QDomDocument doc = QDomDocument());
+			Project(LogsModel *logs, QDomDocument doc, const QString &path);
 			~Project();
 
-			static Project *load(const QString &path);
+			static Project *load(LogsModel *logs, const QString &path);
 
 			bool isValid();
 
@@ -69,11 +69,11 @@ namespace Maditor {
 
 			static const QString sProjectFileName;
 
-			ModuleList *mModules;
+			std::unique_ptr<ModuleList> mModules;
 
 			QFileSystemModel mMediaFolder;
 
-			ApplicationLauncher *mApplication;
+			std::unique_ptr<ApplicationLauncher> mApplication;
 
 
 		};

@@ -14,7 +14,7 @@ namespace Maditor {
 		Maditor::Maditor() :
 			mSettings("MadMan Studios", "Maditor"),
 			mAddons(new Addons::AddonCollector(this)),
-			mLog("Madgine", Log::GuiLog)
+			mLog("Maditor", Log::GuiLog)
 		{
 
 			mSettings.beginGroup("Editor");
@@ -46,14 +46,14 @@ namespace Maditor {
 		void Maditor::newProject(const QString &path, const QString &name)
 		{
 
-			openProject(std::make_unique<Project>(path, name));
+			openProject(std::make_unique<Project>(&mLogs, path, name));
 
 		}
 
 		void Maditor::loadProject(const QString & path)
 		{
 
-			openProject(std::unique_ptr<Project>(Project::load(path)));
+			openProject(std::unique_ptr<Project>(Project::load(&mLogs, path)));
 
 		}
 

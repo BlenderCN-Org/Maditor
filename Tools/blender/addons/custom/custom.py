@@ -215,7 +215,7 @@ def runCustom(report, export, context):
             writeVector([v[1], -v[3], v[2]])
 
             v = ob.scale
-            writeVector([v[0], v[2], -v[1]])
+            writeVector([v[0], v[2], v[1]])
 
 
             #prototype

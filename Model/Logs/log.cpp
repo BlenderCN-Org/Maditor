@@ -14,6 +14,7 @@ namespace Maditor {
 				mModel = std::make_unique<LogTableModel>();
 			}
 		}
+
 		Log::~Log()
 		{
 		}
@@ -31,6 +32,14 @@ namespace Maditor {
 		LogTableModel * Log::model()
 		{
 			return mModel.get();
+		}
+
+		void Log::log(const std::string & msg, MessageType type, const std::string & traceback, const std::string & fileName, int lineNr)
+		{
+			if (mType == GuiLog) {
+				mModel->addMessage(QString::fromStdString(msg), type, QString::fromStdString(traceback), fileName, lineNr);
+			}
+			emit messageReceived(QString::fromStdString(msg));
 		}
 
 	}
