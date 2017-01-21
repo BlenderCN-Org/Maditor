@@ -96,7 +96,7 @@ namespace Maditor {
 			while (!mLoader->done()) {
 				net->receiveMessages();
 				loop.processEvents();
-				if (myTimer.elapsed() > 5000 || !mPID) {
+				if (myTimer.elapsed() > 10000 || !mPID) {
 					shutdown();
 					return;
 				}

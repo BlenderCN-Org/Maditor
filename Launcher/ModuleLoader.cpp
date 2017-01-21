@@ -120,6 +120,7 @@ namespace Maditor {
 
 			std::cout << "Loading " << name() << "..." << std::endl;
 
+			CreateDirectory(mParent->runtimeDir().c_str(), NULL);
 
 			std::string runtimePath = mParent->runtimeDir() + name() + ".dll";
 			std::string runtimePdbPath = mParent->runtimeDir() + name() + ".pdb";
@@ -151,7 +152,8 @@ namespace Maditor {
 			try {
 				mHandle = LoadLibrary(runtimePath.c_str());
 			}
-			catch (...) {
+			catch (const std::exception &e) {
+				std::cout << "Load-time error: " << e.what() << std::endl;
 				mHandle = 0;
 			}
 			SetErrorMode(errorMode);
@@ -194,18 +196,16 @@ namespace Maditor {
 					api->init();
 				}
 
-				if (Engine::Scene::SceneManager::getSingleton().isSceneLoaded()) {
-					for (Engine::Scene::SceneListener *listener : mSceneListeners) {
-						listener->onSceneLoad();
-					}
-
-					for (const std::pair<const std::string, std::list<Engine::Scene::Entity::Entity*>> &ents : mStoredComponentEntities) {
-						for (Engine::Scene::Entity::Entity* e : ents.second) {
-							e->addComponent(ents.first);
-						}
-					}
-					mStoredComponentEntities.clear();
+				for (Engine::Scene::SceneListener *listener : mSceneListeners) {
+					listener->onSceneLoad();
 				}
+
+				for (const std::pair<const std::string, std::list<Engine::Scene::Entity::Entity*>> &ents : mStoredComponentEntities) {
+					for (Engine::Scene::Entity::Entity* e : ents.second) {
+						e->addComponent(ents.first);
+					}
+				}
+				mStoredComponentEntities.clear();
 
 			}
 
@@ -226,27 +226,26 @@ namespace Maditor {
 
 			std::cout << "Unloading " << name() << std::endl;
 
-			if (Engine::Scene::SceneManager::getSingleton().isSceneLoaded()) {
 
-				const std::list<Engine::Scene::Entity::Entity*> &entities = Engine::Scene::SceneManager::getSingleton().entities();
+			const std::list<Engine::Scene::Entity::Entity*> &entities = Engine::Scene::SceneManager::getSingleton().entities();
 
 
-				for (const std::string &comp : mEntityComponentNames) {
-					std::list<Engine::Scene::Entity::Entity*> &componentEntities = mStoredComponentEntities[comp];
-					for (Engine::Scene::Entity::Entity* e : entities) {
-						if (e->hasComponent(comp)) {
-							componentEntities.push_back(e);
-							e->removeComponent(comp);
-						}
+			for (const std::string &comp : mEntityComponentNames) {
+				std::list<Engine::Scene::Entity::Entity*> &componentEntities = mStoredComponentEntities[comp];
+				for (Engine::Scene::Entity::Entity* e : entities) {
+					if (e->hasComponent(comp)) {
+						componentEntities.push_back(e);
+						e->removeComponent(comp);
 					}
 				}
-
-
-				for (Engine::Scene::SceneListener *listener : mSceneListeners) {
-					listener->beforeSceneClear();
-					listener->onSceneClear();
-				}
 			}
+
+
+			for (Engine::Scene::SceneListener *listener : mSceneListeners) {
+				listener->beforeSceneClear();
+				listener->onSceneClear();
+			}
+
 
 			for (Engine::Scripting::BaseGlobalAPIComponent *api : mGlobalAPIComponents) {
 				api->finalize();

@@ -18,9 +18,9 @@ namespace Maditor {
 
 			virtual void onApplicationInitialized() = 0;
 
-			Engine::Serialize::Action<> shutdown;
-			Engine::Serialize::Action<> applicationInitialized;
-			Engine::Serialize::Action<> start, stop, pause;
+			Engine::Serialize::Action<Engine::Serialize::ActionPolicy::allowAll> shutdown;
+			Engine::Serialize::Action<Engine::Serialize::ActionPolicy::allowAll> applicationInitialized;
+			Engine::Serialize::Action<Engine::Serialize::ActionPolicy::allowAll> start, stop, pause;
 
 		protected:
 			Shared &sharedMemory();
