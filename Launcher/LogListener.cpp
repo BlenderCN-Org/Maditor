@@ -17,7 +17,7 @@ namespace Maditor {
 
 		}
 
-		void LogListener::receiveImpl(const std::string & msg, int level, const std::string & logName, const std::string & fullTraceback, const std::string & fileName, int lineNr)
+		void LogListener::receiveImpl(const std::string & msg, Ogre::LogMessageLevel level, const std::string & logName, const std::string & fullTraceback, const std::string & fileName, int lineNr)
 		{
 		}
 

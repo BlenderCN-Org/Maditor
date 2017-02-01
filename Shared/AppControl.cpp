@@ -17,6 +17,8 @@ AppControl::AppControl(bool isLauncher) :
 	start(this, &AppControl::startImpl),
 	stop(this, &AppControl::stopImpl),
 	pause(this, &AppControl::pauseImpl),
+	resizeWindow(this, &AppControl::resizeWindowImpl),
+	ping(this, &AppControl::pingImpl),
 	applicationInitialized(this, &AppControl::onApplicationInitialized)
 {
 	if (isLauncher) {
@@ -42,6 +44,14 @@ Shared & AppControl::sharedMemory()
 Engine::Network::NetworkManager * AppControl::network()
 {
 	return mNetwork;
+}
+
+void AppControl::resizeWindowImpl()
+{
+}
+
+void AppControl::pingImpl()
+{
 }
 
 	}

@@ -22,6 +22,7 @@ namespace Maditor {
 		class TreeModel;
 
 		class ProfilerModel;
+		class StatsModel;
 
 		class LogsModel;
 		class Log;

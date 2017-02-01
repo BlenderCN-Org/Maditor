@@ -163,6 +163,11 @@ namespace Maditor {
 
 		}
 
+		void ApplicationWrapper::resizeWindowImpl()
+		{
+			mApplication.resizeWindow();
+		}
+
 	}
 }
 

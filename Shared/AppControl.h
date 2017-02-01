@@ -21,6 +21,8 @@ namespace Maditor {
 			Engine::Serialize::Action<Engine::Serialize::ActionPolicy::allowAll> shutdown;
 			Engine::Serialize::Action<Engine::Serialize::ActionPolicy::allowAll> applicationInitialized;
 			Engine::Serialize::Action<Engine::Serialize::ActionPolicy::allowAll> start, stop, pause;
+			Engine::Serialize::Action<Engine::Serialize::ActionPolicy::standard> resizeWindow;
+			Engine::Serialize::Action<Engine::Serialize::ActionPolicy::allowAll> ping;
 
 		protected:
 			Shared &sharedMemory();
@@ -31,6 +33,8 @@ namespace Maditor {
 			virtual void startImpl() = 0;
 			virtual void stopImpl() = 0;
 			virtual void pauseImpl() = 0;
+			virtual void resizeWindowImpl();
+			virtual void pingImpl();
 
 		private:
 			Engine::Network::NetworkManager *mNetwork;

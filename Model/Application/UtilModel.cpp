@@ -9,7 +9,8 @@ namespace Maditor {
 
 		UtilModel::UtilModel() :
 			TopLevelSerializableUnit(Engine::Serialize::UTIL),
-			mProfiler(this)
+			mProfiler(this),
+			mStats(this)
 		{
 		}
 
@@ -18,9 +19,15 @@ namespace Maditor {
 			return mProfiler.ptr();
 		}
 
+		StatsModel * UtilModel::stats()
+		{
+			return mStats.ptr();
+		}
+
 		void UtilModel::reset()
 		{
 			mProfiler->reset();
+			mStats->reset();
 		}
 
 	}

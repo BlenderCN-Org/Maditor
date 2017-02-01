@@ -18,10 +18,10 @@ protected:
 
 
 private:
-	void receiveImpl(const std::string &msg, int level, const std::string &logName, const std::string &fullTraceback, const std::string &fileName, int lineNr);
+	void receiveImpl(const std::string &msg, Ogre::LogMessageLevel level, const std::string &logName, const std::string &fullTraceback, const std::string &fileName, int lineNr);
 
 private:
-	Engine::Serialize::Action<const std::string &, int, const std::string &, const std::string &, const std::string &, int> receiveMessage;
+	Engine::Serialize::Action<Engine::Serialize::ActionPolicy::allowAll, const std::string &, Ogre::LogMessageLevel, const std::string &, const std::string &, const std::string &, int> receiveMessage;
 
 
 

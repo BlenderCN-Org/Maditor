@@ -31,3 +31,4 @@
 #include <QSettings>
 #include <QKeyEvent>
 #include <QTime>
+#include <QTimer>

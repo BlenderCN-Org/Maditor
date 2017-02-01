@@ -21,6 +21,9 @@ namespace Maditor {
 			*/
 			virtual bool eventFilter(QObject *target, QEvent *event);
 
+		signals:
+			void resized();
+
 		protected:
 
 

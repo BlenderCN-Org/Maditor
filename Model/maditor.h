@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Project/Project.h"
-#include "Logs\log.h"
+#include "MaditorLog.h"
 #include "Logs\LogsModel.h"
 
 namespace Maditor {
@@ -57,7 +57,7 @@ namespace Maditor {
 
 			std::unique_ptr<Project> mProject;
 
-			Log mLog;
+			MaditorLog mLog;
 			LogsModel mLogs;
 			
 			DialogManager *mDialogManager;

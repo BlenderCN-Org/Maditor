@@ -48,7 +48,7 @@ namespace Maditor {
 			Q_UNUSED(event);
 			if (mUpdateSize) {
 				mUpdateSize = false;
-				//mApp->resizeWindow();
+				emit resized();
 			}
 		}
 
@@ -65,7 +65,7 @@ namespace Maditor {
 				{
 					if (isExposed())
 					{
-						//mApp->resizeWindow();
+						emit resized();
 					}
 					else {
 						mUpdateSize = true;

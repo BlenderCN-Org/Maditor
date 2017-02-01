@@ -12,7 +12,7 @@ namespace Maditor {
 			LOG_TYPE
 		};
 
-			class LogTableModel : public QAbstractTableModel {
+			class MADITOR_MODEL_EXPORT LogTableModel : public QAbstractTableModel {
 				Q_OBJECT
 
 			public:

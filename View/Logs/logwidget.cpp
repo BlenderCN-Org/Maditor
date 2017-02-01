@@ -29,7 +29,7 @@ namespace Maditor {
 		{
 			//connect(ui->tableView, &QTableView::doubleClicked, log, &Model::Watcher::LogTableModel::doubleClicked);
 			ui->tableView->setModel(log);
-			//connect(ui->clearButton, &QPushButton::clicked, log, &Model::Watcher::LogTableModel::clear);
+			connect(ui->clearButton, &QPushButton::clicked, log, &Model::LogTableModel::clear);
 		}
 
 	}

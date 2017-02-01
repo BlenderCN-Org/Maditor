@@ -34,6 +34,8 @@ namespace Maditor {
 
 			void pauseImpl();
 
+			virtual void resizeWindowImpl() override;
+
 		private:
 			Engine::Serialize::Serialized<LogListener> mLog;
 

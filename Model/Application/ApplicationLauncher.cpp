@@ -20,16 +20,23 @@ namespace Maditor {
 			mPath(path),
 			mLoader(this, path + "debug/bin/", modules),
 			mPID(0),
-			mLog(this, logs)
+			mLog(this, logs),
+			mWaitingForLoader(false)
 		{
 			network()->addTopLevelItem(&mUtil);
 
+			connect(mWindow, &OgreWindow::resized, this, &ApplicationLauncher::resizeWindow);
+
 			startTimer(10);
+
+			mPingTimer.setSingleShot(true);
+
+			connect(&mPingTimer, &QTimer::timeout, this, &ApplicationLauncher::kill);
 		}
 
 		ApplicationLauncher::~ApplicationLauncher()
 		{
-			shutdown();
+			kill();
 		}
 
 		void ApplicationLauncher::init()
@@ -78,6 +85,7 @@ namespace Maditor {
 			for (const auto& f : mProcessListener) {
 				f(mPID, appInfo);
 			}
+			mUtil.stats()->setProcess(mHandle);
 
 			Engine::Network::NetworkManager *net = network();
 			
@@ -88,28 +96,14 @@ namespace Maditor {
 
 			mLoader->setup();
 
-			QTime myTimer;
-			myTimer.start();
-			
-			QEventLoop loop;
+			mWaitingForLoader = true;	
 
-			while (!mLoader->done()) {
-				net->receiveMessages();
-				loop.processEvents();
-				if (myTimer.elapsed() > 10000 || !mPID) {
-					shutdown();
-					return;
-				}
-			}
-			mLoader->setup2();			
+			if (!debug)
+				pingImpl();
 		}
 		void ApplicationLauncher::initNoDebug()
 		{
 			initImpl(false);
-		}
-		void ApplicationLauncher::finalize()
-		{
-			shutdown();
 		}
 		void ApplicationLauncher::start()
 		{
@@ -172,6 +166,18 @@ namespace Maditor {
 					return;
 				}
 				network()->receiveMessages();
+				if (mLoader->done() && mWaitingForLoader) {
+					mLoader->setup2();
+					mWaitingForLoader = false;
+				}				
+			}
+		}
+
+		void ApplicationLauncher::kill()
+		{
+			if (mPID) {
+				TerminateProcess(mHandle, -1);
+				cleanup();
 			}
 		}
 
@@ -180,21 +186,26 @@ namespace Maditor {
 			if (mPID) {
 				AppControl::stop();
 				AppControl::shutdown();
+				if (!mPingTimer.isActive())
+					pingImpl();
 			}
 		}
 
 		void ApplicationLauncher::cleanup()
 		{
+			network()->close();
 			if (mPID) {
 				mPID = 0;
 				CloseHandle(mHandle);
 
 				mLoader->reset();
+				mWaitingForLoader = false;
 				mUtil.reset();
 
+				mPingTimer.stop();
+
 				emit applicationShutdown();
-			}
-			network()->close();
+			}			
 		}
 
 		void ApplicationLauncher::shutdownImpl()
@@ -206,6 +217,16 @@ namespace Maditor {
 		void ApplicationLauncher::onApplicationInitialized()
 		{
 			emit applicationInitialized();
+		}
+
+		void ApplicationLauncher::pingImpl()
+		{
+			mPingTimer.start(10000);
+			ping();
+		}
+
+		void ApplicationLauncher::resizeWindow() {
+			AppControl::resizeWindow();
 		}
 
 	}

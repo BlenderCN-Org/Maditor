@@ -19,7 +19,8 @@ namespace Maditor {
 			void init();
 			void initImpl(bool debug);
 			void initNoDebug();
-			void finalize();
+			void shutdown();
+			void kill();
 			void start();
 			void pause();
 			void stop();
@@ -35,7 +36,6 @@ namespace Maditor {
 		protected:
 			virtual void timerEvent(QTimerEvent * te) override;
 
-			void shutdown();
 			void cleanup();
 
 			// Inherited via AppControl
@@ -51,6 +51,11 @@ namespace Maditor {
 
 			// Inherited via AppControl
 			virtual void onApplicationInitialized() override;
+
+			virtual void pingImpl() override;
+
+		protected slots:
+		    void resizeWindow();
 
 		signals:
 			void applicationInitializing();
@@ -72,6 +77,9 @@ namespace Maditor {
 			Engine::Serialize::Serialized<ModuleLoader> mLoader;
 			UtilModel mUtil;
 			
+			bool mWaitingForLoader;
+
+			QTimer mPingTimer;
 
 			std::list<std::function<void(DWORD, const Shared::ApplicationInfo &)>> mProcessListener;
 			

@@ -5,6 +5,7 @@
 #include "Serialize\Container\serialized.h"
 
 #include "ProfilerModel.h"
+#include "StatsModel.h"
 
 namespace Maditor {
 	namespace Model {
@@ -16,11 +17,13 @@ namespace Maditor {
 			UtilModel(const UtilModel &) = delete;
 
 			ProfilerModel *profiler();
+			StatsModel *stats();
 
 			void reset();
 
 		private:
 			Engine::Serialize::Serialized<ProfilerModel> mProfiler;
+			Engine::Serialize::Serialized<StatsModel> mStats;
 
 		};
 	}

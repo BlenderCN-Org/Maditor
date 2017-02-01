@@ -53,6 +53,7 @@ namespace View {
 
 		mLogs->setModel(model->logs());
 
+		show();
 
 		QSettings &settings = model->settings();
 		settings.beginGroup("Window");

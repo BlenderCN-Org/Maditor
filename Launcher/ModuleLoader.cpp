@@ -3,6 +3,7 @@
 
 #include "ModuleLoader.h"
 
+#include <iostream>
 
 namespace Maditor {
 	namespace Launcher {

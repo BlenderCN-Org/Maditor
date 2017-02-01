@@ -6,6 +6,8 @@
 
 #include "Addons\Addon.h"
 
+#include "Util\UtilMethods.h"
+
 namespace Maditor {
 	namespace Model {
 
@@ -13,8 +15,7 @@ namespace Maditor {
 
 		Maditor::Maditor() :
 			mSettings("MadMan Studios", "Maditor"),
-			mAddons(new Addons::AddonCollector(this)),
-			mLog("Maditor", Log::GuiLog)
+			mAddons(new Addons::AddonCollector(this))
 		{
 
 			mSettings.beginGroup("Editor");
@@ -25,6 +26,7 @@ namespace Maditor {
 			connect(this, &Maditor::projectOpened, mAddons, &Addons::AddonCollector::onProjectOpened);
 
 			mLogs.addLog(&mLog);
+			Engine::Util::UtilMethods::setup(&mLog);
 
 			if (mReloadProject && !mRecentProjects.isEmpty()) {
 				loadProject(mRecentProjects.front());
