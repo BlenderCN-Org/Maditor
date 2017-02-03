@@ -85,7 +85,6 @@ namespace Maditor {
 			mRunning = true;
 			mApplication.setup(mSettings);
 
-			Ogre::LogManager::getSingleton().getLog("Scripting.log")->addListener(mLog.ptr());
 			Ogre::LogManager::getSingleton().getLog("Madgine.log")->addListener(mLog.ptr());
 			Ogre::LogManager::getSingleton().getLog("Ogre.log")->addListener(mLog.ptr());
 

@@ -1,17 +1,18 @@
 #pragma once
 
 #include "Logs\log.h"
+#include "Util\UtilMethods.h"
 
 namespace Maditor {
 	namespace Model {
 
 
-		class MaditorLog : public Ogre::Log, Ogre::LogListener, public Log {
+		class MaditorLog : public Engine::Util::Log, public Log {
 		public:
 			MaditorLog();
 
-			// Inherited via LogListener
-			virtual void messageLogged(const Ogre::String & message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String & logName, bool & skipThisMessage) override;
+			// Inherited via Log
+			virtual void log(const std::string & msg, Engine::Util::MessageType lvl, const std::list<Engine::Util::TraceBack>& traceBack = {}) override;
 		};
 
 	}

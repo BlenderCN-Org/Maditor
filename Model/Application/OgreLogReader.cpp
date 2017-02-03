@@ -24,7 +24,7 @@ namespace Maditor {
 
 		}
 
-		void OgreLogReader::receiveImpl(const std::string & msg, Ogre::LogMessageLevel level, const std::string & logName, const std::string & fullTraceback, const std::string & fileName, int lineNr)
+		void OgreLogReader::receiveImpl(const std::string & msg, Engine::Util::MessageType level, const std::string & logName, const std::string & fullTraceback, const std::string & fileName, int lineNr)
 		{
 			auto it = mLogs.find(logName);
 
@@ -37,23 +37,8 @@ namespace Maditor {
 			else {
 				log = it->second;
 			}
-
-			MessageType type;
-			switch (level) {
-			case Ogre::LML_TRIVIAL:
-				type = LOG_TYPE;
-				break;
-			case Ogre::LML_NORMAL:
-				type = WARNING_TYPE;
-				break;
-			case Ogre::LML_CRITICAL:
-				type = ERROR_TYPE;
-				break;
-			default:
-				throw 0;
-			}
 			
-			log->log(msg, type, fullTraceback, fileName, lineNr);
+			log->log(msg, level, fullTraceback, fileName, lineNr);
 		}
 
 }

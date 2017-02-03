@@ -1,16 +1,12 @@
 #pragma once
 
-#include "OgreLog.h"
+#include "Util\UtilMethods.h"
 
 
 namespace Maditor {
 	namespace Model {
 
-		enum MessageType {
-			ERROR_TYPE,
-			WARNING_TYPE,
-			LOG_TYPE
-		};
+		
 
 			class MADITOR_MODEL_EXPORT LogTableModel : public QAbstractTableModel {
 				Q_OBJECT
@@ -19,7 +15,7 @@ namespace Maditor {
 				LogTableModel();
 
 			public slots:
-				void addMessage(const QString &msg, MessageType level, const QString &traceback, const std::string &fileName, int lineNr);
+				void addMessage(const QString &msg, Engine::Util::MessageType level, const QString &traceback, const std::string &fileName, int lineNr);
 				void doubleClicked(const QModelIndex &index);
 				void clear();
 
@@ -34,7 +30,7 @@ namespace Maditor {
 
 
 			private:
-				std::list<std::tuple<MessageType, QString, QString, std::string, int>> mItems;
+				std::list<std::tuple<Engine::Util::MessageType, QString, QString, std::string, int>> mItems;
 				
 			};
 

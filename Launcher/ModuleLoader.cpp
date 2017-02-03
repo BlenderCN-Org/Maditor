@@ -5,6 +5,10 @@
 
 #include <iostream>
 
+#include "Scene/Entity/entity.h"
+#include "Scene\scenecomponent.h"
+#include "Scene/ogrescenemanager.h"
+
 namespace Maditor {
 	namespace Launcher {
 
@@ -140,13 +144,11 @@ namespace Maditor {
 			mGameHandlers.clear();
 			mGuiHandlers.clear();
 			mGlobalAPIComponents.clear();
-			mSceneListeners.clear();
 			std::set<std::string> beforeEntityComponents = Engine::Scene::Entity::Entity::registeredComponentNames();
 			std::set<Engine::Scene::BaseSceneComponent*> beforeSceneComponents = Engine::Scene::SceneManager::getSingleton().getComponents();
 			std::set<Engine::UI::GameHandlerBase*> beforeGameHandlers = Engine::UI::UIManager::getSingleton().getGameHandlers();
 			std::set<Engine::UI::GuiHandlerBase*> beforeGuiHandlers = Engine::UI::UIManager::getSingleton().getGuiHandlers();
-			std::set<Engine::Scripting::BaseGlobalAPIComponent*> beforeAPIComponents = Engine::Scripting::GlobalScope::getSingleton().getGlobalAPIComponents();
-			std::set<Engine::Scene::SceneListener*> beforeSceneListeners = Engine::Scene::SceneManager::getSingleton().getListeners();
+			std::set<Engine::Scripting::BaseGlobalAPIComponent*> beforeAPIComponents = Engine::Scripting::GlobalScopeImpl::getSingleton().getGlobalAPIComponents();
 
 			UINT errorMode = GetErrorMode();
 			SetErrorMode(SEM_FAILCRITICALERRORS);
@@ -173,10 +175,8 @@ namespace Maditor {
 			std::set_difference(afterGameHandlers.begin(), afterGameHandlers.end(), beforeGameHandlers.begin(), beforeGameHandlers.end(), std::inserter(mGameHandlers, mGameHandlers.end()));
 			std::set<Engine::UI::GuiHandlerBase*> afterGuiHandlers = Engine::UI::UIManager::getSingleton().getGuiHandlers();
 			std::set_difference(afterGuiHandlers.begin(), afterGuiHandlers.end(), beforeGuiHandlers.begin(), beforeGuiHandlers.end(), std::inserter(mGuiHandlers, mGuiHandlers.end()));
-			std::set<Engine::Scripting::BaseGlobalAPIComponent*> afterAPIComponents = Engine::Scripting::GlobalScope::getSingleton().getGlobalAPIComponents();
+			std::set<Engine::Scripting::BaseGlobalAPIComponent*> afterAPIComponents = Engine::Scripting::GlobalScopeImpl::getSingleton().getGlobalAPIComponents();
 			std::set_difference(afterAPIComponents.begin(), afterAPIComponents.end(), beforeAPIComponents.begin(), beforeAPIComponents.end(), std::inserter(mGlobalAPIComponents, mGlobalAPIComponents.end()));
-			std::set<Engine::Scene::SceneListener*> afterSceneListeners = Engine::Scene::SceneManager::getSingleton().getListeners();
-			std::set_difference(afterSceneListeners.begin(), afterSceneListeners.end(), beforeSceneListeners.begin(), beforeSceneListeners.end(), std::inserter(mSceneListeners, mSceneListeners.end()));
 
 			if (callInit) {
 
@@ -195,10 +195,6 @@ namespace Maditor {
 
 				for (Engine::Scripting::BaseGlobalAPIComponent *api : mGlobalAPIComponents) {
 					api->init();
-				}
-
-				for (Engine::Scene::SceneListener *listener : mSceneListeners) {
-					listener->onSceneLoad();
 				}
 
 				for (const std::pair<const std::string, std::list<Engine::Scene::Entity::Entity*>> &ents : mStoredComponentEntities) {
@@ -228,7 +224,7 @@ namespace Maditor {
 			std::cout << "Unloading " << name() << std::endl;
 
 
-			const std::list<Engine::Scene::Entity::Entity*> &entities = Engine::Scene::SceneManager::getSingleton().entities();
+			const std::list<Engine::Scene::Entity::Entity*> &entities = Engine::Scene::OgreSceneManager::getSingleton().entities();
 
 
 			for (const std::string &comp : mEntityComponentNames) {
@@ -240,13 +236,6 @@ namespace Maditor {
 					}
 				}
 			}
-
-
-			for (Engine::Scene::SceneListener *listener : mSceneListeners) {
-				listener->beforeSceneClear();
-				listener->onSceneClear();
-			}
-
 
 			for (Engine::Scripting::BaseGlobalAPIComponent *api : mGlobalAPIComponents) {
 				api->finalize();

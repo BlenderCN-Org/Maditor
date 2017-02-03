@@ -44,7 +44,6 @@ private:
 		std::list<Engine::UI::GameHandlerBase*> mGameHandlers;
 		std::list<Engine::UI::GuiHandlerBase*> mGuiHandlers;
 		std::list<Engine::Scripting::BaseGlobalAPIComponent*> mGlobalAPIComponents;
-		std::list<Engine::Scene::SceneListener*> mSceneListeners;
 		std::map<std::string, std::list<Engine::Scene::Entity::Entity*>> mStoredComponentEntities;
 
 		ModuleLoader *mParent;

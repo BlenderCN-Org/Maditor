@@ -2,6 +2,8 @@
 
 #include "LogTableModel.h"
 
+#include "Util\UtilMethods.h"
+
 namespace Maditor {
 	namespace Model {
 
@@ -22,7 +24,7 @@ namespace Maditor {
 			const std::string &name() const;
 			LogTableModel *model();
 
-			void log(const std::string &msg, MessageType type = LOG_TYPE, const std::string &traceback = "", const std::string &fileName = "", int lineNr = -1);
+			void log(const std::string &msg, Engine::Util::MessageType type = Engine::Util::LOG_TYPE, const std::string &traceback = "", const std::string &fileName = "", int lineNr = -1);
 
 		signals:
 			void messageReceived(const QString &msg);
