@@ -186,8 +186,8 @@ namespace Maditor {
 			if (mPID) {
 				AppControl::stop();
 				AppControl::shutdown();
-				if (!mPingTimer.isActive())
-					pingImpl();
+				/*if (!mPingTimer.isActive())
+					pingImpl();*/
 			}
 		}
 

@@ -64,14 +64,14 @@ namespace View {
 		mUi->game->setCurrentIndex(2);
 		mUi->actionInit->setEnabled(false);
 		mUi->actionInit_No_Debug->setEnabled(false);
+		mUi->actionKill->setEnabled(true);
 	}
 
 	void ApplicationView::onApplicationInitialized()
 	{
 		mUi->game->setCurrentIndex(1);
 		mUi->actionStart->setEnabled(true);
-		mUi->actionShutdown->setEnabled(true);
-		mUi->actionKill->setEnabled(true);
+		mUi->actionShutdown->setEnabled(true);		
 	}
 
 	void ApplicationView::onApplicationStarted() {

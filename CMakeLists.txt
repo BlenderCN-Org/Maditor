@@ -4,7 +4,7 @@ cmake_policy(SET CMP0011 OLD)
 cmake_policy(SET CMP0020 OLD)
 cmake_policy(SET CMP0049 OLD)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/../Madgine-Build/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/../bin)
 
 Project(Maditor)
 
