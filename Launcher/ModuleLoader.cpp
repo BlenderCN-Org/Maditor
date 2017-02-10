@@ -151,7 +151,7 @@ namespace Maditor {
 			std::set<Engine::Scripting::BaseGlobalAPIComponent*> beforeAPIComponents = Engine::Scripting::GlobalScopeImpl::getSingleton().getGlobalAPIComponents();
 
 			UINT errorMode = GetErrorMode();
-			SetErrorMode(SEM_FAILCRITICALERRORS);
+			//SetErrorMode(SEM_FAILCRITICALERRORS);
 			try {
 				mHandle = LoadLibrary(runtimePath.c_str());
 			}
@@ -239,6 +239,10 @@ namespace Maditor {
 
 			for (Engine::Scripting::BaseGlobalAPIComponent *api : mGlobalAPIComponents) {
 				api->finalize();
+			}
+
+			for (Engine::Scene::BaseSceneComponent *c : mSceneComponents) {
+				c->finalize();
 			}
 
 			for (int i = -1; i < Engine::UI::UIManager::sMaxInitOrder; ++i)

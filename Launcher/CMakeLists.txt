@@ -22,4 +22,4 @@ add_executable(Maditor_Launcher ${sources})
 
 add_precompiled_header(Maditor_Launcher maditorlauncherlib.h FORCEINCLUDE SOURCE_CXX maditorlauncherlib.cpp)
 
-target_link_libraries(Maditor_Launcher Madgine Maditor_Shared)
+target_link_libraries(Maditor_Launcher OgreMadgine Maditor_Shared)

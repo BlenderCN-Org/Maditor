@@ -15,7 +15,6 @@ set(CMAKE_MODULE_PATH
 	"${CMAKE_CURRENT_LIST_DIR}/CMake"
 )
 
-MESSAGE(STATUS "${CMAKE_CURRENT_LIST_DIR}/CMake")
 
 include(PrecompiledHeader)
 include(Project)
@@ -27,6 +26,7 @@ find_package(QScintilla REQUIRED)
 find_package(Qt5Network REQUIRED)
 
 find_package(Madgine REQUIRED)
+find_package(Interfaces REQUIRED)
 
 add_subdirectory(Shared)
 
@@ -44,6 +44,7 @@ if (BUILD_TESTS)
 endif(BUILD_TESTS)
 
 include_directories(${MADGINE_INCLUDE_DIRS})
+include_directories(${INTERFACES_INCLUDE_DIRS})
 
 add_executable(Maditor main.cpp)
 add_dependencies(Maditor Maditor_Launcher ${TOOLS_LIBS})

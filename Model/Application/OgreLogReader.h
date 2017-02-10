@@ -13,7 +13,7 @@ namespace Maditor {
 			OgreLogReader(LogsModel *model);
 			
 		private:
-			void receiveImpl(const std::string &msg, Engine::Util::MessageType level, const std::string &logName, const std::string &fullTraceback, const std::string &fileName, int lineNr);
+			void receiveImpl(const std::string &msg, Util::MessageType level, const std::string &logName, const std::string &fullTraceback, const std::string &fileName, int lineNr);
 			
 
 		private:
@@ -22,7 +22,7 @@ namespace Maditor {
 
 			std::map<std::string, Log*> mLogs;
 			
-			Engine::Serialize::Action<Engine::Serialize::ActionPolicy::allowAll, const std::string &, Engine::Util::MessageType, const std::string &, const std::string &, const std::string &, int> receiveMessage;
+			Engine::Serialize::Action<Engine::Serialize::ActionPolicy::allowAll, const std::string &, Util::MessageType, const std::string &, const std::string &, const std::string &, int> receiveMessage;
 
 		};
 	}

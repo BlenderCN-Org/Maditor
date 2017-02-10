@@ -17,7 +17,7 @@ namespace Maditor {
 
 		}
 
-		void LogListener::receiveImpl(const std::string & msg, Engine::Util::MessageType level, const std::string & logName, const std::string & fullTraceback, const std::string & fileName, int lineNr)
+		void LogListener::receiveImpl(const std::string & msg, Util::MessageType level, const std::string & logName, const std::string & fullTraceback, const std::string & fileName, int lineNr)
 		{
 		}
 
@@ -28,8 +28,8 @@ namespace Maditor {
 			int lineNr = -2;
 
 			if (logName != "Ogre.log") {				
-				const Engine::Util::TraceBack *last = 0;
-				for (const Engine::Util::TraceBack &t : Engine::Util::UtilMethods::traceBack()) {
+				const Util::TraceBack *last = 0;
+				for (const Util::TraceBack &t : Util::UtilMethods::traceBack()) {
 					if (last)
 						fullTraceback << std::endl;
 					last = &t;
@@ -44,16 +44,16 @@ namespace Maditor {
 				}
 			}
 
-			Engine::Util::MessageType type;
+			Util::MessageType type;
 			switch (lml) {
 			case Ogre::LML_CRITICAL:
-				type = Engine::Util::ERROR_TYPE;
+				type = Util::ERROR_TYPE;
 				break;
 			case Ogre::LML_NORMAL:
-				type = Engine::Util::WARNING_TYPE;
+				type = Util::WARNING_TYPE;
 				break;
 			case Ogre::LML_TRIVIAL:
-				type = Engine::Util::LOG_TYPE;
+				type = Util::LOG_TYPE;
 				break;
 			default:
 				throw 0;

@@ -2,13 +2,15 @@
 
 #include "UtilModel.h"
 
+#include "TopLevelIds.h"
+
 namespace Maditor {
 	namespace Model {
 
 
 
 		UtilModel::UtilModel() :
-			TopLevelSerializableUnit(Engine::Serialize::UTIL),
+			TopLevelSerializableUnit(Engine::UTIL),
 			mProfiler(this),
 			mStats(this)
 		{

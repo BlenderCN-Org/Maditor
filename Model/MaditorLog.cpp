@@ -9,7 +9,7 @@ namespace Maditor {
 		{
 		}
 
-		void MaditorLog::log(const std::string & msg, Engine::Util::MessageType lvl, const std::list<Engine::Util::TraceBack>& traceBack)
+		void MaditorLog::log(const std::string & msg, Util::MessageType lvl, const std::list<Util::TraceBack>& traceBack)
 		{			
 			Model::Log::log(msg.c_str(), lvl);
 		}

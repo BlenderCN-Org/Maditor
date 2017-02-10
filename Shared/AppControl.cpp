@@ -11,7 +11,7 @@ namespace Maditor {
 	namespace Shared {
 
 AppControl::AppControl(bool isLauncher) :
-	TopLevelSerializableUnit(Engine::Serialize::MADITOR),
+	TopLevelSerializableUnit(Engine::Serialize::RESERVED_ID_COUNT-1),
 	mNetwork(new Engine::Network::NetworkManager),
 	shutdown(this, &AppControl::shutdownImpl),
 	start(this, &AppControl::startImpl),

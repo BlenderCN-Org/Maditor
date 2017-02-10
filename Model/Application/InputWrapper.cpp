@@ -29,10 +29,10 @@ namespace Maditor {
 			{
 				boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(mShared.mMutex, boost::interprocess::try_to_lock);
 				if (lock.owns()) {
-					mShared.mAccumulativeMouseMove.moveDelta.x += ev->x() - mShared.mAccumulativeMouseMove.position.x;
-					mShared.mAccumulativeMouseMove.moveDelta.y += ev->y() - mShared.mAccumulativeMouseMove.position.y;
-					mShared.mAccumulativeMouseMove.position.x = ev->x();
-					mShared.mAccumulativeMouseMove.position.y = ev->y();
+					mShared.mAccumulativeMouseMove.moveDelta[0] += ev->x() - mShared.mAccumulativeMouseMove.position[0];
+					mShared.mAccumulativeMouseMove.moveDelta[1] += ev->y() - mShared.mAccumulativeMouseMove.position[1];
+					mShared.mAccumulativeMouseMove.position[0] = ev->x();
+					mShared.mAccumulativeMouseMove.position[1] = ev->y();
 					mShared.mMove = true;
 				}
 			}

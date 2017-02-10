@@ -24,7 +24,7 @@ namespace Maditor {
 
 		}
 
-		void OgreLogReader::receiveImpl(const std::string & msg, Engine::Util::MessageType level, const std::string & logName, const std::string & fullTraceback, const std::string & fileName, int lineNr)
+		void OgreLogReader::receiveImpl(const std::string & msg, Util::MessageType level, const std::string & logName, const std::string & fullTraceback, const std::string & fileName, int lineNr)
 		{
 			auto it = mLogs.find(logName);
 

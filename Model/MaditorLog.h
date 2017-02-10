@@ -7,12 +7,12 @@ namespace Maditor {
 	namespace Model {
 
 
-		class MaditorLog : public Engine::Util::Log, public Log {
+		class MaditorLog : public Util::Log, public Log {
 		public:
 			MaditorLog();
 
 			// Inherited via Log
-			virtual void log(const std::string & msg, Engine::Util::MessageType lvl, const std::list<Engine::Util::TraceBack>& traceBack = {}) override;
+			virtual void log(const std::string & msg, Util::MessageType lvl, const std::list<Util::TraceBack>& traceBack = {}) override;
 		};
 
 	}

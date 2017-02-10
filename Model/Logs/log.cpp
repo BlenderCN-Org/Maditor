@@ -34,7 +34,7 @@ namespace Maditor {
 			return mModel.get();
 		}
 
-		void Log::log(const std::string & msg, Engine::Util::MessageType type, const std::string & traceback, const std::string & fileName, int lineNr)
+		void Log::log(const std::string & msg, Util::MessageType type, const std::string & traceback, const std::string & fileName, int lineNr)
 		{
 			if (mType == GuiLog) {
 				mModel->addMessage(QString::fromStdString(msg), type, QString::fromStdString(traceback), fileName, lineNr);
