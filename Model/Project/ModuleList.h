@@ -25,6 +25,8 @@ namespace Maditor {
 
 			Generators::CmakeProject *cmake();
 
+			Generators::ClassGenerator *getClass(const QString &fullName);
+
 			bool hasModule(const QString &name) const;
 
 			Module *getModule(const QString &name);
@@ -57,6 +59,7 @@ namespace Maditor {
 
 		signals:
 			void moduleAdded(Module *);
+			void classAdded(Generators::ClassGenerator*);
 
 
 		private:

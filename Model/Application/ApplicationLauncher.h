@@ -29,8 +29,6 @@ namespace Maditor {
 			ModuleLoader *moduleLoader();
 			UtilModel *util();
 
-			void addProcessListener(std::function<void(DWORD, const Shared::ApplicationInfo &)> f);
-
 			DWORD pid();
 
 		protected:
@@ -64,6 +62,8 @@ namespace Maditor {
 			void applicationStopped();
 			void applicationShutdown();
 
+			void processStarted(DWORD, const Shared::ApplicationInfo &);
+
 		private:
 			std::unique_ptr<InputWrapper> mInput;
 			OgreWindow *mWindow;
@@ -81,7 +81,6 @@ namespace Maditor {
 
 			QTimer mPingTimer;
 
-			std::list<std::function<void(DWORD, const Shared::ApplicationInfo &)>> mProcessListener;
 			
 
 

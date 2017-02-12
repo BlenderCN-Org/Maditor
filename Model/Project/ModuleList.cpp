@@ -60,6 +60,8 @@ namespace Maditor {
 			mModules.emplace_back(module);
 			//endInsertRows();
 
+			connect(module, &Module::classAdded, this, &ModuleList::classAdded);
+
 			emit moduleAdded(module);
 		}
 
@@ -115,6 +117,14 @@ namespace Maditor {
 		Generators::CmakeProject * ModuleList::cmake()
 		{
 			return &mCmake;
+		}
+
+		Generators::ClassGenerator * ModuleList::getClass(const QString & fullName)
+		{
+			QStringList l = fullName.split(":");
+			if (l.size() != 2)
+				throw 0;
+			return getModule(l[0])->getClass(l[1]);
 		}
 
 		bool ModuleList::hasModule(const QString & name) const

@@ -25,24 +25,21 @@ namespace Maditor {
 		{
 			std::stringstream fullTraceback;
 			std::string fileName;
-			int lineNr = -2;
+		
+			int lineNr = -1;
 
-			if (logName != "Ogre.log") {				
-				const Util::TraceBack *last = 0;
-				for (const Util::TraceBack &t : Util::UtilMethods::traceBack()) {
-					if (last)
-						fullTraceback << std::endl;
-					last = &t;
-					fullTraceback << /*relative*/t.mFile << "(" << t.mLineNr << "): " << t.mFunction;
-				}
-				if (last) {
-					fileName = last->mFile;
-					lineNr = last->mLineNr;
-				}
-				else {
-					lineNr = -1;
-				}
+			const Util::TraceBack *last = 0;
+			for (const Util::TraceBack &t : Util::UtilMethods::traceBack()) {
+				if (last)
+					fullTraceback << std::endl;
+				last = &t;
+				fullTraceback << /*relative*/t.mFile << "(" << t.mLineNr << "): " << t.mFunction;
 			}
+			if (last) {
+				fileName = last->mFile;
+				lineNr = last->mLineNr;
+			}
+			
 
 			Util::MessageType type;
 			switch (lml) {

@@ -13,6 +13,7 @@ namespace Maditor {
 
 			// Inherited via Log
 			virtual void log(const std::string & msg, Util::MessageType lvl, const std::list<Util::TraceBack>& traceBack = {}) override;
+			virtual std::string getName() override;
 		};
 
 	}

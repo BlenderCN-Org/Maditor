@@ -7,7 +7,7 @@ namespace Maditor {
 
 
 
-		enum ApplicationCmd {
+		/*enum ApplicationCmd {
 			APP_CREATED,
 			APP_INITIALIZED,
 			APP_STARTED,
@@ -20,7 +20,7 @@ namespace Maditor {
 			SHUTDOWN,
 
 			RESIZE_WINDOW
-		};
+		};*/
 
 		struct ApplicationInfo {
 			ApplicationInfo(boost::interprocess::managed_shared_memory::segment_manager *mgr) :
@@ -35,9 +35,9 @@ namespace Maditor {
 			bool mDebugged;
 		};
 
-		struct ApplicationMsg {
+		/*struct ApplicationMsg {
 			ApplicationCmd mCmd;
-		};
+		};*/
 
 	}
 }

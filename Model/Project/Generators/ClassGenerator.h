@@ -40,6 +40,8 @@ namespace Maditor {
 
 				void deleteFiles();
 
+				QString fullName() const;
+
 			signals:
 				void deleteClassRequest();
 

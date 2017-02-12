@@ -46,14 +46,15 @@ namespace Maditor {
 		{
 			return mName;
 		}
-		/*QString ProjectElement::type()
-		{
-			return mRootElement.tagName();
-		}*/
 
 		QModelIndex ProjectElement::ownIndex()
 		{
 			return parentItem() == 0 ? QModelIndex() : project()->index(parentIndex(), 0, parentItem()->ownIndex());
+		}
+
+		QString ProjectElement::type() const
+		{
+			return mRootElement.attribute("type");
 		}
 
 		QDomDocument ProjectElement::document()

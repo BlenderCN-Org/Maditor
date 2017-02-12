@@ -6,12 +6,6 @@
 #include "ModuleList.h"
 #include "DialogManager.h"
 
-#include "Generators\GuiHandlerGenerator.h"
-#include "Generators\GameHandlerGenerator.h"
-#include "Generators\GlobalAPIGenerator.h"
-#include "Generators\SceneComponentGenerator.h"
-#include "Generators\OtherClassGenerator.h"
-#include "Generators\EntityComponentGenerator.h"
 
 
 namespace Maditor {
@@ -70,51 +64,9 @@ namespace Maditor {
 		}
 		void Module::newClass()
 		{
-			Generators::ClassGeneratorFactory::ClassType type;
-			QString name;
-			if (DialogManager::showNewClassDialogStatic(this, name, type)) {
-				switch (type) {
-				case Generators::ClassGeneratorFactory::GUI_HANDLER:
-				{
-					QString window;
-					int type;
-					bool hasLayout;
-					if (DialogManager::showNewGuiHandlerDialogStatic(this, name, window, type, hasLayout)) {
-						addClass(new Generators::GuiHandlerGenerator(this, name, window, type, hasLayout));
-					}
-				}
-					break;
-				case Generators::ClassGeneratorFactory::GAME_HANDLER:
-					if (DialogManager::showNewGameHandlerDialogStatic(this, name)) {
-						addClass(new Generators::GameHandlerGenerator(this, name));
-					}
-					break;
-				case Generators::ClassGeneratorFactory::ENTITY_COMPONENT:
-				{
-					QString componentName;
-					if (DialogManager::showNewEntityComponentDialogStatic(this, name, componentName)) {
-						addClass(new Generators::EntityComponentGenerator(this, name, componentName));
-					}
-				}
-					break;
-				case Generators::ClassGeneratorFactory::SCENE_COMPONENT:
-					if (DialogManager::showNewSceneComponentDialogStatic(this, name)) {
-						addClass(new Generators::SceneComponentGenerator(this, name));
-					}
-					break;
-				case Generators::ClassGeneratorFactory::GLOBAL_API:
-					if (DialogManager::showNewGlobalAPIDialogStatic(this, name)) {
-						addClass(new Generators::GlobalAPIGenerator(this, name));
-					}
-					break;
-				case Generators::ClassGeneratorFactory::OTHER_CLASS:
-					if (DialogManager::showNewOtherClassDialogStatic(this, name)) {
-						addClass(new Generators::OtherClassGenerator(this, name));
-					}
-					break;
-				default:
-					throw 0;
-				}
+			Generators::ClassGenerator *gen = Generators::ClassGeneratorFactory::createClass(this);
+			if (gen) {
+				addClass(gen);
 			}
 		}
 		void Module::addClass(Generators::ClassGenerator * generator)
@@ -251,6 +203,14 @@ namespace Maditor {
 		Generators::ClassGenerator *Module::child(int i) {
 			auto it = mClasses.begin();
 			std::advance(it, i);
+			return it->get();
+		}
+
+		Generators::ClassGenerator * Module::getClass(const QString & name)
+		{
+			auto it = std::find_if(mClasses.begin(), mClasses.end(), [&](const std::unique_ptr<Generators::ClassGenerator> &c) {return c->name() == name; });
+			if (it == mClasses.end())
+				throw 0;
 			return it->get();
 		}
 

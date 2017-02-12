@@ -32,6 +32,7 @@ namespace Maditor {
 				virtual bool showNewSceneComponentDialog(Model::Module *module, const QString &name) override;
 				virtual bool showNewGameHandlerDialog(Model::Module *module, const QString &name) override;
 				virtual bool showNewOtherClassDialog(Model::Module *module, const QString &name) override;
+				virtual bool showNewServerClassDialog(Model::Module *module, const QString &name) override;
 
 				virtual void showModulePropertiesDialog(Model::Module *module) override;
 

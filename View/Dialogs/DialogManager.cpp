@@ -147,6 +147,11 @@ namespace Maditor {
 				return true;
 			}
 
+			bool DialogManager::showNewServerClassDialog(Model::Module * module, const QString & name)
+			{
+				return true;
+			}
+
 			void DialogManager::showModulePropertiesDialog(Model::Module * module)
 			{
 				ModulePropertiesDialog dialog(module);

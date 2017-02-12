@@ -44,6 +44,7 @@ namespace Maditor {
 				virtual bool showNewSceneComponentDialog(Model::Module *module, const QString &name) = 0;
 				virtual bool showNewGameHandlerDialog(Model::Module *module, const QString &name) = 0;
 				virtual bool showNewOtherClassDialog(Model::Module *module, const QString &name) = 0;
+				virtual bool showNewServerClassDialog(Model::Module *module, const QString &name) = 0;
 				static bool showNewGuiHandlerDialogStatic(Model::Module *module, const QString &name, QString &window, int &type, bool &hasLayout) {
 					return sSingleton->showNewGuiHandlerDialog(module, name, window, type, hasLayout);
 				}
@@ -61,6 +62,9 @@ namespace Maditor {
 				}
 				static bool showNewOtherClassDialogStatic(Model::Module *module, const QString &name) {
 					return sSingleton->showNewOtherClassDialog(module, name);
+				}
+				static bool showNewServerClassDialogStatic(Model::Module *module, const QString &name) {
+					return sSingleton->showNewServerClassDialog(module, name);
 				}
 
 				virtual void showModulePropertiesDialog(Model::Module *module) = 0;

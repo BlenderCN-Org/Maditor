@@ -16,6 +16,7 @@
 #include "VSLinkView.h"
 
 #include "Shared\ApplicationInfo.h"
+#include "Shared\ServerInfo.h"
 
 
 Maditor::Addons::Addon *createAddon(Maditor::Model::Maditor *editor) {
@@ -90,6 +91,13 @@ void VSLink::onProcessStarted(DWORD pid, const Maditor::Shared::ApplicationInfo 
 	}
 }
 
+void VSLink::onServerProcessStarted(DWORD pid, const Maditor::Shared::ServerInfo & info)
+{
+	if (mAutoAttachDebugger && info.mDebugged) {
+		sendPID(pid);
+	}
+}
+
 
 void VSLink::receiveMessage(const VSMsg & msg)
 {
@@ -121,7 +129,13 @@ QString VSLink::resourceGroupName()
 
 void VSLink::onProjectOpened(Maditor::Model::Project * project)
 {
-	project->application()->addProcessListener([this](DWORD pid, const Maditor::Shared::ApplicationInfo &info) {onProcessStarted(pid, info); });
+	connect(project->application(), &Maditor::Model::ApplicationLauncher::processStarted, this, &VSLink::onProcessStarted);
+	connect(project, &Maditor::Model::Project::serverCreated, this, &VSLink::onServerCreated);
+}
+
+void VSLink::onServerCreated(Maditor::Model::ServerLauncher * server)
+{
+	connect(server, &Maditor::Model::ServerLauncher::processStarted, this, &VSLink::onServerProcessStarted);
 }
 
 bool VSLink::autoAttachDebugger()

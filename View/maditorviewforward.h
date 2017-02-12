@@ -6,6 +6,8 @@ namespace Maditor {
 		class ApplicationView;
 		class LogsView;
 		class ProjectView;
+		class ServerView;
+		class ServerWindow;
 		namespace Ui {
 			class MainWindow;
 		}

@@ -6,6 +6,8 @@
 
 #include "Model\TreeModel.h"
 
+#include "Model\Server\ServerLauncher.h"
+
 
 namespace Maditor {
 	namespace Model {
@@ -47,18 +49,27 @@ namespace Maditor {
 
 			ApplicationLauncher *application();
 
+			void startDefaultServer();
+			void startServer(Generators::ServerClassGenerator *generator = nullptr);
+
+		private:
+			ServerLauncher *getServer(Generators::ServerClassGenerator *generator);
+
+		signals:
+			void serverCreated(ServerLauncher *);
+
 		public slots:
 			void deleteClass(Generators::ClassGenerator *generator, bool deleteFiles);
 
 			void mediaDoubleClicked(const QModelIndex &index);
 
+		private slots:
+		    void onClassAdded(Generators::ClassGenerator *generator);
+
 		private:
 			void init();
 
 			void copyTemplate(QMessageBox::StandardButton *answer);
-
-			
-
 		
 		private:
 			QDomDocument mDocument;
@@ -75,6 +86,11 @@ namespace Maditor {
 
 			std::unique_ptr<ApplicationLauncher> mApplication;
 
+			Generators::ServerClassGenerator *mCurrentServer;
+
+			std::map<Generators::ClassGenerator*, ServerLauncher> mServers;
+
+			LogsModel *mLogs;
 
 		};
 	}

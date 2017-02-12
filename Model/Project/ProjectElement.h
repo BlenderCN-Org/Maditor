@@ -25,6 +25,8 @@ namespace Maditor {
 
 			virtual QString path() const = 0;
 
+			QString type() const;
+
 		protected:
 			QDomDocument document();
 			QDomElement element();

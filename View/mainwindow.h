@@ -47,6 +47,7 @@ private:
 	ApplicationView *mApplication;
 	LogsView *mLogs;
 	ProjectView *mProject;
+	ServerView *mServer;
 
 };
 

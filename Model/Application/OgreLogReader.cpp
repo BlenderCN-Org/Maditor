@@ -17,9 +17,10 @@
 namespace Maditor {
 	namespace Model {
 
-		OgreLogReader::OgreLogReader(LogsModel * model) :
+		OgreLogReader::OgreLogReader(LogsModel * model, const std::list<std::string> &textLogs) :
 			mModel(model),
-			receiveMessage(this, &OgreLogReader::receiveImpl)
+			receiveMessage(this, &OgreLogReader::receiveImpl),
+			mTextLogs(textLogs)
 		{
 
 		}
@@ -30,7 +31,7 @@ namespace Maditor {
 
 			Log *log;
 			if (it == mLogs.end()) {
-				log = new Log(logName, lineNr == -2 ? Log::TextLog : Log::GuiLog);
+				log = new Log(logName, std::find(mTextLogs.begin(), mTextLogs.end(), logName) != mTextLogs.end() ? Log::TextLog : Log::GuiLog);
 				mModel->addLog(log);
 				mLogs[logName] = log;
 			}

@@ -35,13 +35,15 @@ private:
 	}
 
 protected:
-	void createToolbar(QMainWindow *window, const QString &name, const QList<QAction *> &actions) {
+	QToolBar *createToolbar(QMainWindow *window, const QString &name, const QList<QAction *> &actions) {
 		QToolBar *toolbar = new QToolBar;
 		toolbar->setObjectName(name);
 
 		toolbar->addActions(actions);
 
 		window->addToolBar(toolbar);
+
+		return toolbar;
 	}
 
 	void createSettingsTab(Dialogs::DialogManager *dialogs, Dialogs::SettingsTab *tab, const QString &name) {

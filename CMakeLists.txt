@@ -32,6 +32,8 @@ add_subdirectory(Shared)
 
 add_subdirectory(Launcher)
 
+add_subdirectory(ServerLauncher)
+
 add_subdirectory(Model)
 
 add_subdirectory(Tools)
@@ -47,5 +49,5 @@ include_directories(${MADGINE_INCLUDE_DIRS})
 include_directories(${INTERFACES_INCLUDE_DIRS})
 
 add_executable(Maditor main.cpp)
-add_dependencies(Maditor Maditor_Launcher ${TOOLS_LIBS})
+add_dependencies(Maditor Maditor_Launcher Maditor_Server_Launcher ${TOOLS_LIBS})
 target_link_libraries(Maditor Maditor_Model Maditor_View)

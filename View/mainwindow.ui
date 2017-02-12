@@ -460,6 +460,7 @@
     <string>Kill</string>
    </property>
   </action>
+  
  </widget>
  <customwidgets>
   <customwidget>

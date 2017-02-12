@@ -8,6 +8,7 @@ namespace Maditor {
 		class Maditor;
 		class Project;
 		class ApplicationLauncher;
+		class ServerLauncher;
 		class OgreWindow;
 
 		class Module;
@@ -33,6 +34,7 @@ namespace Maditor {
 		namespace Generators {
 			class CmakeSubProject;
 			class ClassGenerator;
+			class ServerClassGenerator;
 		}
 
 	}

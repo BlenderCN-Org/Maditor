@@ -142,6 +142,11 @@ namespace Maditor {
 				}
 			}
 
+			QString ClassGenerator::fullName() const
+			{
+				return mModule->name() + ":" + mName;
+			}
+
 		}
 	}
 }

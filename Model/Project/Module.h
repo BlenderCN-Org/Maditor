@@ -39,6 +39,7 @@ namespace Maditor {
 			virtual int childCount() const override;
 
 			virtual Generators::ClassGenerator * child(int i) override;
+			Generators::ClassGenerator *getClass(const QString &name);
 
 			virtual Project *project() override;
 

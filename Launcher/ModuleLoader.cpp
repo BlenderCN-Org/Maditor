@@ -145,7 +145,11 @@ namespace Maditor {
 			mGuiHandlers.clear();
 			mGlobalAPIComponents.clear();
 			std::set<std::string> beforeEntityComponents = Engine::Scene::Entity::Entity::registeredComponentNames();
-			std::set<Engine::Scene::BaseSceneComponent*> beforeSceneComponents = Engine::Scene::SceneManager::getSingleton().getComponents();
+
+			std::list<Engine::Scene::BaseSceneComponent*> beforeSceneComponentsList;
+			for (const std::unique_ptr<Engine::Scene::BaseSceneComponent> &comp : Engine::UniqueComponentCollector<Engine::Scene::BaseSceneComponent>::getSingleton())
+				beforeSceneComponentsList.push_back(comp.get());
+			std::set<Engine::Scene::BaseSceneComponent*> beforeSceneComponents(beforeSceneComponentsList.begin(), beforeSceneComponentsList.end());
 			std::set<Engine::UI::GameHandlerBase*> beforeGameHandlers = Engine::UI::UIManager::getSingleton().getGameHandlers();
 			std::set<Engine::UI::GuiHandlerBase*> beforeGuiHandlers = Engine::UI::UIManager::getSingleton().getGuiHandlers();
 			std::set<Engine::Scripting::BaseGlobalAPIComponent*> beforeAPIComponents = Engine::Scripting::GlobalScopeImpl::getSingleton().getGlobalAPIComponents();
@@ -169,7 +173,10 @@ namespace Maditor {
 
 			std::set<std::string> afterEntityComponents = Engine::Scene::Entity::Entity::registeredComponentNames();
 			std::set_difference(afterEntityComponents.begin(), afterEntityComponents.end(), beforeEntityComponents.begin(), beforeEntityComponents.end(), std::inserter(mEntityComponentNames, mEntityComponentNames.end()));
-			std::set<Engine::Scene::BaseSceneComponent*> afterSceneComponents = Engine::Scene::SceneManager::getSingleton().getComponents();
+			std::list<Engine::Scene::BaseSceneComponent*> afterSceneComponentsList;
+			for (const std::unique_ptr<Engine::Scene::BaseSceneComponent> &comp : Engine::UniqueComponentCollector<Engine::Scene::BaseSceneComponent>::getSingleton())
+				afterSceneComponentsList.push_back(comp.get());
+			std::set<Engine::Scene::BaseSceneComponent*> afterSceneComponents(afterSceneComponentsList.begin(), afterSceneComponentsList.end());
 			std::set_difference(afterSceneComponents.begin(), afterSceneComponents.end(), beforeSceneComponents.begin(), beforeSceneComponents.end(), std::inserter(mSceneComponents, mSceneComponents.end()));
 			std::set<Engine::UI::GameHandlerBase*> afterGameHandlers = Engine::UI::UIManager::getSingleton().getGameHandlers();
 			std::set_difference(afterGameHandlers.begin(), afterGameHandlers.end(), beforeGameHandlers.begin(), beforeGameHandlers.end(), std::inserter(mGameHandlers, mGameHandlers.end()));

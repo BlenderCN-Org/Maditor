@@ -20,7 +20,7 @@ namespace Maditor {
 			mPath(path),
 			mLoader(this, path + "debug/bin/", modules),
 			mPID(0),
-			mLog(this, logs),
+			mLog(this, logs, std::list<std::string>{ "Ogre.log" }),
 			mWaitingForLoader(false)
 		{
 			network()->addTopLevelItem(&mUtil);
@@ -82,9 +82,7 @@ namespace Maditor {
 			mHandle = pi.hProcess;
 			CloseHandle(pi.hThread);
 
-			for (const auto& f : mProcessListener) {
-				f(mPID, appInfo);
-			}
+			emit processStarted(mPID, appInfo);
 			mUtil.stats()->setProcess(mHandle);
 
 			Engine::Network::NetworkManager *net = network();
@@ -143,11 +141,6 @@ namespace Maditor {
 		UtilModel * ApplicationLauncher::util()
 		{
 			return &mUtil;
-		}
-
-		void ApplicationLauncher::addProcessListener(std::function<void(DWORD, const Shared::ApplicationInfo &)> f)
-		{
-			mProcessListener.push_back(f);
 		}
 
 		DWORD ApplicationLauncher::pid()

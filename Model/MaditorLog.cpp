@@ -14,6 +14,11 @@ namespace Maditor {
 			Model::Log::log(msg.c_str(), lvl);
 		}
 
+		std::string MaditorLog::getName()
+		{
+			return "Maditor.log";
+		}
+
 	}
 }
 

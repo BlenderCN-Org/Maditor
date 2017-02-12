@@ -41,6 +41,7 @@ namespace View {
 			ui->actionStop
 		});
 
+
 	}
 
 	void ApplicationView::setModel(Model::ApplicationLauncher * app)
