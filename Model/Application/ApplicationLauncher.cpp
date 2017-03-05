@@ -88,11 +88,11 @@ namespace Maditor {
 			Engine::Network::NetworkManager *net = network();
 			
 			if (!net->connect("127.0.0.1", 1000, 2000)) {
-				shutdown();
+				kill();
 				return;
 			}
 
-			mLoader->setup();
+			mLoader->setup(false);
 
 			mWaitingForLoader = true;	
 
@@ -105,15 +105,15 @@ namespace Maditor {
 		}
 		void ApplicationLauncher::start()
 		{
-			AppControl::start();
+			AppControl::start({});
 		}
 		void ApplicationLauncher::pause()
 		{
-			AppControl::pause();
+			AppControl::pause({});
 		}
 		void ApplicationLauncher::stop()
 		{
-			AppControl::stop();
+			AppControl::stop({});
 		}
 
 		void ApplicationLauncher::startImpl()
@@ -177,8 +177,8 @@ namespace Maditor {
 		void ApplicationLauncher::shutdown()
 		{
 			if (mPID) {
-				AppControl::stop();
-				AppControl::shutdown();
+				AppControl::stop({});
+				AppControl::shutdown({});
 				/*if (!mPingTimer.isActive())
 					pingImpl();*/
 			}
@@ -215,11 +215,11 @@ namespace Maditor {
 		void ApplicationLauncher::pingImpl()
 		{
 			mPingTimer.start(10000);
-			ping();
+			ping({});
 		}
 
 		void ApplicationLauncher::resizeWindow() {
-			AppControl::resizeWindow();
+			AppControl::resizeWindow({});
 		}
 
 	}

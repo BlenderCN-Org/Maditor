@@ -67,9 +67,9 @@ namespace Maditor {
 					return sSingleton->showNewServerClassDialog(module, name);
 				}
 
-				virtual void showModulePropertiesDialog(Model::Module *module) = 0;
-				static void showModulePropertiesDialogStatic(Model::Module *module) {
-					sSingleton->showModulePropertiesDialog(module);
+				virtual void showModulePropertiesDialog(Model::ModuleList *list) = 0;
+				static void showModulePropertiesDialogStatic(Model::ModuleList *list) {
+					sSingleton->showModulePropertiesDialog(list);
 				}
 
 				virtual void showSettingsDialog() = 0;

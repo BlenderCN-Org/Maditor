@@ -66,6 +66,12 @@ namespace Maditor {
 				beginInsertRows(parent, row, row);
 				endInsertRows();
 				break;
+			case BEFORE | SET_FULL_STATE:
+				beginResetModel();
+				break;
+			case AFTER | SET_FULL_STATE:
+				endResetModel();
+				break;
 			default:
 				throw 0;
 			}

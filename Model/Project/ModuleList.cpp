@@ -50,7 +50,8 @@ namespace Maditor {
 			setContextMenuItems({
 				{ "New Module", [=]() {newModule(); } },
 				{ "Rebuild Structure", [=]() {generate(); } },
-				{ "Draw Dependencies", [=]() {drawDependenciesGraph(); } }
+				{ "Draw Dependencies", [=]() {drawDependenciesGraph(); } },
+				{ "Properties", [this]() {showPropertiesDialog(); } }
 			});
 		}
 
@@ -86,6 +87,7 @@ namespace Maditor {
 
 			dot.generate();
 		}
+
 
 		QString ModuleList::path() const
 		{
@@ -189,6 +191,12 @@ namespace Maditor {
 		{
 			return mParent;
 		}
+
+		void ModuleList::showPropertiesDialog()
+		{
+			DialogManager::showModulePropertiesDialogStatic(this);
+		}
+
 
 	}
 }

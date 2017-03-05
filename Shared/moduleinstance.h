@@ -10,6 +10,13 @@ namespace Maditor {
 
 		class MADITOR_SHARED_EXPORT ModuleInstance : public Engine::Serialize::SerializableUnit {
 
+
+		private:
+			virtual void reloadImpl();
+			void reloadImpl2() {
+				reloadImpl();
+			}
+
 		public:
 			ModuleInstance(const std::string &name);
 
@@ -26,15 +33,13 @@ namespace Maditor {
 
 			virtual void writeCreationData(Engine::Serialize::SerializeOutStream &out) const override;
 
-			Engine::Serialize::Action<Engine::Serialize::ActionPolicy::standard> reload;
+			Engine::Serialize::Action<decltype(&ModuleInstance::reloadImpl2), &ModuleInstance::reloadImpl2, Engine::Serialize::ActionPolicy::request> reload;
 
 			const Engine::Serialize::ObservableList<ModuleInstance*, Engine::Serialize::ContainerPolicy::allowAll> &dependencies();
 
 		protected:
 			Engine::Serialize::Observed<bool> mLoaded;
 
-		private:
-			virtual void reloadImpl();
 
 		private:
 			bool mExists;

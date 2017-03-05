@@ -20,7 +20,7 @@ public:
 	const std::string &binaryDir();
 	const std::string &runtimeDir();
 
-	Engine::Server::BaseServer *createServer(const std::string &fullName);
+	Engine::Server::BaseServer *createServer(const std::string &fullName, const std::string &mediaDir);
 
 private:
 
@@ -64,7 +64,7 @@ private:
 	bool mReceivingModules;
 
 	Engine::Serialize::ObservableList<ModuleLauncherInstance, Engine::Serialize::ContainerPolicy::allowAll, ModuleLoader *, std::string> mInstances;
-	Engine::Serialize::Action<Engine::Serialize::ActionPolicy::standard> setupDone;
+	Engine::Serialize::Action<decltype(&ModuleLoader::setupDoneImpl), &ModuleLoader::setupDoneImpl, Engine::Serialize::ActionPolicy::request> setupDone;
 
 };
 

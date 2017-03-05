@@ -15,13 +15,20 @@ class ServerWindow : public QWidget
     Q_OBJECT
 
 public:
-    explicit ServerWindow(Model::ServerLauncher *model, QWidget *parent = 0);
+	explicit ServerWindow(Model::ServerLauncher *model, QTabWidget *tabWidget);
     ~ServerWindow();
+
+private slots:
+	void onServerStarting();
+	void onServerStarted();
+	void onServerShutdown();
 
 private:
     Ui::ServerWindow *ui;
 
 	Model::ServerLauncher *mModel;
+
+	QTabWidget *mTabWidget;
 };
 
 

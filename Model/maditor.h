@@ -55,11 +55,12 @@ namespace Maditor {
 
 			Addons::AddonCollector *mAddons;
 
-			std::unique_ptr<Project> mProject;
-
+			
 			MaditorLog mLog;
 			LogsModel mLogs;
 			
+			std::unique_ptr<Project> mProject;
+
 			DialogManager *mDialogManager;
 
 		};

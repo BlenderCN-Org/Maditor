@@ -18,12 +18,11 @@ namespace Maditor {
 			mParent(0),
 			mChildren(this, &ProfilerItem::createNode),
 			mDuration(this, 0),
-			mFullDuration(0.0f)
+			mFullDuration(0.0f),
+			mUpdateSlot(this)
 		{
 			setContainer(mChildren);
-			mDuration.setCallback([=](const size_t &duration) { 
-				update(duration);
-			});
+			mDuration.setCallback<decltype(&ProfilerItem::update), &ProfilerItem::update, ProfilerItem, size_t>(mUpdateSlot);
 		}
 
 		ProfilerItem::ProfilerItem(ProfilerItem * parent, const std::string & name) :
@@ -32,7 +31,8 @@ namespace Maditor {
 			mParent(parent),
 			mChildren(this, &ProfilerItem::createNode),
 			mDuration(this, 0),
-			mFullDuration(0.0f)
+			mFullDuration(0.0f),
+			mUpdateSlot(this)
 		{
 			setContainer(mChildren);
 		}

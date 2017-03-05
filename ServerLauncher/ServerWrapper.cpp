@@ -64,12 +64,14 @@ namespace Maditor {
 				return -1;
 			}
 
-			Engine::Server::BaseServer *server = mLoader->createServer(serverInfo.mServerClass.c_str());
+			Engine::Server::BaseServer *server = mLoader->createServer(serverInfo.mServerClass.c_str(), serverInfo.mMediaDir.c_str());
 
 			if (!server)
 				return -1;
 
-			int result = server->start();
+			server->addFrameCallback([this](float timeSinceLastFrame) {return update(timeSinceLastFrame); });
+
+			int result = server->run();
 
 				/*net->addTopLevelItem(&Engine::Util::Util::getSingleton());
 
@@ -94,14 +96,14 @@ namespace Maditor {
 			mRunning = false;
 		}
 
-		/*bool ServerWrapper::frameRenderingQueued(const Ogre::FrameEvent & evt)
+		bool ServerWrapper::update(float timeSinceLastFrame)
 		{
 			network()->receiveMessages();
 			if (network()->clientCount() != 1) {
 				shutdownImpl();
 			}
 			return mRunning;
-		}*/
+		}
 
 
 	}

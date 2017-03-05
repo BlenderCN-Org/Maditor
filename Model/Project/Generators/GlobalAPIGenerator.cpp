@@ -19,7 +19,14 @@ namespace Maditor {
 			}
 			QString GlobalAPIGenerator::templateFileName(int index)
 			{
-				return QString();
+				switch (index) {
+				case 0:
+					return "GlobalAPI.cpp";
+				case 1:
+					return "GlobalAPI.h";
+				default:
+					throw 0;
+				}
 			}
 		}
 	}

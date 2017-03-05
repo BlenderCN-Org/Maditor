@@ -66,7 +66,7 @@ namespace View {
 
 	void ServerView::createServerWindow(Model::ServerLauncher * launcher)
 	{
-		ServerWindow *win = new ServerWindow(launcher);
+		ServerWindow *win = new ServerWindow(launcher, mUi->tabWidget);
 		mServerWindows[launcher] = win;
 		mUi->tabWidget->addTab(win, launcher->name());
 	}

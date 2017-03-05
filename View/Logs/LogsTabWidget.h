@@ -13,6 +13,8 @@ namespace Maditor {
 
 			void setModel(const Model::LogsModel *watcher);
 
+			void clear();
+
 		public slots:
 			void addLog(Model::Log *log);
 			void removeLog(Model::Log *log);

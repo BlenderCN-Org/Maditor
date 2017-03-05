@@ -12,9 +12,9 @@ namespace Maditor {
 
 ServerControl::ServerControl(bool isLauncher) :
 	TopLevelSerializableUnit(Engine::Serialize::RESERVED_ID_COUNT-1),
-	mNetwork(new Engine::Network::NetworkManager),
-	shutdown(this, &ServerControl::shutdownImpl),
-	ping(this, &ServerControl::pingImpl)
+	shutdown(this),
+	ping(this),
+	mNetwork(new Engine::Network::NetworkManager)
 {
 	if (isLauncher) {
 		mMemory = new ServerSharedMemory(ServerSharedMemory::create);

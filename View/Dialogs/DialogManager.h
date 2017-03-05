@@ -34,7 +34,7 @@ namespace Maditor {
 				virtual bool showNewOtherClassDialog(Model::Module *module, const QString &name) override;
 				virtual bool showNewServerClassDialog(Model::Module *module, const QString &name) override;
 
-				virtual void showModulePropertiesDialog(Model::Module *module) override;
+				virtual void showModulePropertiesDialog(Model::ModuleList *list) override;
 
 				virtual void showSettingsDialog() override;
 

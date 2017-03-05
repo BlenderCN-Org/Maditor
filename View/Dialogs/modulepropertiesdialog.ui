@@ -22,13 +22,59 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="dependenciesTab">
+     <widget class="QWidget" name="modulesTab">
       <attribute name="title">
-       <string>Dependencies</string>
+       <string>Modules</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
-        <widget class="QListWidget" name="dependenciesList"/>
+        <widget class="QTabWidget" name="modulesWidget">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="propertiesTab">
+          <attribute name="title">
+           <string>Properties</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout_3">
+           <item row="0" column="0">
+            <widget class="QTableWidget" name="propertiesWidget">
+             <property name="rowCount">
+              <number>0</number>
+             </property>
+             <property name="columnCount">
+              <number>3</number>
+             </property>
+             <column>
+              <property name="text">
+               <string>Module</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Client Code</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Server Code</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="dependenciesTab">
+          <attribute name="title">
+           <string>Dependencies</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="0">
+            <widget class="QTabWidget" name="dependenciesWidget"/>
+           </item>
+          </layout>
+         </widget>
+        </widget>
        </item>
       </layout>
      </widget>

@@ -10,8 +10,8 @@ namespace Maditor {
 		StatsModel::StatsModel() :
 			mAverageFPS(this),
 			mOgreMemoryUsage(this),
-			startTrack(this, &StatsModel::dummy),
-			stopTrack(this, &StatsModel::dummy),
+			startTrack(this),
+			stopTrack(this),
 			mTimerId(0),
 			mCurrentUsage(0)
 		{
@@ -58,12 +58,12 @@ namespace Maditor {
 
 		void StatsModel::trackAllocations()
 		{
-			startTrack();
+			startTrack({});
 		}
 
 		void StatsModel::logTrackedAllocations()
 		{
-			stopTrack();
+			stopTrack({});
 		}
 
 		void StatsModel::dummy()

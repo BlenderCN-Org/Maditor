@@ -4,6 +4,8 @@ cmake_policy(SET CMP0011 OLD)
 cmake_policy(SET CMP0020 OLD)
 cmake_policy(SET CMP0049 OLD)
 
+set (CMAKE_CXX_STANDARD 14)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/../bin)
 
 Project(Maditor)
@@ -14,6 +16,10 @@ set(CMAKE_MODULE_PATH
 	"${QT_PATH}"
 	"${CMAKE_CURRENT_LIST_DIR}/CMake"
 )
+
+if (MINGW)
+	add_compile_options(-Wall -fpermissive)
+endif (MINGW)
 
 
 include(PrecompiledHeader)

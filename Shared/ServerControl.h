@@ -13,11 +13,7 @@ namespace Maditor {
 		public:
 			ServerControl(bool isLauncher);
 			virtual ~ServerControl();
-
-		protected:			
-
-			Engine::Serialize::Action<Engine::Serialize::ActionPolicy::allowAll> shutdown;			
-			Engine::Serialize::Action<Engine::Serialize::ActionPolicy::allowAll> ping;
+			
 
 		protected:
 			ServerInfo &sharedMemory();
@@ -27,6 +23,16 @@ namespace Maditor {
 			virtual void shutdownImpl() = 0;			
 			virtual void pingImpl();
 
+			void shutdownImpl2() {
+				shutdownImpl();
+			}
+			void pingImpl2() {
+				pingImpl();
+			}
+
+			Engine::Serialize::Action<decltype(&ServerControl::shutdownImpl2), &ServerControl::shutdownImpl2, Engine::Serialize::ActionPolicy::broadcast> shutdown;
+			Engine::Serialize::Action<decltype(&ServerControl::pingImpl2), &ServerControl::pingImpl2, Engine::Serialize::ActionPolicy::broadcast> ping;
+			
 		private:
 			Engine::Network::NetworkManager *mNetwork;
 

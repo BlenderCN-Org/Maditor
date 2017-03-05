@@ -21,7 +21,7 @@ private:
 	void receiveImpl(const std::string &msg, Util::MessageType level, const std::string &logName, const std::string &fullTraceback, const std::string &fileName, int lineNr);
 
 private:
-	Engine::Serialize::Action<Engine::Serialize::ActionPolicy::allowAll, const std::string &, Util::MessageType, const std::string &, const std::string &, const std::string &, int> receiveMessage;
+	Engine::Serialize::Action<decltype(&LogListener::receiveImpl), &LogListener::receiveImpl, Engine::Serialize::ActionPolicy::notification> receiveMessage;
 
 
 

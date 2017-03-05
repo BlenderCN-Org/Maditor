@@ -20,6 +20,8 @@ namespace Maditor {
 			// Inherited via AppControl
 			virtual void shutdownImpl() override;
 		
+			bool update(float timeSinceLastFrame);
+
 		private:
 			Engine::Serialize::Serialized<LogListener> mLog;
 

@@ -15,7 +15,7 @@ namespace Maditor {
 		ModuleLoader::ModuleLoader() :
 			mInit(false),
 			mInstances(this, &ModuleLoader::createModule),
-			setupDone(this, &ModuleLoader::setupDoneImpl)
+			setupDone(this)
 		{
 
 		}
@@ -61,7 +61,7 @@ namespace Maditor {
 			return mRuntimeDir;
 		}
 
-		Engine::Server::BaseServer * ModuleLoader::createServer(const std::string & fullName)
+		Engine::Server::BaseServer * ModuleLoader::createServer(const std::string & fullName, const std::string &mediaDir)
 		{
 			size_t delimPos = fullName.find(':');
 			std::string moduleName(fullName.c_str(), delimPos);
@@ -71,8 +71,8 @@ namespace Maditor {
 			if (it != mInstances.end() && it->isLoaded()) {
 				void *symbol = it->getSymbol(std::string("create") + className);
 				if (symbol) {
-					typedef Engine::Server::BaseServer *(*Factory)();					
-					return (*static_cast<Factory>(symbol))();
+					typedef Engine::Server::BaseServer *(*Factory)(const std::string &);					
+					return (*static_cast<Factory>(symbol))(mediaDir);
 				}
 			}
 

@@ -24,5 +24,6 @@ namespace Maditor {
 			const std::list<Log*> &LogsModel::logs() const{
 				return mLogs;
 			}
+
 	}
 }

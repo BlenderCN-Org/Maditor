@@ -155,7 +155,7 @@ namespace Maditor {
 			if (generator) {
 				mCurrentServer = generator;
 				element().setAttribute("CurrentServer", generator->fullName());
-				getServer(generator)->init();
+				getServer(generator)->start();
 			}
 		}
 

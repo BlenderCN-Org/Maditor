@@ -9,7 +9,7 @@
 
 namespace Maditor {
 	namespace Model {
-		class MADITOR_MODEL_EXPORT ModuleList : public QObject, public ProjectElement {
+		class MADITOR_MODEL_EXPORT ModuleList : public QObject, public ProjectElement{
 			Q_OBJECT
 
 		public:
@@ -46,6 +46,7 @@ namespace Maditor {
 
 			virtual Module * child(int i) override;
 
+			void showPropertiesDialog();
 
 		public slots:
 			void createModule(const QString &name);
@@ -71,7 +72,8 @@ namespace Maditor {
 
 			std::list<std::unique_ptr<Module>> mModules;
 
-			
+
+
 		};
 	}
 }

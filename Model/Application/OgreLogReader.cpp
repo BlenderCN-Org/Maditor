@@ -19,10 +19,24 @@ namespace Maditor {
 
 		OgreLogReader::OgreLogReader(LogsModel * model, const std::list<std::string> &textLogs) :
 			mModel(model),
-			receiveMessage(this, &OgreLogReader::receiveImpl),
+			receiveMessage(this),
 			mTextLogs(textLogs)
 		{
 
+		}
+
+		OgreLogReader::~OgreLogReader()
+		{
+			clear();
+		}
+
+		void OgreLogReader::clear()
+		{
+			for (const std::pair<const std::string, Log *> &log : mLogs) {
+				mModel->removeLog(log.second);
+				delete log.second;
+			}
+			mLogs.clear();
 		}
 
 		void OgreLogReader::receiveImpl(const std::string & msg, Util::MessageType level, const std::string & logName, const std::string & fullTraceback, const std::string & fileName, int lineNr)

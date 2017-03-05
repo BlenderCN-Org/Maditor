@@ -18,8 +18,9 @@ namespace Maditor {
 			mBinaryDir(binaryDir),
 			mModules(moduleList),
 			mInstances(this, &ModuleLoader::createModule),
-			setupDone(this, &ModuleLoader::setupDoneImpl),
-			TableUnit(2)
+			setupDone(this),
+			TableUnit(2),
+			mModulesCount(-1)
 		{
 			setContainer(mInstances);
 			/*const Shared::ModuleInstance *ptr = &*it;
@@ -125,10 +126,14 @@ namespace Maditor {
 		}
 
 
-		void ModuleLoader::setup()
+		void ModuleLoader::setup(bool server)
 		{
+			mModulesCount = 0;
 			for (const std::unique_ptr<Module> &module : mModules) {
-				addModule(module.get());
+				if (server ? module->serverCode() : module->clientCode()) {
+					addModule(module.get());
+					++mModulesCount;
+				}
 			}
 
 		}
@@ -140,12 +145,12 @@ namespace Maditor {
 					module.second->addDependency(mMap.at(mModules.getModule(dep)));
 				}
 			}
-			setupDone();
+			setupDone({});
 		}
 
 		bool ModuleLoader::done()
 		{
-			return mInstances.size() == mModules.childCount();
+			return mInstances.size() == mModulesCount;
 		}
 
 		void ModuleLoader::notifyDataChanged(ModuleImpl * module, int column)
@@ -157,7 +162,7 @@ namespace Maditor {
 
 		void ModuleLoader::reload(const Module *module) {
 
-			mMap.at(module)->reload();
+			mMap.at(module)->reload({});
 		}
 
 		void ModuleLoader::setupDoneImpl()
@@ -192,9 +197,16 @@ namespace Maditor {
 		}
 
 		ModuleImpl::ModuleImpl(ModuleLoader * loader, const std::string & name) :
-			ModuleInstance(name)
+			ModuleInstance(name),
+			mNotify(this),
+			mLoader(loader)
 		{
-			mLoaded.setCallback([=](const bool &) { loader->notifyDataChanged(this, 1); });
+			mLoaded.setCallback(mNotify);
+		}
+
+		void ModuleImpl::notify()
+		{
+			mLoader->notifyDataChanged(this, 1);
 		}
 
 }

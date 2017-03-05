@@ -17,7 +17,7 @@ namespace Maditor {
 			mPath(path),
 			mLoader(this, path + "debug/bin/", modules),
 			mPID(0),
-			mLog(this, &mLogs, std::list<std::string>{ "TW-Main-Server-Log" }),
+			mLogReader(this, &mLogs, std::list<std::string>{ "TW-Main-Server-Log" }),
 			mWaitingForLoader(false),
 			ServerControl(true),
 			mServerClass(serverClass)
@@ -36,19 +36,25 @@ namespace Maditor {
 			kill();
 		}
 
-		void ServerLauncher::init()
+		void ServerLauncher::start()
 		{
-			initImpl(true);
+			startImpl(true);
 		}
 
-		void ServerLauncher::initImpl(bool debug)
+		void ServerLauncher::startImpl(bool debug)
 		{
-			emit serverInitialized();
+
+			emit serverStarting();
+
+			if (mPID)
+				return;
+
+			mLogReader->clear();
 
 			Shared::ServerInfo &serverInfo = sharedMemory();
 
 			serverInfo.mServerClass = mServerClass->fullName().toStdString().c_str();
-			serverInfo.mMediaDir = (mPath + "Data/").toStdString().c_str();
+			serverInfo.mMediaDir = (mPath + "Data/Media/Scripts/").toStdString().c_str();
 			serverInfo.mProjectDir = mPath.toStdString().c_str();
 			serverInfo.mDebugged = debug;
 
@@ -87,16 +93,18 @@ namespace Maditor {
 				return;
 			}
 
-			mLoader->setup();
+			mLoader->setup(true);
 
 			mWaitingForLoader = true;	
+
+			emit serverStarted();
 
 			if (!debug)
 				pingImpl();
 		}
-		void ServerLauncher::initNoDebug()
+		void ServerLauncher::startNoDebug()
 		{
-			initImpl(false);
+			startImpl(false);
 		}
 		
 
@@ -155,7 +163,7 @@ namespace Maditor {
 		void ServerLauncher::shutdown()
 		{
 			if (mPID) {
-				ServerControl::shutdown();
+				ServerControl::shutdown({});
 				/*if (!mPingTimer.isActive())
 					pingImpl();*/
 			}
@@ -186,7 +194,7 @@ namespace Maditor {
 		void ServerLauncher::pingImpl()
 		{
 			mPingTimer.start(10000);
-			ping();
+			ping({});
 		}
 
 	}

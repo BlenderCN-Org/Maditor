@@ -43,7 +43,7 @@ namespace Maditor {
 				!GetAsyncKeyState(VK_F10))
 			{
 				::Sleep(100);
-				if (++j > 50) {
+				if (++j > 50000) {
 					return -1;
 				}
 			}
@@ -100,11 +100,12 @@ namespace Maditor {
 				return -1;
 			}
 
-			net->addTopLevelItem(&Engine::Util::Util::getSingleton());
+			if (!mApplication.init())
+				return -1;
 
-			mApplication.init();
+			net->addTopLevelItem(&Engine::Util::Util::getSingleton());					
 
-			applicationInitialized();
+			applicationInitialized({});
 
 			Ogre::Root::getSingleton().addFrameListener(this);
 
@@ -118,7 +119,7 @@ namespace Maditor {
 				if (mStartRequested) {
 					mApplication.go();
 					mStartRequested = false;
-					stop();
+					stop({});
 				}
 
 			}

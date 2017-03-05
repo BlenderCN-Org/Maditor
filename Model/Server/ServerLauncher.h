@@ -17,9 +17,9 @@ namespace Maditor {
 			ServerLauncher(Generators::ServerClassGenerator *serverClass, const QString &path, const ModuleList &modules);
 			virtual ~ServerLauncher();
 
-			void init();
-			void initImpl(bool debug);
-			void initNoDebug();
+			void start();
+			void startImpl(bool debug);
+			void startNoDebug();
 			void shutdown();
 			void kill();
 			
@@ -42,7 +42,8 @@ namespace Maditor {
 			virtual void pingImpl() override;
 
 		signals:
-			void serverInitialized();
+			void serverStarting();
+			void serverStarted();
 			void serverShutdown();
 			
 			void processStarted(DWORD, const Shared::ServerInfo &);
@@ -53,7 +54,9 @@ namespace Maditor {
 			DWORD mPID;
 			HANDLE mHandle;
 
-			Engine::Serialize::Serialized<OgreLogReader> mLog;
+			LogsModel mLogs;
+
+			Engine::Serialize::Serialized<OgreLogReader> mLogReader;
 			Engine::Serialize::Serialized<ModuleLoader> mLoader;
 			UtilModel mUtil;
 			
@@ -63,7 +66,7 @@ namespace Maditor {
 
 			Generators::ServerClassGenerator *mServerClass;
 
-			LogsModel mLogs;
+			
 
 		};
 

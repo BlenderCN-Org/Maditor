@@ -30,9 +30,12 @@ namespace Maditor {
 			void ogreMemoryUsageChanged(size_t mem);
 
 		private:
-			Engine::Serialize::Observed<float> mAverageFPS;
 			Engine::Serialize::Observed<size_t> mOgreMemoryUsage;
-			Engine::Serialize::Action<Engine::Serialize::ActionPolicy::standard> startTrack, stopTrack;
+			
+			Engine::Serialize::Action<decltype(&StatsModel::dummy), &StatsModel::dummy, Engine::Serialize::ActionPolicy::request> startTrack, stopTrack;			
+			
+			Engine::Serialize::Observed<float> mAverageFPS;		
+			
 
 			int mTimerId;
 			HANDLE mHandle;

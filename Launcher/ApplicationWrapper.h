@@ -2,8 +2,8 @@
 
 #include "Shared/AppControl.h"
 
-#include "App\appsettings.h"
-#include "App/Application.h"
+#include "App\Ogreappsettings.h"
+#include "App/OgreApplication.h"
 
 #include "ModuleLoader.h"
 #include "LogListener.h"
@@ -39,8 +39,8 @@ namespace Maditor {
 		private:
 			Engine::Serialize::Serialized<LogListener> mLog;
 
-			Engine::App::AppSettings mSettings;
-			Engine::App::Application mApplication;
+			Engine::App::OgreAppSettings mSettings;
+			Engine::App::OgreApplication mApplication;
 
 			InputWrapper *mInput;
 

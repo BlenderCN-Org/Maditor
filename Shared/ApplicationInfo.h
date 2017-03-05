@@ -5,23 +5,6 @@
 namespace Maditor {
 	namespace Shared {
 
-
-
-		/*enum ApplicationCmd {
-			APP_CREATED,
-			APP_INITIALIZED,
-			APP_STARTED,
-			APP_STOPPED,
-			APP_SHUTDOWN,
-			APP_AFTER_SHUTDOWN,
-
-			START_APP,
-			STOP_APP,
-			SHUTDOWN,
-
-			RESIZE_WINDOW
-		};*/
-
 		struct ApplicationInfo {
 			ApplicationInfo(boost::interprocess::managed_shared_memory::segment_manager *mgr) :
 				mMediaDir(SharedCharAllocator(mgr)),
@@ -35,9 +18,6 @@ namespace Maditor {
 			bool mDebugged;
 		};
 
-		/*struct ApplicationMsg {
-			ApplicationCmd mCmd;
-		};*/
 
 	}
 }

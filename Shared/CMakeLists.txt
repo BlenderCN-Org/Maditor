@@ -8,13 +8,18 @@ set(BOOST_PATH "" CACHE PATH "Path to Boost")
 
 PROJECT(Maditor_Shared)
 
+
+if (MINGW)
+	add_compile_options(-Wall -std=c++14 -fpermissive)
+endif (MINGW)
+
 include_directories(${BOOST_PATH})
 
 set (sources "")
 FolderSources(sources "" "" AppControl.cpp AppControl.h ApplicationInfo.h InputInfo.h maditorsharedlib.cpp maditorsharedlib.h maditorsharedforward.h moduleinstance.cpp moduleinstance.h ServerControl.cpp ServerControl.h ServerInfo.h ServerSharedMemory.cpp ServerSharedMemory.h SharedBase.h sharedmemory.cpp sharedmemory.h)
 
 
-include_directories(${MADGINE_INCLUDE_DIRS})
+include_directories(${MADGINE_INCLUDE_DIRS} ${Maditor_Shared_SOURCE_DIR})
 
 if (OGRE_FOUND)
   include_directories(${OGRE_INCLUDE_DIRS} ${OGRE_Terrain_INCLUDE_DIRS} ${OGRE_RTShaderSystem_INCLUDE_DIRS})

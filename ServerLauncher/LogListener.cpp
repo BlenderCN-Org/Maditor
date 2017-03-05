@@ -8,7 +8,7 @@ namespace Maditor {
 	namespace Launcher {
 
 		LogListener::LogListener() :
-		 receiveMessage(this, &LogListener::receiveImpl)
+		 receiveMessage(this)
 		{
 
 		}
@@ -42,7 +42,7 @@ namespace Maditor {
 				lineNr = -1;
 			}
 
-			receiveMessage(message, lml, logName, fullTraceback.str(), fileName, lineNr);
+			receiveMessage(message, lml, logName, fullTraceback.str(), fileName, lineNr, {});
 		}
 
 	}

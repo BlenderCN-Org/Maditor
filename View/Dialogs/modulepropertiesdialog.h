@@ -15,14 +15,15 @@ class ModulePropertiesDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ModulePropertiesDialog(Model::Module *module);
+    explicit ModulePropertiesDialog(Model::ModuleList *list);
     ~ModulePropertiesDialog();
 
 public slots:
 	bool apply();
 
 private:
-	Model::Module *mModule;
+	Model::ModuleList *mModules;
+	std::list<ModulePropertiesWidget*> mModuleWidgets;
 
     Ui::ModulePropertiesDialog *ui;
 };

@@ -152,9 +152,9 @@ namespace Maditor {
 				return true;
 			}
 
-			void DialogManager::showModulePropertiesDialog(Model::Module * module)
+			void DialogManager::showModulePropertiesDialog(Model::ModuleList *list)
 			{
-				ModulePropertiesDialog dialog(module);
+				ModulePropertiesDialog dialog(list);
 				
 				bool done = false;
 

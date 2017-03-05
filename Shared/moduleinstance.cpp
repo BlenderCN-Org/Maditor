@@ -7,11 +7,11 @@
 namespace Maditor {
 	namespace Shared {
 		ModuleInstance::ModuleInstance(const std::string & name) :
+			reload(this),
+			mLoaded(this, false),
 			mExists(false),
 			mName(name),
-			mLoaded(this, false),
-			mDependencies(this),
-			reload(this, &ModuleInstance::reloadImpl)
+			mDependencies(this)
 		{
 		}
 

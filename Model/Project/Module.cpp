@@ -51,8 +51,7 @@ namespace Maditor {
 		void Module::init()
 		{
 			setContextMenuItems({ 
-				{ "New Class", [this]() {newClass(); } },
-				{ "Properties", [this]() {showPropertiesDialog(); }}
+				{ "New Class", [this]() {newClass(); } }
 			});
 
 			mCmake.addFile(Generators::HeaderGuardGenerator::fileName(mName));
@@ -76,6 +75,35 @@ namespace Maditor {
 			mParent->generate();
 
 			project()->save();
+		}
+		bool Module::serverCode()
+		{
+			return element().attribute("ServerCode", "1") == "1";
+
+		}
+		bool Module::clientCode()
+		{
+			return element().attribute("ClientCode", "1") == "1";
+		}
+		bool Module::setServerCode(bool b)
+		{
+			for (Module *dep : (b ? mDependencies : mDependedBy)) {
+				if (dep->serverCode() != b)
+					return false;
+			}
+
+			element().setAttribute("ServerCode", b);
+			return true;
+		}
+		bool Module::setClientCode(bool b)
+		{
+			for (Module *dep : (b ? mDependencies : mDependedBy)) {
+				if (dep->clientCode() != b)
+					return false;
+			}
+
+			element().setAttribute("ClientCode", b);
+			return true;
 		}
 		void Module::addClassImpl(Generators::ClassGenerator * generator, bool callInsert)
 		{
@@ -101,11 +129,6 @@ namespace Maditor {
 			return std::find_if(mClasses.begin(), mClasses.end(), [&](const std::unique_ptr<Generators::ClassGenerator> &ptr) {return ptr->name() == name; }) != mClasses.end();
 		}
 
-		void Module::showPropertiesDialog()
-		{
-			DialogManager::showModulePropertiesDialogStatic(this);
-		}
-
 		QVariant Module::icon() const
 		{
 			QIcon icon;
@@ -126,6 +149,10 @@ namespace Maditor {
 			
 
 			Module *other = mParent->getModule(dep);
+
+			if ((clientCode() && !other->clientCode()) || (serverCode() && !other->serverCode()))
+				return false;
+
 			std::list<const Module*> modules;
 			fillReloadOrder(modules);
 			if (std::find(modules.begin(), modules.end(), other) != modules.end()) {

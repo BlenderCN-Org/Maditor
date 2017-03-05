@@ -16,7 +16,7 @@ namespace Maditor {
 		ModuleLoader::ModuleLoader() :
 			mInit(false),
 			mInstances(this, &ModuleLoader::createModule),
-			setupDone(this, &ModuleLoader::setupDoneImpl)
+			setupDone(this)
 		{
 
 		}
@@ -152,7 +152,9 @@ namespace Maditor {
 			std::set<Engine::Scene::BaseSceneComponent*> beforeSceneComponents(beforeSceneComponentsList.begin(), beforeSceneComponentsList.end());
 			std::set<Engine::UI::GameHandlerBase*> beforeGameHandlers = Engine::UI::UIManager::getSingleton().getGameHandlers();
 			std::set<Engine::UI::GuiHandlerBase*> beforeGuiHandlers = Engine::UI::UIManager::getSingleton().getGuiHandlers();
-			std::set<Engine::Scripting::BaseGlobalAPIComponent*> beforeAPIComponents = Engine::Scripting::GlobalScopeImpl::getSingleton().getGlobalAPIComponents();
+			std::list<Engine::Scripting::BaseGlobalAPIComponent*> beforeAPIComponents;
+			for (const std::unique_ptr<Engine::Scripting::BaseGlobalAPIComponent> &comp : Engine::UniqueComponentCollector<Engine::Scripting::BaseGlobalAPIComponent>::getSingleton())
+				beforeAPIComponents.push_back(comp.get());
 
 			UINT errorMode = GetErrorMode();
 			//SetErrorMode(SEM_FAILCRITICALERRORS);
@@ -182,8 +184,16 @@ namespace Maditor {
 			std::set_difference(afterGameHandlers.begin(), afterGameHandlers.end(), beforeGameHandlers.begin(), beforeGameHandlers.end(), std::inserter(mGameHandlers, mGameHandlers.end()));
 			std::set<Engine::UI::GuiHandlerBase*> afterGuiHandlers = Engine::UI::UIManager::getSingleton().getGuiHandlers();
 			std::set_difference(afterGuiHandlers.begin(), afterGuiHandlers.end(), beforeGuiHandlers.begin(), beforeGuiHandlers.end(), std::inserter(mGuiHandlers, mGuiHandlers.end()));
-			std::set<Engine::Scripting::BaseGlobalAPIComponent*> afterAPIComponents = Engine::Scripting::GlobalScopeImpl::getSingleton().getGlobalAPIComponents();
+			std::list<Engine::Scripting::BaseGlobalAPIComponent*> afterAPIComponents;
+			for (const std::unique_ptr<Engine::Scripting::BaseGlobalAPIComponent> &comp : Engine::UniqueComponentCollector<Engine::Scripting::BaseGlobalAPIComponent>::getSingleton())
+				afterAPIComponents.push_back(comp.get());
+			afterAPIComponents.sort();
+			beforeAPIComponents.sort();
 			std::set_difference(afterAPIComponents.begin(), afterAPIComponents.end(), beforeAPIComponents.begin(), beforeAPIComponents.end(), std::inserter(mGlobalAPIComponents, mGlobalAPIComponents.end()));
+
+			for (Engine::Scene::BaseSceneComponent *c : mSceneComponents) {
+				Engine::Serialize::UnitHelper<Engine::Scene::BaseSceneComponent>::setItemTopLevel(*c, &Engine::Scene::SceneManager::getSingleton());
+			}
 
 			if (callInit) {
 
@@ -245,20 +255,25 @@ namespace Maditor {
 			}
 
 			for (Engine::Scripting::BaseGlobalAPIComponent *api : mGlobalAPIComponents) {
-				api->finalize();
+				if (api->getState() == Engine::ObjectState::INITIALIZED)
+					api->finalize();
 			}
 
 			for (Engine::Scene::BaseSceneComponent *c : mSceneComponents) {
-				c->finalize();
+				if (c->getState() == Engine::ObjectState::INITIALIZED)
+					c->finalize();
+			}
+
+			for (Engine::UI::GameHandlerBase *h : mGameHandlers) {
+				if (h->getState() == Engine::ObjectState::INITIALIZED)
+					h->finalize();
 			}
 
 			for (int i = -1; i < Engine::UI::UIManager::sMaxInitOrder; ++i)
 				for (Engine::UI::GuiHandlerBase *h : mGuiHandlers)
-					h->finalize(i);
-
-			for (Engine::UI::GameHandlerBase *h : mGameHandlers) {
-				h->finalize();
-			}
+					if (h->getState() == Engine::ObjectState::INITIALIZED)
+						h->finalize(i);
+			
 
 			bool result = (FreeLibrary(mHandle) != 0);
 			if (result)

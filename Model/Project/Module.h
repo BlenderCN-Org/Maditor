@@ -50,12 +50,15 @@ namespace Maditor {
 			void deleteClass(Generators::ClassGenerator *generator);
 			void removeClass(Generators::ClassGenerator *generator);
 
+			bool serverCode();
+			bool clientCode();
+			bool setServerCode(bool b);
+			bool setClientCode(bool b);
+
 		private:
 			void addClassImpl(Generators::ClassGenerator *generator, bool callInsert = true);
 
 			void init();
-
-			void showPropertiesDialog();
 
 		signals:
 
