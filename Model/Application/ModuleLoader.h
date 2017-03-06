@@ -8,6 +8,8 @@
 
 #include "TableUnit.h"
 
+#include "SignalSlot\slot.h"
+
 namespace Maditor {
 	namespace Model {
 

@@ -22,7 +22,7 @@ namespace Maditor {
 			mUpdateSlot(this)
 		{
 			setContainer(mChildren);
-			mDuration.setCallback<decltype(&ProfilerItem::update), &ProfilerItem::update, ProfilerItem, size_t>(mUpdateSlot);
+			mDuration.setCallback(mUpdateSlot);
 		}
 
 		ProfilerItem::ProfilerItem(ProfilerItem * parent, const std::string & name) :
@@ -35,6 +35,7 @@ namespace Maditor {
 			mUpdateSlot(this)
 		{
 			setContainer(mChildren);
+			mDuration.setCallback(mUpdateSlot);
 		}
 
 		int ProfilerItem::childCount() const

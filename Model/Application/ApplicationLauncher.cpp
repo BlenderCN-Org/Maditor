@@ -21,7 +21,8 @@ namespace Maditor {
 			mLoader(this, path + "debug/bin/", modules),
 			mPID(0),
 			mLog(this, logs, std::list<std::string>{ "Ogre.log" }),
-			mWaitingForLoader(false)
+			mWaitingForLoader(false),
+			mUtil(false)
 		{
 			network()->addTopLevelItem(&mUtil);
 

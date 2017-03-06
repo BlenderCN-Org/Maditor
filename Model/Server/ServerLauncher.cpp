@@ -20,7 +20,8 @@ namespace Maditor {
 			mLogReader(this, &mLogs, std::list<std::string>{ "TW-Main-Server-Log" }),
 			mWaitingForLoader(false),
 			ServerControl(true),
-			mServerClass(serverClass)
+			mServerClass(serverClass),
+			mUtil(true)
 		{
 			network()->addTopLevelItem(&mUtil);
 

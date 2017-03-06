@@ -11,7 +11,7 @@ namespace Maditor {
 	namespace Shared {
 
 ServerControl::ServerControl(bool isLauncher) :
-	TopLevelSerializableUnit(Engine::Serialize::RESERVED_ID_COUNT-1),
+	TopLevelSerializableUnit(Engine::Serialize::RESERVED_ID_COUNT-2),
 	shutdown(this),
 	ping(this),
 	mNetwork(new Engine::Network::NetworkManager)
