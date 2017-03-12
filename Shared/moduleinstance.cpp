@@ -6,61 +6,61 @@
 
 namespace Maditor {
 	namespace Shared {
-		ModuleInstance::ModuleInstance(const std::string & name) :
+		ModuleInstanceBase::ModuleInstanceBase(const std::string & name) :
 			reload(this),
-			mLoaded(this, false),
+			mLoaded(false),
 			mExists(false),
 			mName(name),
-			mDependencies(this)
+			mDependencies()
 		{
 		}
 
-		const std::string & ModuleInstance::name() const
+		const std::string & ModuleInstanceBase::name() const
 		{
 			return mName;
 		}
 
-		bool ModuleInstance::exists() const
+		bool ModuleInstanceBase::exists() const
 		{
 			return mExists;
 		}
 
-		void ModuleInstance::setExists(bool b)
+		void ModuleInstanceBase::setExists(bool b)
 		{
 			mExists = b;
 		}
 
-		bool ModuleInstance::isLoaded() const
+		bool ModuleInstanceBase::isLoaded() const
 		{
 			return mLoaded;
 		}
 		
-		void ModuleInstance::setLoaded(bool b)
+		void ModuleInstanceBase::setLoaded(bool b)
 		{
 			mLoaded = b;
 		}
 
-		void ModuleInstance::addDependency(ModuleInstance * dep)
+		void ModuleInstanceBase::addDependency(ModuleInstanceBase * dep)
 		{
 			mDependencies.push_back(dep);
 		}
 
-		void ModuleInstance::removeDependency(ModuleInstance * dep)
+		void ModuleInstanceBase::removeDependency(ModuleInstanceBase * dep)
 		{
 			mDependencies.remove(dep);
 		}
 		
-		void ModuleInstance::writeCreationData(Engine::Serialize::SerializeOutStream & out) const
+		void ModuleInstanceBase::writeCreationData(Engine::Serialize::SerializeOutStream & out) const
 		{
 			out << mName;
 		}
 
-		const Engine::Serialize::ObservableList<ModuleInstance*, Engine::Serialize::ContainerPolicy::allowAll> &ModuleInstance::dependencies()
+		const Engine::Serialize::ObservableList<ModuleInstanceBase*, Engine::Serialize::ContainerPolicy::allowAll> &ModuleInstanceBase::dependencies()
 		{
 			return mDependencies;
 		}
 
-		void ModuleInstance::reloadImpl()
+		void ModuleInstanceBase::reloadImpl()
 		{
 		}
 	}

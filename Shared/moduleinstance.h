@@ -8,7 +8,7 @@
 namespace Maditor {
 	namespace Shared {
 
-		class MADITOR_SHARED_EXPORT ModuleInstance : public Engine::Serialize::SerializableUnit {
+		class MADITOR_SHARED_EXPORT ModuleInstanceBase : public Engine::Serialize::SerializableUnitBase {
 
 
 		private:
@@ -18,7 +18,7 @@ namespace Maditor {
 			}
 
 		public:
-			ModuleInstance(const std::string &name);
+			ModuleInstanceBase(const std::string &name);
 
 			const std::string &name() const;
 
@@ -28,14 +28,14 @@ namespace Maditor {
 			bool isLoaded() const;
 			void setLoaded(bool b);
 
-			void addDependency(ModuleInstance *dep);
-			void removeDependency(ModuleInstance *dep);
+			void addDependency(ModuleInstanceBase *dep);
+			void removeDependency(ModuleInstanceBase *dep);
 
 			virtual void writeCreationData(Engine::Serialize::SerializeOutStream &out) const override;
 
-			Engine::Serialize::Action<decltype(&ModuleInstance::reloadImpl2), &ModuleInstance::reloadImpl2, Engine::Serialize::ActionPolicy::request> reload;
+			Engine::Serialize::Action<decltype(&ModuleInstanceBase::reloadImpl2), &ModuleInstanceBase::reloadImpl2, Engine::Serialize::ActionPolicy::request> reload;
 
-			const Engine::Serialize::ObservableList<ModuleInstance*, Engine::Serialize::ContainerPolicy::allowAll> &dependencies();
+			const Engine::Serialize::ObservableList<ModuleInstanceBase*, Engine::Serialize::ContainerPolicy::allowAll> &dependencies();
 
 		protected:
 			Engine::Serialize::Observed<bool> mLoaded;
@@ -46,8 +46,13 @@ namespace Maditor {
 			std::string mName;
 
 
-			Engine::Serialize::ObservableList<ModuleInstance*, Engine::Serialize::ContainerPolicy::allowAll> mDependencies;
+			Engine::Serialize::ObservableList<ModuleInstanceBase*, Engine::Serialize::ContainerPolicy::allowAll> mDependencies;
 
+		};
+
+		template <class T>
+		class ModuleInstance : Engine::Hierarchy::HierarchyObject<T>, public ModuleInstanceBase {
+			using ModuleInstanceBase::ModuleInstanceBase;
 		};
 
 	}

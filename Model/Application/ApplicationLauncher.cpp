@@ -18,9 +18,9 @@ namespace Maditor {
 			mInput(new InputWrapper(sharedMemory().mInput)),
 			mWindow(new OgreWindow(mInput.get())),
 			mPath(path),
-			mLoader(this, path + "debug/bin/", modules),
+			mLoader(path + "debug/bin/", modules),
 			mPID(0),
-			mLog(this, logs, std::list<std::string>{ "Ogre.log" }),
+			mLog(logs, std::list<std::string>{ "Ogre.log" }),
 			mWaitingForLoader(false),
 			mUtil(false)
 		{

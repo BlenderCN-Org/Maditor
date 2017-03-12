@@ -10,7 +10,7 @@
 namespace Maditor {
 	namespace Model {
 
-		class MADITOR_MODEL_EXPORT UtilModel : public Engine::Serialize::TopLevelSerializableUnit {
+		class MADITOR_MODEL_EXPORT UtilModel : public Engine::Serialize::TopLevelSerializableUnit<UtilModel> {
 		public:
 
 			UtilModel(bool server);

@@ -8,7 +8,7 @@
 namespace Maditor {
 	namespace Shared {
 
-		class MADITOR_SHARED_EXPORT ServerControl : public Engine::Serialize::TopLevelSerializableUnit {
+		class MADITOR_SHARED_EXPORT ServerControl : public Engine::Serialize::TopLevelSerializableUnitBase {
 
 		public:
 			ServerControl(bool isLauncher);

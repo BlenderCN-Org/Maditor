@@ -13,7 +13,7 @@
 namespace Maditor {
 	namespace Model {
 
-		class ModuleImpl : public Shared::ModuleInstance {
+		class ModuleImpl : public Shared::ModuleInstance<ModuleImpl> {
 		public:
 			ModuleImpl(ModuleLoader *loader, const std::string &name);
 
@@ -25,7 +25,7 @@ namespace Maditor {
 			Engine::SignalSlot::Slot<decltype(&ModuleImpl::notify), &ModuleImpl::notify> mNotify;
 		};
 
-		class ModuleLoader : public TableUnit {
+		class ModuleLoader : public TableUnit<ModuleLoader> {
 			Q_OBJECT
 
 		public:
@@ -67,8 +67,8 @@ namespace Maditor {
 
 			const ModuleList &mModules;
 
-			std::map<const Module *, Shared::ModuleInstance*> mMap;
-			Engine::Serialize::ObservableList<ModuleImpl, Engine::Serialize::ContainerPolicy::allowAll, ModuleLoader*, std::string> mInstances;
+			std::map<const Module *, Shared::ModuleInstanceBase*> mMap;
+			Engine::Serialize::ObservableList<ModuleImpl, Engine::Serialize::ContainerPolicy::allowAll, Engine::Serialize::CustomCreator<decltype(&ModuleLoader::createModule), &ModuleLoader::createModule>> mInstances;
 
 			Engine::Serialize::Action<decltype(&ModuleLoader::setupDoneImpl), &ModuleLoader::setupDoneImpl, Engine::Serialize::ActionPolicy::request> setupDone;
 			

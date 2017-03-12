@@ -8,39 +8,45 @@
 namespace Maditor {
 	namespace Model {
 
-		class TreeUnitItem : public TreeItem, public Engine::Serialize::SerializableUnit {
+		class TreeUnitItemBase : public TreeItem {
 		public:
-			TreeUnitItem(TreeUnitItem *parent);
+			TreeUnitItemBase(TreeUnitItemBase *parent);
 
-			virtual TreeUnitItem *parentItem() override;
+			virtual TreeUnitItemBase *parentItem() override;
 
 			QModelIndex getIndex();
 
 		protected:
-			TreeUnitItem(TreeUnit *tree);
+			TreeUnitItemBase(TreeUnitBase *tree);
 
 			void notifyDataChange(int column);
 			void notifyDataChange(int fromCol, int toCol);
 
 			template <class C>
 			void setContainer(C &container) {
-				container.setCallback([&container = (const C&)container, this](const typename C::const_iterator &it, int op) {
+				container.connectCallback([&container = (const C&)container, this](const typename C::const_iterator &it, int op) {
 					int row = std::distance(container.begin(), it);
 					mTree->handleOperation(getIndex(), row, op);
 				});
 			}
 
 		private:
-			TreeUnitItem *mParent;
-			TreeUnit *mTree;
+			TreeUnitItemBase *mParent;
+			TreeUnitBase *mTree;
 		};
 
-		class TreeUnit : public TreeModel, public TreeUnitItem{
+		template <class T>
+		class TreeUnitItem : public Engine::Serialize::SerializableUnit<T>, public TreeUnitItemBase {
+		public:
+			using TreeUnitItemBase::TreeUnitItemBase;
+		};
+
+		class TreeUnitBase : public TreeModel, public TreeUnitItemBase {
 			Q_OBJECT
 
 		public:
 			
-			TreeUnit(int columnCount);
+			TreeUnitBase(int columnCount);
 
 			virtual QVariant data(int column) const override;
 
@@ -48,5 +54,12 @@ namespace Maditor {
 			void onDataChanged(const QModelIndex &parent, int row, int fromCol, int toCol);
 
 		};
+
+		template <class T>
+		class TreeUnit : public TreeUnitBase, public Engine::Serialize::SerializableUnit<T> {
+		public:
+			using TreeUnitBase::TreeUnitBase;
+		};
+
 	}
 }

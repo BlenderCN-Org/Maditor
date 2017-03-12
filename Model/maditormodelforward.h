@@ -19,7 +19,7 @@ namespace Maditor {
 		class InputWrapper;
 
 		class TreeItem;
-		class TreeUnit;
+		class TreeUnitBase;
 		class TreeModel;
 
 		class ProfilerModel;

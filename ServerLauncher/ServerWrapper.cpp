@@ -20,9 +20,9 @@ namespace Maditor {
 
 		ServerWrapper::ServerWrapper() :
 			ServerControl(false),
-			mLoader(this),
+			mLoader(),
 			mRunning(false),
-			mLog(this)
+			mLog()
 		{			
 		}
 

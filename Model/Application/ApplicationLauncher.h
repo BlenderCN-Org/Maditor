@@ -9,7 +9,7 @@
 namespace Maditor {
 	namespace Model {
 
-		class MADITOR_MODEL_EXPORT ApplicationLauncher : public QObject, public Shared::AppControl {
+		class MADITOR_MODEL_EXPORT ApplicationLauncher : public QObject, public Shared::AppControl<ApplicationLauncher> {
 			Q_OBJECT
 
 		public:

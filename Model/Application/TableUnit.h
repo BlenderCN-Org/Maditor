@@ -8,18 +8,18 @@ namespace Maditor {
 	namespace Model {
 
 
-		class TableUnit : public TableModel, public Engine::Serialize::SerializableUnit {
+		class TableUnitBase : public TableModel {
 			Q_OBJECT
 
 		public:
 			
-			TableUnit(int columnCount);
+			TableUnitBase(int columnCount);
 
 			
 		protected:
 			template <class C>
 			void setContainer(C &container) {
-				container.setCallback([&container = (const C&)container, this](const typename C::const_iterator &it, int op) {
+				container.connectCallback([&container = (const C&)container, this](const typename C::const_iterator &it, int op) {
 					int row = std::distance(container.begin(), it);
 					handleOperation(row, op);
 				});
@@ -28,5 +28,12 @@ namespace Maditor {
 			void handleOperation(int row, int op);
 			
 		};
+
+		template <class T>
+		class TableUnit : public TableUnitBase, public Engine::Serialize::SerializableUnit<T> {
+		public:
+			using TableUnitBase::TableUnitBase;
+		};
+
 	}
 }

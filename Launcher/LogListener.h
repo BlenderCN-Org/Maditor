@@ -6,7 +6,7 @@
 namespace Maditor {
 	namespace Launcher {
 
-class LogListener : public Engine::Serialize::SerializableUnit, public Ogre::LogListener {
+class LogListener : public Engine::Serialize::SerializableUnitBase, public Ogre::LogListener {
 
 public:
 	LogListener();

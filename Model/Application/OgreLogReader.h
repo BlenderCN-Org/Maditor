@@ -7,7 +7,7 @@
 namespace Maditor {
 	namespace Model {
 
-		class OgreLogReader : public Engine::Serialize::SerializableUnit {
+		class OgreLogReader : public Engine::Serialize::SerializableUnitBase {
 
 		public:
 			OgreLogReader(LogsModel *model, const std::list<std::string> &textLogs);

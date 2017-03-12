@@ -11,8 +11,8 @@ namespace Maditor {
 
 		UtilModel::UtilModel(bool server) :
 			TopLevelSerializableUnit(Engine::UTIL + (server ? 20 : 0)),
-			mProfiler(this),
-			mStats(this)
+			mProfiler(),
+			mStats()
 		{
 		}
 

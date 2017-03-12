@@ -6,7 +6,7 @@
 namespace Maditor {
 	namespace Launcher {
 
-class ModuleLoader : public Engine::Serialize::SerializableUnit{
+class ModuleLoader : public Engine::Serialize::SerializableUnitBase {
 
 public:
 	ModuleLoader();
@@ -24,7 +24,7 @@ public:
 
 private:
 
-	class ModuleLauncherInstance : public Shared::ModuleInstance {
+	class ModuleLauncherInstance : public Shared::ModuleInstance<ModuleLauncherInstance> {
 	public:
 		ModuleLauncherInstance(ModuleLoader *parent, const std::string &name);
 
@@ -63,7 +63,7 @@ private:
 
 	bool mReceivingModules;
 
-	Engine::Serialize::ObservableList<ModuleLauncherInstance, Engine::Serialize::ContainerPolicy::allowAll, ModuleLoader *, std::string> mInstances;
+	Engine::Serialize::ObservableList<ModuleLauncherInstance, Engine::Serialize::ContainerPolicy::allowAll, Engine::Serialize::CustomCreator<decltype(&ModuleLoader::createModule), &ModuleLoader::createModule>> mInstances;
 	Engine::Serialize::Action<decltype(&ModuleLoader::setupDoneImpl), &ModuleLoader::setupDoneImpl, Engine::Serialize::ActionPolicy::request> setupDone;
 
 };

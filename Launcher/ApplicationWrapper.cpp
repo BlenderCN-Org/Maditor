@@ -18,10 +18,10 @@ namespace Maditor {
 		ApplicationWrapper::ApplicationWrapper() :
 			AppControl(false),
 			mInput(new InputWrapper(sharedMemory().mInput)),
-			mLoader(this),
+			mLoader(),
 			mRunning(false),
 			mStartRequested(false),
-			mLog(this)
+			mLog()
 		{			
 		}
 

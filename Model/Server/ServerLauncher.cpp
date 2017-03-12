@@ -15,9 +15,9 @@ namespace Maditor {
 	namespace Model {
 		ServerLauncher::ServerLauncher(Generators::ServerClassGenerator *serverClass, const QString &path, const ModuleList &modules) :			
 			mPath(path),
-			mLoader(this, path + "debug/bin/", modules),
+			mLoader(path + "debug/bin/", modules),
 			mPID(0),
-			mLogReader(this, &mLogs, std::list<std::string>{ "TW-Main-Server-Log" }),
+			mLogReader(&mLogs, std::list<std::string>{ "TW-Main-Server-Log" }),
 			mWaitingForLoader(false),
 			ServerControl(true),
 			mServerClass(serverClass),

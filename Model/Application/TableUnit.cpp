@@ -7,13 +7,13 @@
 namespace Maditor {
 	namespace Model {
 
-		TableUnit::TableUnit(int columnCount) :
+		TableUnitBase::TableUnitBase(int columnCount) :
 			TableModel(columnCount)
 		{
 
 		}
 
-		void TableUnit::handleOperation(int row, int op)
+		void TableUnitBase::handleOperation(int row, int op)
 		{
 			using namespace Engine::Serialize;
 

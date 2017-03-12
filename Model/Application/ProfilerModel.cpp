@@ -7,17 +7,17 @@ namespace Maditor {
 
 		ProfilerModel::ProfilerModel() :
 			TreeUnit(4),
-			mTopLevelItems(this, &ProfilerModel::createNode)
+			mTopLevelItems()
 		{
 			setContainer(mTopLevelItems);
 		}
 
-		ProfilerItem::ProfilerItem(TreeUnitItem * parent, const std::string & name) :
+		ProfilerItem::ProfilerItem(TreeUnitItemBase * parent, const std::string & name) :
 			TreeUnitItem(parent),
 			mName(name),
 			mParent(0),
-			mChildren(this, &ProfilerItem::createNode),
-			mDuration(this, 0),
+			mChildren(),
+			mDuration(0),
 			mFullDuration(0.0f),
 			mUpdateSlot(this)
 		{
@@ -29,8 +29,8 @@ namespace Maditor {
 			TreeUnitItem(parent),
 			mName(name),
 			mParent(parent),
-			mChildren(this, &ProfilerItem::createNode),
-			mDuration(this, 0),
+			mChildren(),
+			mDuration(0),
 			mFullDuration(0.0f),
 			mUpdateSlot(this)
 		{
@@ -119,7 +119,7 @@ namespace Maditor {
 			}
 		}
 
-		std::tuple<std::string, TreeUnitItem*, std::string> ProfilerModel::createNode(const std::string & name)
+		std::tuple<std::string, TreeUnitItemBase*, std::string> ProfilerModel::createNode(const std::string & name)
 		{
 			return{ name, this, name };
 		}

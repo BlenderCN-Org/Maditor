@@ -10,9 +10,9 @@
 namespace Maditor {
 	namespace Model {
 
-		class ProfilerItem : public TreeUnitItem {
+		class ProfilerItem : public TreeUnitItem<ProfilerItem> {
 		public:
-			ProfilerItem(TreeUnitItem *parent, const std::string &name);
+			ProfilerItem(TreeUnitItemBase *parent, const std::string &name);
 			ProfilerItem(ProfilerItem *parent, const std::string &name);
 
 			// Geerbt über TreeUnitItem
@@ -28,7 +28,7 @@ namespace Maditor {
 
 		private:
 			Engine::Serialize::Observed<size_t> mDuration;
-			Engine::Serialize::ObservableMap<std::string, ProfilerItem, Engine::Serialize::ContainerPolicy::masterOnly, ProfilerItem*, std::string> mChildren;
+			Engine::Serialize::ObservableMap<std::string, ProfilerItem, Engine::Serialize::ContainerPolicy::masterOnly, Engine::Serialize::CustomCreator<decltype(&ProfilerItem::createNode), &ProfilerItem::createNode>> mChildren;
 
 			Engine::SignalSlot::Slot<decltype(&ProfilerItem::update), &ProfilerItem::update> mUpdateSlot;
 
@@ -37,7 +37,7 @@ namespace Maditor {
 			float mFullDuration;
 		};
 
-		class ProfilerModel : public TreeUnit {
+		class ProfilerModel : public TreeUnit<ProfilerModel> {
 			Q_OBJECT
 
 		public:
@@ -55,10 +55,10 @@ namespace Maditor {
 			virtual QVariant header(int col) const override;
 
 		private:
-			std::tuple<std::string, TreeUnitItem*, std::string> createNode(const std::string &name);
+			std::tuple<std::string, TreeUnitItemBase*, std::string> createNode(const std::string &name);
 
 		private:
-			Engine::Serialize::ObservableMap<std::string, ProfilerItem, Engine::Serialize::ContainerPolicy::masterOnly, TreeUnitItem*, std::string> mTopLevelItems;
+			Engine::Serialize::ObservableMap<std::string, ProfilerItem, Engine::Serialize::ContainerPolicy::masterOnly, Engine::Serialize::CustomCreator<decltype(&ProfilerModel::createNode), &ProfilerModel::createNode>> mTopLevelItems;
 
 			
 

@@ -7,51 +7,51 @@
 namespace Maditor {
 	namespace Model {
 
-		TreeUnit::TreeUnit(int columnCount) :
+		TreeUnitBase::TreeUnitBase(int columnCount) :
 			TreeModel(this, columnCount),
-			TreeUnitItem(this)
+			TreeUnitItemBase(this)
 		{
 
 		}
 
-		TreeUnitItem::TreeUnitItem(TreeUnit * tree) :
+		TreeUnitItemBase::TreeUnitItemBase(TreeUnitBase * tree) :
 			mParent(0),
 			mTree(tree)
 		{
 		}
 
-		void TreeUnitItem::notifyDataChange(int column)
+		void TreeUnitItemBase::notifyDataChange(int column)
 		{
 			notifyDataChange(column, column);
 		}
 
-		void TreeUnitItem::notifyDataChange(int fromCol, int toCol)
+		void TreeUnitItemBase::notifyDataChange(int fromCol, int toCol)
 		{
 			mTree->onDataChanged(getIndex(), parentIndex(), fromCol, toCol);
 		}
 
-		TreeUnitItem::TreeUnitItem(TreeUnitItem * parent) :
+		TreeUnitItemBase::TreeUnitItemBase(TreeUnitItemBase * parent) :
 			mParent(parent),
 			mTree(parent->mTree)
 		{
 		}
 
-		TreeUnitItem * TreeUnitItem::parentItem()
+		TreeUnitItemBase * TreeUnitItemBase::parentItem()
 		{
 			return mParent;
 		}
 
-		QModelIndex TreeUnitItem::getIndex()
+		QModelIndex TreeUnitItemBase::getIndex()
 		{
 			return mParent ? mTree->index(parentIndex(), 0, mParent->getIndex()) : QModelIndex();
 		}
 
-		QVariant TreeUnit::data(int col) const
+		QVariant TreeUnitBase::data(int col) const
 		{
 			return QVariant();
 		}
 
-		void TreeUnit::handleOperation(const QModelIndex & parent, int row, int op)
+		void TreeUnitBase::handleOperation(const QModelIndex & parent, int row, int op)
 		{
 			using namespace Engine::Serialize;
 
@@ -77,7 +77,7 @@ namespace Maditor {
 			}
 		}
 
-		void TreeUnit::onDataChanged(const QModelIndex & parent, int row, int fromCol, int toCol)
+		void TreeUnitBase::onDataChanged(const QModelIndex & parent, int row, int fromCol, int toCol)
 		{
 			emit dataChanged(index(row, fromCol, parent), index(row, toCol, parent));
 		}

@@ -14,7 +14,7 @@ namespace Maditor {
 
 		ModuleLoader::ModuleLoader() :
 			mInit(false),
-			mInstances(this, &ModuleLoader::createModule),
+			mInstances(),
 			setupDone(this)
 		{
 
@@ -105,7 +105,7 @@ namespace Maditor {
 		ModuleLoader::ModuleLauncherInstance::~ModuleLauncherInstance()
 		{
 			unload();
-			for (ModuleInstance *dep : dependencies()) {
+			for (ModuleInstanceBase *dep : dependencies()) {
 				ModuleLauncherInstance *d = dynamic_cast<ModuleLauncherInstance*>(dep);
 				if (!d)
 					throw 0;
@@ -119,7 +119,7 @@ namespace Maditor {
 
 		void ModuleLoader::ModuleLauncherInstance::createDependencies()
 		{
-			for (ModuleInstance *dep : dependencies()) {
+			for (ModuleInstanceBase *dep : dependencies()) {
 				ModuleLauncherInstance *d = dynamic_cast<ModuleLauncherInstance*>(dep);
 				if (!d)
 					throw 0;
@@ -132,7 +132,7 @@ namespace Maditor {
 			if (isLoaded())
 				return true;
 
-			for (ModuleInstance *dep : dependencies()) {
+			for (ModuleInstanceBase *dep : dependencies()) {
 				ModuleLauncherInstance *d = dynamic_cast<ModuleLauncherInstance*>(dep);
 				if (!d)
 					throw 0;

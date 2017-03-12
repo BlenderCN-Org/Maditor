@@ -12,7 +12,7 @@
 namespace Maditor {
 	namespace Launcher {
 
-		class ApplicationWrapper : public Shared::AppControl, public Ogre::FrameListener {
+		class ApplicationWrapper : public Shared::AppControl<ApplicationWrapper>, public Ogre::FrameListener {
 
 		public:
 			ApplicationWrapper();
