@@ -26,7 +26,7 @@ namespace Maditor {
 			connect(this, &Maditor::projectOpened, mAddons, &Addons::AddonCollector::onProjectOpened);
 
 			mLogs.addLog(&mLog);
-			Util::UtilMethods::setup(&mLog);
+			Engine::Util::UtilMethods::setup(&mLog);
 
 			if (mReloadProject && !mRecentProjects.isEmpty()) {
 				loadProject(mRecentProjects.front());

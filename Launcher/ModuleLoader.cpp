@@ -14,13 +14,9 @@ namespace Maditor {
 
 
 		ModuleLoader::ModuleLoader() :
-			mInit(false),
-			mInstances(),
-			setupDone(this)
+			mInit(false)
 		{
-
 		}
-
 
 		ModuleLoader::~ModuleLoader()
 		{
@@ -146,14 +142,14 @@ namespace Maditor {
 			mGlobalAPIComponents.clear();
 			std::set<std::string> beforeEntityComponents = Engine::Scene::Entity::Entity::registeredComponentNames();
 
-			std::list<Engine::Scene::BaseSceneComponent*> beforeSceneComponentsList;
-			for (const std::unique_ptr<Engine::Scene::BaseSceneComponent> &comp : Engine::UniqueComponentCollector<Engine::Scene::BaseSceneComponent>::getSingleton())
+			std::list<Engine::Scene::SceneComponentBase*> beforeSceneComponentsList;
+			for (const std::unique_ptr<Engine::Scene::SceneComponentBase> &comp : Engine::UniqueComponentCollector<Engine::Scene::SceneComponentBase>::getSingleton())
 				beforeSceneComponentsList.push_back(comp.get());
-			std::set<Engine::Scene::BaseSceneComponent*> beforeSceneComponents(beforeSceneComponentsList.begin(), beforeSceneComponentsList.end());
+			std::set<Engine::Scene::SceneComponentBase*> beforeSceneComponents(beforeSceneComponentsList.begin(), beforeSceneComponentsList.end());
 			std::set<Engine::UI::GameHandlerBase*> beforeGameHandlers = Engine::UI::UIManager::getSingleton().getGameHandlers();
 			std::set<Engine::UI::GuiHandlerBase*> beforeGuiHandlers = Engine::UI::UIManager::getSingleton().getGuiHandlers();
-			std::list<Engine::Scripting::BaseGlobalAPIComponent*> beforeAPIComponents;
-			for (const std::unique_ptr<Engine::Scripting::BaseGlobalAPIComponent> &comp : Engine::UniqueComponentCollector<Engine::Scripting::BaseGlobalAPIComponent>::getSingleton())
+			std::list<Engine::Scripting::GlobalAPIComponentBase*> beforeAPIComponents;
+			for (const std::unique_ptr<Engine::Scripting::GlobalAPIComponentBase> &comp : Engine::UniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase>::getSingleton())
 				beforeAPIComponents.push_back(comp.get());
 
 			UINT errorMode = GetErrorMode();
@@ -175,24 +171,24 @@ namespace Maditor {
 
 			std::set<std::string> afterEntityComponents = Engine::Scene::Entity::Entity::registeredComponentNames();
 			std::set_difference(afterEntityComponents.begin(), afterEntityComponents.end(), beforeEntityComponents.begin(), beforeEntityComponents.end(), std::inserter(mEntityComponentNames, mEntityComponentNames.end()));
-			std::list<Engine::Scene::BaseSceneComponent*> afterSceneComponentsList;
-			for (const std::unique_ptr<Engine::Scene::BaseSceneComponent> &comp : Engine::UniqueComponentCollector<Engine::Scene::BaseSceneComponent>::getSingleton())
+			std::list<Engine::Scene::SceneComponentBase*> afterSceneComponentsList;
+			for (const std::unique_ptr<Engine::Scene::SceneComponentBase> &comp : Engine::UniqueComponentCollector<Engine::Scene::SceneComponentBase>::getSingleton())
 				afterSceneComponentsList.push_back(comp.get());
-			std::set<Engine::Scene::BaseSceneComponent*> afterSceneComponents(afterSceneComponentsList.begin(), afterSceneComponentsList.end());
+			std::set<Engine::Scene::SceneComponentBase*> afterSceneComponents(afterSceneComponentsList.begin(), afterSceneComponentsList.end());
 			std::set_difference(afterSceneComponents.begin(), afterSceneComponents.end(), beforeSceneComponents.begin(), beforeSceneComponents.end(), std::inserter(mSceneComponents, mSceneComponents.end()));
 			std::set<Engine::UI::GameHandlerBase*> afterGameHandlers = Engine::UI::UIManager::getSingleton().getGameHandlers();
 			std::set_difference(afterGameHandlers.begin(), afterGameHandlers.end(), beforeGameHandlers.begin(), beforeGameHandlers.end(), std::inserter(mGameHandlers, mGameHandlers.end()));
 			std::set<Engine::UI::GuiHandlerBase*> afterGuiHandlers = Engine::UI::UIManager::getSingleton().getGuiHandlers();
 			std::set_difference(afterGuiHandlers.begin(), afterGuiHandlers.end(), beforeGuiHandlers.begin(), beforeGuiHandlers.end(), std::inserter(mGuiHandlers, mGuiHandlers.end()));
-			std::list<Engine::Scripting::BaseGlobalAPIComponent*> afterAPIComponents;
-			for (const std::unique_ptr<Engine::Scripting::BaseGlobalAPIComponent> &comp : Engine::UniqueComponentCollector<Engine::Scripting::BaseGlobalAPIComponent>::getSingleton())
+			std::list<Engine::Scripting::GlobalAPIComponentBase*> afterAPIComponents;
+			for (const std::unique_ptr<Engine::Scripting::GlobalAPIComponentBase> &comp : Engine::UniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase>::getSingleton())
 				afterAPIComponents.push_back(comp.get());
 			afterAPIComponents.sort();
 			beforeAPIComponents.sort();
 			std::set_difference(afterAPIComponents.begin(), afterAPIComponents.end(), beforeAPIComponents.begin(), beforeAPIComponents.end(), std::inserter(mGlobalAPIComponents, mGlobalAPIComponents.end()));
 
-			for (Engine::Scene::BaseSceneComponent *c : mSceneComponents) {
-				Engine::Serialize::UnitHelper<Engine::Scene::BaseSceneComponent>::setItemTopLevel(*c, &Engine::Scene::SceneManager::getSingleton());
+			for (Engine::Scene::SceneComponentBase *c : mSceneComponents) {
+				Engine::Serialize::UnitHelper<Engine::Scene::SceneComponentBase>::setItemTopLevel(*c, &Engine::Scene::SceneManager::getSingleton());
 			}
 
 			if (callInit) {
@@ -206,11 +202,11 @@ namespace Maditor {
 				}
 
 
-				for (Engine::Scene::BaseSceneComponent *c : mSceneComponents) {
+				for (Engine::Scene::SceneComponentBase *c : mSceneComponents) {
 					c->init();
 				}
 
-				for (Engine::Scripting::BaseGlobalAPIComponent *api : mGlobalAPIComponents) {
+				for (Engine::Scripting::GlobalAPIComponentBase *api : mGlobalAPIComponents) {
 					api->init();
 				}
 
@@ -254,12 +250,12 @@ namespace Maditor {
 				}
 			}
 
-			for (Engine::Scripting::BaseGlobalAPIComponent *api : mGlobalAPIComponents) {
+			for (Engine::Scripting::GlobalAPIComponentBase *api : mGlobalAPIComponents) {
 				if (api->getState() == Engine::ObjectState::INITIALIZED)
 					api->finalize();
 			}
 
-			for (Engine::Scene::BaseSceneComponent *c : mSceneComponents) {
+			for (Engine::Scene::SceneComponentBase *c : mSceneComponents) {
 				if (c->getState() == Engine::ObjectState::INITIALIZED)
 					c->finalize();
 			}

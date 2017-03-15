@@ -11,7 +11,7 @@ class ComponentView
 {
 public:
 	ComponentView() :
-	mModel(0){
+	mModel(nullptr){
 
 	}
 

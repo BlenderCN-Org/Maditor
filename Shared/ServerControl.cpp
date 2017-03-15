@@ -12,8 +12,6 @@ namespace Maditor {
 
 ServerControl::ServerControl(bool isLauncher) :
 	TopLevelSerializableUnitBase(Engine::Serialize::RESERVED_ID_COUNT-2),
-	shutdown(this),
-	ping(this),
 	mNetwork(new Engine::Network::NetworkManager)
 {
 	if (isLauncher) {

@@ -40,10 +40,10 @@ private:
 		std::list<ModuleLauncherInstance *> mDependedBy;
 
 		std::list<std::string> mEntityComponentNames;
-		std::list<Engine::Scene::BaseSceneComponent*> mSceneComponents;
+		std::list<Engine::Scene::SceneComponentBase*> mSceneComponents;
 		std::list<Engine::UI::GameHandlerBase*> mGameHandlers;
 		std::list<Engine::UI::GuiHandlerBase*> mGuiHandlers;
-		std::list<Engine::Scripting::BaseGlobalAPIComponent*> mGlobalAPIComponents;
+		std::list<Engine::Scripting::GlobalAPIComponentBase*> mGlobalAPIComponents;
 		std::map<std::string, std::list<Engine::Scene::Entity::Entity*>> mStoredComponentEntities;
 
 		ModuleLoader *mParent;

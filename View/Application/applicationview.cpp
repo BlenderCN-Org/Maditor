@@ -13,7 +13,7 @@ namespace Maditor {
 namespace View {
 
 	ApplicationView::ApplicationView() :
-		mUi(0){
+		mUi(nullptr){
 
 	}
 

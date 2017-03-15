@@ -28,10 +28,10 @@ namespace Maditor {
 				beginInsertRows(QModelIndex(), row, row);
 				endInsertRows();
 				break;
-			case BEFORE | SET_FULL_STATE:
+			case BEFORE | RESET:
 				beginResetModel();
 				break;
-			case AFTER | SET_FULL_STATE:
+			case AFTER | RESET:
 				endResetModel();
 				break;
 			default:

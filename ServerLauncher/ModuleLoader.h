@@ -6,7 +6,7 @@
 namespace Maditor {
 	namespace Launcher {
 
-class ModuleLoader : public Engine::Serialize::SerializableUnitBase {
+class ModuleLoader : public Engine::Serialize::SerializableUnit<ModuleLoader> {
 
 public:
 	ModuleLoader();
@@ -20,7 +20,7 @@ public:
 	const std::string &binaryDir();
 	const std::string &runtimeDir();
 
-	Engine::Server::BaseServer *createServer(const std::string &fullName, const std::string &mediaDir);
+	Engine::Server::ServerBase *createServer(const std::string &fullName, const std::string &mediaDir);
 
 private:
 

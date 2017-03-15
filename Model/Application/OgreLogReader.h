@@ -7,7 +7,7 @@
 namespace Maditor {
 	namespace Model {
 
-		class OgreLogReader : public Engine::Serialize::SerializableUnitBase {
+		class OgreLogReader : public Engine::Serialize::SerializableUnit<OgreLogReader> {
 
 		public:
 			OgreLogReader(LogsModel *model, const std::list<std::string> &textLogs);
@@ -16,7 +16,7 @@ namespace Maditor {
 			void clear();
 
 		private:
-			void receiveImpl(const std::string &msg, Util::MessageType level, const std::string &logName, const std::string &fullTraceback, const std::string &fileName, int lineNr);
+			void receiveImpl(const std::string &msg, Engine::Util::MessageType level, const std::string &logName, const std::string &fullTraceback, const std::string &fileName, int lineNr);
 			
 
 		private:

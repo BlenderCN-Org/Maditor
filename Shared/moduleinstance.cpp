@@ -7,7 +7,6 @@
 namespace Maditor {
 	namespace Shared {
 		ModuleInstanceBase::ModuleInstanceBase(const std::string & name) :
-			reload(this),
 			mLoaded(false),
 			mExists(false),
 			mName(name),

@@ -8,10 +8,6 @@ namespace Maditor {
 	namespace Model {
 
 		StatsModel::StatsModel() :
-			mAverageFPS(),
-			mOgreMemoryUsage(),
-			startTrack(this),
-			stopTrack(this),
 			mTimerId(0),
 			mCurrentUsage(0)
 		{

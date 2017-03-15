@@ -10,7 +10,7 @@ namespace Maditor {
 namespace View {
 
 	LogsView::LogsView() :
-		mUi(0){
+		mUi(nullptr){
 
 	}
 

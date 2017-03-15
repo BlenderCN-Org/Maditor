@@ -9,7 +9,7 @@
 namespace Maditor {
 	namespace Launcher {
 
-		class ServerWrapper : public Shared::ServerControl {
+		class ServerWrapper : public Engine::Hierarchy::HierarchyObject<ServerWrapper>, public Shared::ServerControl {
 
 		public:
 			ServerWrapper();

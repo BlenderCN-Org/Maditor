@@ -10,7 +10,7 @@ namespace Maditor {
 
 		TreeView::TreeView(QWidget * parent) :
 			QTreeView(parent),
-			mModel(0)
+			mModel(nullptr)
 		{
 			connect(this, &QTreeView::customContextMenuRequested, this, &TreeView::buildContextMenu);
 			setContextMenuPolicy(Qt::CustomContextMenu);
@@ -30,7 +30,7 @@ namespace Maditor {
 				connect(this, &QTreeView::doubleClicked, model->sorted(), &Model::TreeSorter::itemDoubleClicked);
 			}
 			else {
-				QTreeView::setModel(0);
+				QTreeView::setModel(nullptr);
 			}
 
 			mModel = model;
@@ -46,7 +46,7 @@ namespace Maditor {
 
 		void TreeView::clearModel()
 		{
-			setModel(0);
+			setModel(nullptr);
 		}		 
 
 	}

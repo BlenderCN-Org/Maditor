@@ -25,7 +25,7 @@ namespace Maditor {
 			mModules(new ModuleList(this)),
 			mValid(false),
 			mApplication(new ApplicationLauncher(mPath, *mModules, logs)),
-			mCurrentServer(0),
+			mCurrentServer(nullptr),
 			mLogs(logs)
 		{
 			init();

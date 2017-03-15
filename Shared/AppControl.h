@@ -8,11 +8,11 @@
 namespace Maditor {
 	namespace Shared {
 
-		class MADITOR_SHARED_EXPORT AppControlBase : public Engine::Serialize::TopLevelSerializableUnitBase {
+		class MADITOR_SHARED_EXPORT AppControl : public Engine::Serialize::TopLevelSerializableUnitBase {
 
 		public:
-			AppControlBase(bool isLauncher);
-			virtual ~AppControlBase();
+			AppControl(bool isLauncher);
+			virtual ~AppControl();
 
 		protected:
 
@@ -50,13 +50,13 @@ namespace Maditor {
 				onApplicationInitialized();
 			}
 
-			Engine::Serialize::Action<decltype(&AppControlBase::shutdownImpl2), &AppControlBase::shutdownImpl2, Engine::Serialize::ActionPolicy::broadcast> shutdown;
-			Engine::Serialize::Action<decltype(&AppControlBase::onApplicationInitialized2), &AppControlBase::onApplicationInitialized2, Engine::Serialize::ActionPolicy::broadcast> applicationInitialized;
-			Engine::Serialize::Action<decltype(&AppControlBase::startImpl2), &AppControlBase::startImpl2, Engine::Serialize::ActionPolicy::broadcast> start;
-			Engine::Serialize::Action<decltype(&AppControlBase::stopImpl2), &AppControlBase::stopImpl2, Engine::Serialize::ActionPolicy::broadcast> stop;
-			Engine::Serialize::Action<decltype(&AppControlBase::pauseImpl2), &AppControlBase::pauseImpl2, Engine::Serialize::ActionPolicy::broadcast> pause;
-			Engine::Serialize::Action<decltype(&AppControlBase::resizeWindowImpl2), &AppControlBase::resizeWindowImpl2, Engine::Serialize::ActionPolicy::broadcast> resizeWindow;
-			Engine::Serialize::Action<decltype(&AppControlBase::pingImpl2), &AppControlBase::pingImpl2, Engine::Serialize::ActionPolicy::broadcast> ping;
+			Engine::Serialize::Action<decltype(&AppControl::shutdownImpl2), &AppControl::shutdownImpl2, Engine::Serialize::ActionPolicy::broadcast> shutdown;
+			Engine::Serialize::Action<decltype(&AppControl::onApplicationInitialized2), &AppControl::onApplicationInitialized2, Engine::Serialize::ActionPolicy::broadcast> applicationInitialized;
+			Engine::Serialize::Action<decltype(&AppControl::startImpl2), &AppControl::startImpl2, Engine::Serialize::ActionPolicy::broadcast> start;
+			Engine::Serialize::Action<decltype(&AppControl::stopImpl2), &AppControl::stopImpl2, Engine::Serialize::ActionPolicy::broadcast> stop;
+			Engine::Serialize::Action<decltype(&AppControl::pauseImpl2), &AppControl::pauseImpl2, Engine::Serialize::ActionPolicy::broadcast> pause;
+			Engine::Serialize::Action<decltype(&AppControl::resizeWindowImpl2), &AppControl::resizeWindowImpl2, Engine::Serialize::ActionPolicy::broadcast> resizeWindow;
+			Engine::Serialize::Action<decltype(&AppControl::pingImpl2), &AppControl::pingImpl2, Engine::Serialize::ActionPolicy::broadcast> ping;
 			
 		private:
 			Engine::Network::NetworkManager *mNetwork;
@@ -64,10 +64,6 @@ namespace Maditor {
 			SharedMemory *mMemory;
 		};
 
-		template <class T>
-		class AppControl : public Engine::Hierarchy::HierarchyObject<T>, public AppControlBase {
-			using AppControlBase::AppControlBase;
-		};
 
 	}
 }

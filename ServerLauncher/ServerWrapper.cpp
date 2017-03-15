@@ -5,24 +5,18 @@
 
 #include "Shared\SharedMemory.h"
 
-#include "GUI\GUISystem.h"
-
 #include "Network\networkmanager.h"
-
-#include "Util\Util.h"
 
 #include "Shared\ServerInfo.h"
 
-#include "Server/baseserver.h"
+#include "Server/serverbase.h"
 
 namespace Maditor {
 	namespace Launcher {
 
 		ServerWrapper::ServerWrapper() :
 			ServerControl(false),
-			mLoader(),
-			mRunning(false),
-			mLog()
+			mRunning(false)
 		{			
 		}
 
@@ -49,7 +43,7 @@ namespace Maditor {
 				}
 			}
 
-			Util::UtilMethods::addListener(mLog.ptr());
+			Engine::Util::UtilMethods::addListener(mLog.ptr());
 
 			mRunning = true;
 
@@ -64,7 +58,7 @@ namespace Maditor {
 				return -1;
 			}
 
-			Engine::Server::BaseServer *server = mLoader->createServer(serverInfo.mServerClass.c_str(), serverInfo.mMediaDir.c_str());
+			Engine::Server::ServerBase *server = mLoader->createServer(serverInfo.mServerClass.c_str(), serverInfo.mMediaDir.c_str());
 
 			if (!server)
 				return -1;

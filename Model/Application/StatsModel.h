@@ -7,7 +7,7 @@
 namespace Maditor {
 	namespace Model {
 
-		class MADITOR_MODEL_EXPORT StatsModel : public QObject, public Engine::Serialize::SerializableUnitBase {
+		class MADITOR_MODEL_EXPORT StatsModel : public QObject, public Engine::Serialize::SerializableUnit<StatsModel> {
 			Q_OBJECT
 		public:
 			StatsModel();

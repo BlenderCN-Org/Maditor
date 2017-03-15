@@ -9,6 +9,8 @@
 #include "maditormodelforward.h"
 #include "Shared/maditorsharedlib.h"
 
+#include "madginelib.h"
+
 //before any qt because of emit
 #include "SignalSlot\signal.h"
 #include "Serialize\Container\serialized.h"

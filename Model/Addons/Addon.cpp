@@ -64,9 +64,13 @@ void AddonCollector::load(Model::Maditor * editor)
 		while (!in.atEnd())
 		{
 			QString line = in.readLine();
+			qDebug() << "Loading Addon: " << line;
 			HINSTANCE h = LoadLibrary(line.toStdString().c_str());
-			if (!h)
+			if (!h) {
+				qDebug() << "Failed!";
 				continue;
+			}
+			qDebug() << "Success!";
 			typedef Addon *(*Creator)(Model::Maditor*);
 			Creator creator = (Creator)GetProcAddress(h, "createAddon");
 			if (!creator)

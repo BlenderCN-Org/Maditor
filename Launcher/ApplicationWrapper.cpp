@@ -18,10 +18,8 @@ namespace Maditor {
 		ApplicationWrapper::ApplicationWrapper() :
 			AppControl(false),
 			mInput(new InputWrapper(sharedMemory().mInput)),
-			mLoader(),
 			mRunning(false),
-			mStartRequested(false),
-			mLog()
+			mStartRequested(false)
 		{			
 		}
 
@@ -43,7 +41,7 @@ namespace Maditor {
 				!GetAsyncKeyState(VK_F10))
 			{
 				::Sleep(100);
-				if (++j > 50000) {
+				if (++j > 5000) {
 					return -1;
 				}
 			}

@@ -10,7 +10,7 @@
 namespace Maditor {
 	namespace Model {
 
-		class MADITOR_MODEL_EXPORT ServerLauncher : public QObject, public Shared::ServerControl {
+		class MADITOR_MODEL_EXPORT ServerLauncher : public QObject, public Engine::Hierarchy::HierarchyObject<ServerLauncher>, public Shared::ServerControl {
 			Q_OBJECT
 
 		public:

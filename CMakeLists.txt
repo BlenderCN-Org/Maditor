@@ -12,8 +12,14 @@ Project(Maditor)
 
 set(QT_PATH "" CACHE PATH "Path to Qt-find script")
 
-set(CMAKE_MODULE_PATH
+set(CMAKE_PREFIX_PATH
+  ${CMAKE_PREFIX_PATH}
 	"${QT_PATH}"
+	"${CMAKE_CURRENT_LIST_DIR}/CMake"
+)
+
+set(CMAKE_MODULE_PATH
+  ${CMAKE_MODULE_PATH}
 	"${CMAKE_CURRENT_LIST_DIR}/CMake"
 )
 
@@ -25,6 +31,7 @@ endif (MINGW)
 include(PrecompiledHeader)
 include(Project)
 
+
 #Find the QtWidgets library
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Xml REQUIRED)
@@ -33,6 +40,11 @@ find_package(Qt5Network REQUIRED)
 
 find_package(Madgine REQUIRED)
 find_package(Interfaces REQUIRED)
+
+
+include_directories(${MADGINE_INCLUDE_DIRS})
+include_directories(${INTERFACES_INCLUDE_DIRS})
+
 
 add_subdirectory(Shared)
 
@@ -50,9 +62,6 @@ add_subdirectory(View)
 if (BUILD_TESTS)
 	add_subdirectory(test)
 endif(BUILD_TESTS)
-
-include_directories(${MADGINE_INCLUDE_DIRS})
-include_directories(${INTERFACES_INCLUDE_DIRS})
 
 add_executable(Maditor main.cpp)
 add_dependencies(Maditor Maditor_Launcher Maditor_Server_Launcher ${TOOLS_LIBS})

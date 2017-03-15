@@ -15,8 +15,8 @@ namespace Maditor {
 namespace View {
 
 	ServerView::ServerView() :
-		mUi(0),
-		mStartServerMenu(0)
+		mUi(nullptr),
+		mStartServerMenu(nullptr)
 	{
 
 	}

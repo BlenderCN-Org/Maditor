@@ -13,7 +13,7 @@ namespace Maditor {
 namespace View {
 
 	ProjectView::ProjectView() :
-		mUi(0){
+		mUi(nullptr){
 
 	}
 

@@ -17,8 +17,6 @@ namespace Maditor {
 		ModuleLoader::ModuleLoader(const QString & binaryDir, const ModuleList &moduleList) :			
 			mBinaryDir(binaryDir),
 			mModules(moduleList),
-			mInstances(),
-			setupDone(this),
 			TableUnit(2),
 			mModulesCount(-1)
 		{
@@ -198,7 +196,6 @@ namespace Maditor {
 
 		ModuleImpl::ModuleImpl(ModuleLoader * loader, const std::string & name) :
 			ModuleInstance(name),
-			mNotify(this),
 			mLoader(loader)
 		{
 			mLoaded.setCallback(mNotify);

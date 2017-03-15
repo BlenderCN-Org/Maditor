@@ -48,7 +48,7 @@ namespace Maditor {
 
 		void FilesView::clearModel()
 		{
-			setModel(0);
+			setModel(nullptr);
 		}		 
 
 	}

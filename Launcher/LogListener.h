@@ -6,7 +6,7 @@
 namespace Maditor {
 	namespace Launcher {
 
-class LogListener : public Engine::Serialize::SerializableUnitBase, public Ogre::LogListener {
+class LogListener : public Engine::Serialize::SerializableUnit<LogListener>, public Ogre::LogListener {
 
 public:
 	LogListener();
@@ -18,7 +18,7 @@ protected:
 
 
 private:
-	void receiveImpl(const std::string &msg, Util::MessageType level, const std::string &logName, const std::string &fullTraceback, const std::string &fileName, int lineNr);
+	void receiveImpl(const std::string &msg, Engine::Util::MessageType level, const std::string &logName, const std::string &fullTraceback, const std::string &fileName, int lineNr);
 
 private:
 	Engine::Serialize::Action<decltype(&LogListener::receiveImpl), &LogListener::receiveImpl, Engine::Serialize::ActionPolicy::notification> receiveMessage;

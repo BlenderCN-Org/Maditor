@@ -15,7 +15,7 @@ namespace Maditor {
 		}
 
 		TreeUnitItemBase::TreeUnitItemBase(TreeUnitBase * tree) :
-			mParent(0),
+			mParent(nullptr),
 			mTree(tree)
 		{
 		}
@@ -66,10 +66,10 @@ namespace Maditor {
 				beginInsertRows(parent, row, row);
 				endInsertRows();
 				break;
-			case BEFORE | SET_FULL_STATE:
+			case BEFORE | RESET:
 				beginResetModel();
 				break;
-			case AFTER | SET_FULL_STATE:
+			case AFTER | RESET:
 				endResetModel();
 				break;
 			default:

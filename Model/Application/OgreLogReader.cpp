@@ -19,7 +19,6 @@ namespace Maditor {
 
 		OgreLogReader::OgreLogReader(LogsModel * model, const std::list<std::string> &textLogs) :
 			mModel(model),
-			receiveMessage(this),
 			mTextLogs(textLogs)
 		{
 
@@ -39,7 +38,7 @@ namespace Maditor {
 			mLogs.clear();
 		}
 
-		void OgreLogReader::receiveImpl(const std::string & msg, Util::MessageType level, const std::string & logName, const std::string & fullTraceback, const std::string & fileName, int lineNr)
+		void OgreLogReader::receiveImpl(const std::string & msg, Engine::Util::MessageType level, const std::string & logName, const std::string & fullTraceback, const std::string & fileName, int lineNr)
 		{
 			auto it = mLogs.find(logName);
 

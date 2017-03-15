@@ -11,7 +11,7 @@ namespace Maditor {
 			{				
 			}
 
-			void LogTableModel::addMessage(const QString &msg, Util::MessageType level, const QString &traceback, const std::string &fileName, int lineNr) {
+			void LogTableModel::addMessage(const QString &msg, Engine::Util::MessageType level, const QString &traceback, const std::string &fileName, int lineNr) {
 				beginInsertRows(QModelIndex(), 0, 0);
 				mItems.emplace_front(level, msg, traceback, fileName, lineNr);
 				endInsertRows();
@@ -68,13 +68,13 @@ namespace Maditor {
 						return QVariant();
 					QIcon icon;
 					switch (std::get<0>(*it)) {
-					case Util::LOG_TYPE:
+					case Engine::Util::LOG_TYPE:
 						icon.addPixmap(QApplication::style()->standardPixmap(QStyle::SP_MessageBoxInformation));
 						break;
-					case Util::WARNING_TYPE:
+					case Engine::Util::WARNING_TYPE:
 						icon.addPixmap(QApplication::style()->standardPixmap(QStyle::SP_MessageBoxWarning));
 						break;
-					case Util::ERROR_TYPE:
+					case Engine::Util::ERROR_TYPE:
 						icon.addPixmap(QApplication::style()->standardPixmap(QStyle::SP_MessageBoxCritical));
 						break;
 					}

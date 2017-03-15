@@ -18,7 +18,7 @@ namespace Maditor {
 		ProjectElement::ProjectElement(const QString & name, const QString & type, QDomDocument &doc) :
 			mRootElement(doc.createElement(type)),
 			mName(name),
-			mParent(0)
+			mParent(nullptr)
 		{
 			mRootElement.setAttribute("name", mName);
 			doc.appendChild(mRootElement);
