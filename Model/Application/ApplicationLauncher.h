@@ -9,16 +9,16 @@
 namespace Maditor {
 	namespace Model {
 
-		class MADITOR_MODEL_EXPORT ApplicationLauncher : public QObject, public Engine::Hierarchy::HierarchyObject<ApplicationLauncher>, public Shared::AppControl {
+		class MADITOR_MODEL_EXPORT ApplicationLauncher : public QObject, public Shared::AppControl {
 			Q_OBJECT
 
 		public:
 			ApplicationLauncher(const QString &path, const ModuleList &modules, LogsModel *logs);
 			virtual ~ApplicationLauncher();
 
-			void init();
-			void initImpl(bool debug);
-			void initNoDebug();
+			void setup();
+			void setupImpl(bool debug);
+			void setupNoDebug();
 			void shutdown();
 			void kill();
 			void start();
@@ -48,7 +48,7 @@ namespace Maditor {
 			virtual void pauseImpl() override;
 
 			// Inherited via AppControl
-			virtual void onApplicationInitialized() override;
+			virtual void onApplicationSetup() override;
 
 			virtual void pingImpl() override;
 
@@ -56,8 +56,8 @@ namespace Maditor {
 		    void resizeWindow();
 
 		signals:
-			void applicationInitializing();
-			void applicationInitialized();
+			void applicationSettingup();
+			void applicationSetup();
 			void applicationStarted();
 			void applicationStopped();
 			void applicationShutdown();
@@ -65,6 +65,9 @@ namespace Maditor {
 			void processStarted(DWORD, const Shared::ApplicationInfo &);
 
 		private:
+
+			virtual size_t getSize() const override;
+
 			std::unique_ptr<InputWrapper> mInput;
 			OgreWindow *mWindow;
 
@@ -75,7 +78,7 @@ namespace Maditor {
 
 			Engine::Serialize::Serialized<OgreLogReader> mLog;
 			Engine::Serialize::Serialized<ModuleLoader> mLoader;
-			UtilModel mUtil;
+			Engine::Serialize::Serialized<UtilModel> mUtil;
 			
 			bool mWaitingForLoader;
 

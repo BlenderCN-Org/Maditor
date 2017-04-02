@@ -11,8 +11,10 @@ namespace Maditor {
 	namespace Shared {
 
 ServerControl::ServerControl(bool isLauncher) :
-	TopLevelSerializableUnitBase(Engine::Serialize::RESERVED_ID_COUNT-2),
-	mNetwork(new Engine::Network::NetworkManager)
+	TopLevelSerializableUnit(Engine::Serialize::RESERVED_ID_COUNT-2),
+	mNetwork(new Engine::Network::NetworkManager)/*,
+	shutdown(this),
+	ping(this)*/
 {
 	if (isLauncher) {
 		mMemory = new ServerSharedMemory(ServerSharedMemory::create);

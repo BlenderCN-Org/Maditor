@@ -9,7 +9,9 @@ namespace Maditor {
 
 		StatsModel::StatsModel() :
 			mTimerId(0),
-			mCurrentUsage(0)
+			mCurrentUsage(0)/*,
+			startTrack(this),
+			stopTrack(this)*/
 		{
 			mAverageFPS.setCallback([this](const float &f) {emit averageFPSChanged(f); });
 			mOgreMemoryUsage.setCallback([this](const size_t &mem) {emit ogreMemoryUsageChanged(mem); });

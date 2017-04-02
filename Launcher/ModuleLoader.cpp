@@ -14,8 +14,10 @@ namespace Maditor {
 
 
 		ModuleLoader::ModuleLoader() :
-			mInit(false)
+			mInit(false)/*,
+			setupDone(this)*/
 		{
+			mInstances.setCreator(std::bind(&ModuleLoader::createModule, this, std::placeholders::_1));
 		}
 
 		ModuleLoader::~ModuleLoader()
@@ -84,7 +86,7 @@ namespace Maditor {
 		ModuleLoader::ModuleLauncherInstance::~ModuleLauncherInstance()
 		{
 			unload();
-			for (ModuleInstanceBase *dep : dependencies()) {
+			for (ModuleInstance *dep : dependencies()) {
 				ModuleLauncherInstance *d = dynamic_cast<ModuleLauncherInstance*>(dep);
 				if (!d)
 					throw 0;
@@ -98,7 +100,7 @@ namespace Maditor {
 
 		void ModuleLoader::ModuleLauncherInstance::createDependencies()
 		{
-			for (ModuleInstanceBase *dep : dependencies()) {
+			for (ModuleInstance *dep : dependencies()) {
 				ModuleLauncherInstance *d = dynamic_cast<ModuleLauncherInstance*>(dep);
 				if (!d)
 					throw 0;
@@ -111,7 +113,7 @@ namespace Maditor {
 			if (isLoaded())
 				return true;
 
-			for (ModuleInstanceBase *dep : dependencies()) {
+			for (ModuleInstance *dep : dependencies()) {
 				ModuleLauncherInstance *d = dynamic_cast<ModuleLauncherInstance*>(dep);
 				if (!d)
 					throw 0;
@@ -143,13 +145,13 @@ namespace Maditor {
 			std::set<std::string> beforeEntityComponents = Engine::Scene::Entity::Entity::registeredComponentNames();
 
 			std::list<Engine::Scene::SceneComponentBase*> beforeSceneComponentsList;
-			for (const std::unique_ptr<Engine::Scene::SceneComponentBase> &comp : Engine::UniqueComponentCollector<Engine::Scene::SceneComponentBase>::getSingleton())
+			for (const std::unique_ptr<Engine::Scene::SceneComponentBase> &comp : Engine::BaseUniqueComponentCollector<Engine::Scene::SceneComponentBase>::getSingleton())
 				beforeSceneComponentsList.push_back(comp.get());
 			std::set<Engine::Scene::SceneComponentBase*> beforeSceneComponents(beforeSceneComponentsList.begin(), beforeSceneComponentsList.end());
 			std::set<Engine::UI::GameHandlerBase*> beforeGameHandlers = Engine::UI::UIManager::getSingleton().getGameHandlers();
 			std::set<Engine::UI::GuiHandlerBase*> beforeGuiHandlers = Engine::UI::UIManager::getSingleton().getGuiHandlers();
 			std::list<Engine::Scripting::GlobalAPIComponentBase*> beforeAPIComponents;
-			for (const std::unique_ptr<Engine::Scripting::GlobalAPIComponentBase> &comp : Engine::UniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase>::getSingleton())
+			for (const std::unique_ptr<Engine::Scripting::GlobalAPIComponentBase> &comp : Engine::BaseUniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase>::getSingleton())
 				beforeAPIComponents.push_back(comp.get());
 
 			UINT errorMode = GetErrorMode();
@@ -172,7 +174,7 @@ namespace Maditor {
 			std::set<std::string> afterEntityComponents = Engine::Scene::Entity::Entity::registeredComponentNames();
 			std::set_difference(afterEntityComponents.begin(), afterEntityComponents.end(), beforeEntityComponents.begin(), beforeEntityComponents.end(), std::inserter(mEntityComponentNames, mEntityComponentNames.end()));
 			std::list<Engine::Scene::SceneComponentBase*> afterSceneComponentsList;
-			for (const std::unique_ptr<Engine::Scene::SceneComponentBase> &comp : Engine::UniqueComponentCollector<Engine::Scene::SceneComponentBase>::getSingleton())
+			for (const std::unique_ptr<Engine::Scene::SceneComponentBase> &comp : Engine::BaseUniqueComponentCollector<Engine::Scene::SceneComponentBase>::getSingleton())
 				afterSceneComponentsList.push_back(comp.get());
 			std::set<Engine::Scene::SceneComponentBase*> afterSceneComponents(afterSceneComponentsList.begin(), afterSceneComponentsList.end());
 			std::set_difference(afterSceneComponents.begin(), afterSceneComponents.end(), beforeSceneComponents.begin(), beforeSceneComponents.end(), std::inserter(mSceneComponents, mSceneComponents.end()));
@@ -181,14 +183,14 @@ namespace Maditor {
 			std::set<Engine::UI::GuiHandlerBase*> afterGuiHandlers = Engine::UI::UIManager::getSingleton().getGuiHandlers();
 			std::set_difference(afterGuiHandlers.begin(), afterGuiHandlers.end(), beforeGuiHandlers.begin(), beforeGuiHandlers.end(), std::inserter(mGuiHandlers, mGuiHandlers.end()));
 			std::list<Engine::Scripting::GlobalAPIComponentBase*> afterAPIComponents;
-			for (const std::unique_ptr<Engine::Scripting::GlobalAPIComponentBase> &comp : Engine::UniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase>::getSingleton())
+			for (const std::unique_ptr<Engine::Scripting::GlobalAPIComponentBase> &comp : Engine::BaseUniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase>::getSingleton())
 				afterAPIComponents.push_back(comp.get());
 			afterAPIComponents.sort();
 			beforeAPIComponents.sort();
 			std::set_difference(afterAPIComponents.begin(), afterAPIComponents.end(), beforeAPIComponents.begin(), beforeAPIComponents.end(), std::inserter(mGlobalAPIComponents, mGlobalAPIComponents.end()));
 
 			for (Engine::Scene::SceneComponentBase *c : mSceneComponents) {
-				Engine::Serialize::UnitHelper<Engine::Scene::SceneComponentBase>::setItemTopLevel(*c, &Engine::Scene::SceneManager::getSingleton());
+				Engine::Serialize::UnitHelper<Engine::Scene::SceneComponentBase>::setItemTopLevel(*c, &Engine::Scene::SceneManagerBase::getSingleton());
 			}
 
 			if (callInit) {
@@ -210,9 +212,9 @@ namespace Maditor {
 					api->init();
 				}
 
-				for (const std::pair<const std::string, std::list<Engine::Scene::Entity::Entity*>> &ents : mStoredComponentEntities) {
-					for (Engine::Scene::Entity::Entity* e : ents.second) {
-						e->addComponent(ents.first);
+				for (const std::pair<const std::string, std::list<std::pair<Engine::Scene::Entity::Entity*, Engine::Scripting::ArgumentList>>> &ents : mStoredComponentEntities) {
+					for (const std::pair<Engine::Scene::Entity::Entity*, Engine::Scripting::ArgumentList> &p : ents.second) {
+						p.first->addComponent(p.second, ents.first);
 					}
 				}
 				mStoredComponentEntities.clear();
@@ -241,10 +243,10 @@ namespace Maditor {
 
 
 			for (const std::string &comp : mEntityComponentNames) {
-				std::list<Engine::Scene::Entity::Entity*> &componentEntities = mStoredComponentEntities[comp];
+				std::list<std::pair<Engine::Scene::Entity::Entity*, Engine::Scripting::ArgumentList>> &componentEntities = mStoredComponentEntities[comp];
 				for (Engine::Scene::Entity::Entity* e : entities) {
 					if (e->hasComponent(comp)) {
-						componentEntities.push_back(e);
+						componentEntities.push_back(std::make_pair(e, e->getComponent(comp)->creationArguments()));
 						e->removeComponent(comp);
 					}
 				}

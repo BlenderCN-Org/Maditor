@@ -17,10 +17,12 @@ namespace Maditor {
 		ServerWrapper::ServerWrapper() :
 			ServerControl(false),
 			mRunning(false)
-		{			
+		{		
+			postConstruct();
 		}
 
-		int ServerWrapper::init()
+
+		int ServerWrapper::start()
 		{
 			Engine::Network::NetworkManager *net = network();
 
@@ -97,6 +99,11 @@ namespace Maditor {
 				shutdownImpl();
 			}
 			return mRunning;
+		}
+
+		size_t ServerWrapper::getSize() const
+		{
+			return sizeof(ServerWrapper);
 		}
 
 

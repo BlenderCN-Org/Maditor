@@ -22,8 +22,8 @@ namespace View {
 		mUi = ui;
 
 		setConnections({
-			{ ui->actionInit, &Model::ApplicationLauncher::init },
-			{ ui->actionInit_No_Debug, &Model::ApplicationLauncher::initNoDebug },
+			{ ui->actionSetup, &Model::ApplicationLauncher::setup },
+			{ ui->actionSetup_No_Debug, &Model::ApplicationLauncher::setupNoDebug },
 			{ ui->actionShutdown, &Model::ApplicationLauncher::shutdown },
 			{ ui->actionKill, &Model::ApplicationLauncher::kill},
 			{ ui->actionStart, &Model::ApplicationLauncher::start },
@@ -32,8 +32,8 @@ namespace View {
 		});
 
 		createToolbar(window, "ApplicationToolbar", {
-			ui->actionInit,
-			ui->actionInit_No_Debug,
+			ui->actionSetup,
+			ui->actionSetup_No_Debug,
 			ui->actionShutdown,
 			ui->actionKill,
 			ui->actionStart,
@@ -53,22 +53,22 @@ namespace View {
 		mUi->performanceWidget->setModel(app->util()->profiler());
 		mUi->appStatsWidget->setModel(app->util()->stats());
 
-		mUi->actionInit->setEnabled(true);
-		connect(app, &Model::ApplicationLauncher::applicationInitializing, this, &ApplicationView::onApplicationInitializing);
-		connect(app, &Model::ApplicationLauncher::applicationInitialized, this, &ApplicationView::onApplicationInitialized);
+		mUi->actionSetup->setEnabled(true);
+		connect(app, &Model::ApplicationLauncher::applicationSettingup, this, &ApplicationView::onApplicationSettingup);
+		connect(app, &Model::ApplicationLauncher::applicationSetup, this, &ApplicationView::onApplicationSetup);
 		connect(app, &Model::ApplicationLauncher::applicationStarted, this, &ApplicationView::onApplicationStarted);
 		connect(app, &Model::ApplicationLauncher::applicationStopped, this, &ApplicationView::onApplicationStopped);
 		connect(app, &Model::ApplicationLauncher::applicationShutdown, this, &ApplicationView::onApplicationShutdown);
 	}
 
-	void ApplicationView::onApplicationInitializing() {
+	void ApplicationView::onApplicationSettingup() {
 		mUi->game->setCurrentIndex(2);
-		mUi->actionInit->setEnabled(false);
-		mUi->actionInit_No_Debug->setEnabled(false);
+		mUi->actionSetup->setEnabled(false);
+		mUi->actionSetup_No_Debug->setEnabled(false);
 		mUi->actionKill->setEnabled(true);
 	}
 
-	void ApplicationView::onApplicationInitialized()
+	void ApplicationView::onApplicationSetup()
 	{
 		mUi->game->setCurrentIndex(1);
 		mUi->actionStart->setEnabled(true);
@@ -93,8 +93,8 @@ namespace View {
 	void ApplicationView::onApplicationShutdown()
 	{
 		mUi->game->setCurrentIndex(0);
-		mUi->actionInit->setEnabled(true);
-		mUi->actionInit_No_Debug->setEnabled(true);
+		mUi->actionSetup->setEnabled(true);
+		mUi->actionSetup_No_Debug->setEnabled(true);
 		mUi->actionShutdown->setEnabled(false);
 		mUi->actionKill->setEnabled(false);
 		mUi->actionStart->setEnabled(false);

@@ -20,10 +20,11 @@ namespace Maditor {
 			mInput(new InputWrapper(sharedMemory().mInput)),
 			mRunning(false),
 			mStartRequested(false)
-		{			
+		{
 		}
 
-		int ApplicationWrapper::init()
+
+		int ApplicationWrapper::start()
 		{
 			Engine::Network::NetworkManager *net = network();
 
@@ -81,6 +82,7 @@ namespace Maditor {
 #endif
 
 			mRunning = true;
+
 			mApplication.setup(mSettings);
 
 			Ogre::LogManager::getSingleton().getLog("Madgine.log")->addListener(mLog.ptr());
@@ -103,7 +105,7 @@ namespace Maditor {
 
 			net->addTopLevelItem(&Engine::Util::Util::getSingleton());					
 
-			applicationInitialized({});
+			applicationSetup({});
 
 			Ogre::Root::getSingleton().addFrameListener(this);
 
@@ -133,7 +135,7 @@ namespace Maditor {
 			mApplication.shutdown();
 		}
 
-		void ApplicationWrapper::onApplicationInitialized()
+		void ApplicationWrapper::onApplicationSetup()
 		{
 
 		}
@@ -164,6 +166,11 @@ namespace Maditor {
 		void ApplicationWrapper::resizeWindowImpl()
 		{
 			mApplication.resizeWindow();
+		}
+
+		size_t ApplicationWrapper::getSize() const
+		{
+			return sizeof(ApplicationWrapper);
 		}
 
 	}

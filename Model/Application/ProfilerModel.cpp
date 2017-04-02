@@ -16,7 +16,8 @@ namespace Maditor {
 			mName(name),
 			mParent(nullptr),
 			mDuration(0),
-			mFullDuration(0.0f)
+			mFullDuration(0.0f),
+			mUpdateSlot(this)
 		{
 			setContainer(mChildren);
 			mDuration.setCallback(mUpdateSlot);
@@ -27,7 +28,8 @@ namespace Maditor {
 			mName(name),
 			mParent(parent),
 			mDuration(0),
-			mFullDuration(0.0f)
+			mFullDuration(0.0f),
+			mUpdateSlot(this)
 		{
 			setContainer(mChildren);
 			mDuration.setCallback(mUpdateSlot);

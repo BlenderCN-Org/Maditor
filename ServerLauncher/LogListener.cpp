@@ -7,7 +7,8 @@
 namespace Maditor {
 	namespace Launcher {
 
-		LogListener::LogListener()
+		LogListener::LogListener()/* :
+			receiveMessage(this)*/
 		{
 
 		}

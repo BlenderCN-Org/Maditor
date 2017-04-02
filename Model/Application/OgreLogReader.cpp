@@ -19,7 +19,8 @@ namespace Maditor {
 
 		OgreLogReader::OgreLogReader(LogsModel * model, const std::list<std::string> &textLogs) :
 			mModel(model),
-			mTextLogs(textLogs)
+			mTextLogs(textLogs)/*,
+			receiveMessage(this)*/
 		{
 
 		}

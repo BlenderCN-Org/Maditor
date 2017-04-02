@@ -21,8 +21,8 @@ public:
 	virtual void setModel(Model::ApplicationLauncher *app) override;
 
 private slots:
-	void onApplicationInitializing();
-	void onApplicationInitialized();
+	void onApplicationSettingup();
+	void onApplicationSetup();
 	void onApplicationStarted();
 	void onApplicationStopped();
 	void onApplicationShutdown();

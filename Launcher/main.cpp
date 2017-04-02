@@ -4,5 +4,5 @@
 
 int main() {
 	Maditor::Launcher::ApplicationWrapper app;
-	return app.init();
+	return app.start();
 }

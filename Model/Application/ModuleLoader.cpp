@@ -18,7 +18,8 @@ namespace Maditor {
 			mBinaryDir(binaryDir),
 			mModules(moduleList),
 			TableUnit(2),
-			mModulesCount(-1)
+			mModulesCount(-1)/*,
+			setupDone(this)*/
 		{
 			setContainer(mInstances);
 			/*const Shared::ModuleInstance *ptr = &*it;
@@ -27,6 +28,8 @@ namespace Maditor {
 				dataChanged(std::distance(mInstances.begin(), it), column);
 			})*/
 						
+			mInstances.setCreator(std::bind(&ModuleLoader::createModule, this, std::placeholders::_1));
+
 			QDir dir(binaryDir);
 			mFiles = QSet<QString>::fromList(dir.entryList({ "*.dll" }, QDir::NoDotAndDotDot | QDir::Files));
 
@@ -45,7 +48,7 @@ namespace Maditor {
 
 			std::list<const Module*> reloadOrder;
 
-			for (const Shared::ModuleInstanceBase &mod : mInstances) {
+			for (const Shared::ModuleInstance &mod : mInstances) {
 				mWatcher.removePath(mBinaryDir + QString::fromStdString(mod.name()) + ".dll");
 			}
 
@@ -66,7 +69,7 @@ namespace Maditor {
 			auto it = mMap.find(m);
 			//if (it == mInstances.end())
 			//	return;
-			Shared::ModuleInstanceBase &module = *it->second;
+			Shared::ModuleInstance &module = *it->second;
 			module.setExists(f.exists());
 			if (module.exists()) {
 				qDebug() << path << "Changed!";
@@ -138,7 +141,7 @@ namespace Maditor {
 
 		void ModuleLoader::setup2()
 		{
-			for (const std::pair<const Model::Module *, Shared::ModuleInstanceBase *> &module : mMap) {
+			for (const std::pair<const Model::Module *, Shared::ModuleInstance *> &module : mMap) {
 				for (const QString &dep : module.first->dependencies()) {
 					module.second->addDependency(mMap.at(mModules.getModule(dep)));
 				}
@@ -196,7 +199,8 @@ namespace Maditor {
 
 		ModuleImpl::ModuleImpl(ModuleLoader * loader, const std::string & name) :
 			ModuleInstance(name),
-			mLoader(loader)
+			mLoader(loader),
+			mNotify(this)
 		{
 			mLoaded.setCallback(mNotify);
 		}

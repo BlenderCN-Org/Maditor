@@ -12,19 +12,19 @@
 namespace Maditor {
 	namespace Launcher {
 
-		class ApplicationWrapper : public Engine::Hierarchy::HierarchyObject<ApplicationWrapper>, public Shared::AppControl, public Ogre::FrameListener {
+		class ApplicationWrapper : public Shared::AppControl, public Ogre::FrameListener {
 
 		public:
 			ApplicationWrapper();
 
-			int init();
+			int start();
 			
 		protected:
 			// Inherited via AppControl
 			virtual void shutdownImpl() override;
 		
 			// Inherited via AppControl
-			virtual void onApplicationInitialized() override;
+			virtual void onApplicationSetup() override;
 
 			virtual bool frameRenderingQueued(const Ogre::FrameEvent &evt) override;
 
@@ -37,6 +37,8 @@ namespace Maditor {
 			virtual void resizeWindowImpl() override;
 
 		private:
+			virtual size_t getSize() const override;
+
 			Engine::Serialize::Serialized<LogListener> mLog;
 
 			Engine::App::OgreAppSettings mSettings;

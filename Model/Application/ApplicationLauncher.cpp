@@ -24,8 +24,6 @@ namespace Maditor {
 			mWaitingForLoader(false),
 			mUtil(false)
 		{
-			network()->addTopLevelItem(&mUtil);
-
 			connect(mWindow, &OgreWindow::resized, this, &ApplicationLauncher::resizeWindow);
 
 			startTimer(10);
@@ -33,6 +31,8 @@ namespace Maditor {
 			mPingTimer.setSingleShot(true);
 
 			connect(&mPingTimer, &QTimer::timeout, this, &ApplicationLauncher::kill);
+
+			postConstruct();
 		}
 
 		ApplicationLauncher::~ApplicationLauncher()
@@ -40,14 +40,14 @@ namespace Maditor {
 			kill();
 		}
 
-		void ApplicationLauncher::init()
+		void ApplicationLauncher::setup()
 		{
-			initImpl(true);
+			setupImpl(true);
 		}
 
-		void ApplicationLauncher::initImpl(bool debug)
+		void ApplicationLauncher::setupImpl(bool debug)
 		{
-			emit applicationInitializing();
+			emit applicationSettingup();
 
 			Shared::ApplicationInfo &appInfo = sharedMemory().mAppInfo;
 
@@ -84,7 +84,7 @@ namespace Maditor {
 			CloseHandle(pi.hThread);
 
 			emit processStarted(mPID, appInfo);
-			mUtil.stats()->setProcess(mHandle);
+			mUtil->stats()->setProcess(mHandle);
 
 			Engine::Network::NetworkManager *net = network();
 			
@@ -100,9 +100,9 @@ namespace Maditor {
 			if (!debug)
 				pingImpl();
 		}
-		void ApplicationLauncher::initNoDebug()
+		void ApplicationLauncher::setupNoDebug()
 		{
-			initImpl(false);
+			setupImpl(false);
 		}
 		void ApplicationLauncher::start()
 		{
@@ -141,7 +141,7 @@ namespace Maditor {
 
 		UtilModel * ApplicationLauncher::util()
 		{
-			return &mUtil;
+			return mUtil.ptr();
 		}
 
 		DWORD ApplicationLauncher::pid()
@@ -194,7 +194,7 @@ namespace Maditor {
 
 				mLoader->reset();
 				mWaitingForLoader = false;
-				mUtil.reset();
+				mUtil->reset();
 
 				mPingTimer.stop();
 
@@ -208,9 +208,9 @@ namespace Maditor {
 		}
 
 
-		void ApplicationLauncher::onApplicationInitialized()
+		void ApplicationLauncher::onApplicationSetup()
 		{
-			emit applicationInitialized();
+			emit applicationSetup();
 		}
 
 		void ApplicationLauncher::pingImpl()
@@ -221,6 +221,10 @@ namespace Maditor {
 
 		void ApplicationLauncher::resizeWindow() {
 			AppControl::resizeWindow({});
+		}
+
+		size_t ApplicationLauncher::getSize() const {
+			return sizeof(ApplicationLauncher);
 		}
 
 	}

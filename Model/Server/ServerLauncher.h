@@ -10,7 +10,7 @@
 namespace Maditor {
 	namespace Model {
 
-		class MADITOR_MODEL_EXPORT ServerLauncher : public QObject, public Engine::Hierarchy::HierarchyObject<ServerLauncher>, public Shared::ServerControl {
+		class MADITOR_MODEL_EXPORT ServerLauncher : public QObject, public Shared::ServerControl {
 			Q_OBJECT
 
 		public:
@@ -49,6 +49,8 @@ namespace Maditor {
 			void processStarted(DWORD, const Shared::ServerInfo &);
 
 		private:			
+			virtual size_t getSize() const override;
+
 			QString mPath;
 
 			DWORD mPID;
@@ -58,14 +60,13 @@ namespace Maditor {
 
 			Engine::Serialize::Serialized<OgreLogReader> mLogReader;
 			Engine::Serialize::Serialized<ModuleLoader> mLoader;
-			UtilModel mUtil;
+			Engine::Serialize::Serialized<UtilModel> mUtil;
 			
 			bool mWaitingForLoader;
 
 			QTimer mPingTimer;		
 
 			Generators::ServerClassGenerator *mServerClass;
-
 			
 
 		};

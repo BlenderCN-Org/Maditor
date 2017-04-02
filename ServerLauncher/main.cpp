@@ -3,6 +3,6 @@
 #include "ServerWrapper.h"
 
 int main() {
-	Maditor::Launcher::ServerWrapper server;
-	return server.init();
+	Maditor::Launcher::ServerWrapper server;	
+	return server.start();
 }

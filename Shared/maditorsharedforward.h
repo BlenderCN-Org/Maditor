@@ -8,7 +8,7 @@ namespace Maditor {
 		class ServerSharedMemory;
 		struct ServerInfo;
 		struct InputShared;
-		class ModuleInstanceBase;
+		class ModuleInstance;
 		struct ApplicationInfo;
 
 	}

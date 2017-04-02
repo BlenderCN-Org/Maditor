@@ -22,7 +22,7 @@ public:
 
 private:
 
-	class ModuleLauncherInstance : public Shared::ModuleInstance<ModuleLauncherInstance> {
+	class ModuleLauncherInstance : public Shared::ModuleInstance {
 	public:
 		ModuleLauncherInstance(ModuleLoader *parent, const std::string &name);
 
@@ -44,7 +44,7 @@ private:
 		std::list<Engine::UI::GameHandlerBase*> mGameHandlers;
 		std::list<Engine::UI::GuiHandlerBase*> mGuiHandlers;
 		std::list<Engine::Scripting::GlobalAPIComponentBase*> mGlobalAPIComponents;
-		std::map<std::string, std::list<Engine::Scene::Entity::Entity*>> mStoredComponentEntities;
+		std::map<std::string, std::list<std::pair<Engine::Scene::Entity::Entity*, Engine::Scripting::ArgumentList>>> mStoredComponentEntities;
 
 		ModuleLoader *mParent;
 	};
@@ -61,7 +61,7 @@ private:
 
 	bool mReceivingModules;
 
-	Engine::Serialize::ObservableList<ModuleLauncherInstance, Engine::Serialize::ContainerPolicy::allowAll, Engine::Serialize::CustomCreator<decltype(&ModuleLoader::createModule), &ModuleLoader::createModule>> mInstances;
+	Engine::Serialize::ObservableList<ModuleLauncherInstance, Engine::Serialize::ContainerPolicy::allowAll, Engine::Serialize::CustomCreator<decltype(&ModuleLoader::createModule)>> mInstances;
 	Engine::Serialize::Action<decltype(&ModuleLoader::setupDoneImpl), &ModuleLoader::setupDoneImpl, Engine::Serialize::ActionPolicy::request> setupDone;
 
 };

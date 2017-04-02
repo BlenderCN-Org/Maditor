@@ -13,9 +13,10 @@ namespace Maditor {
 
 
 		ModuleLoader::ModuleLoader() :
-			mInit(false)
+			mInit(false)/*,
+			setupDone(this)*/
 		{
-
+			mInstances.setCreator(std::bind(&ModuleLoader::createModule, this, std::placeholders::_1));
 		}
 
 
@@ -103,7 +104,7 @@ namespace Maditor {
 		ModuleLoader::ModuleLauncherInstance::~ModuleLauncherInstance()
 		{
 			unload();
-			for (ModuleInstanceBase *dep : dependencies()) {
+			for (ModuleInstance *dep : dependencies()) {
 				ModuleLauncherInstance *d = dynamic_cast<ModuleLauncherInstance*>(dep);
 				if (!d)
 					throw 0;
@@ -117,7 +118,7 @@ namespace Maditor {
 
 		void ModuleLoader::ModuleLauncherInstance::createDependencies()
 		{
-			for (ModuleInstanceBase *dep : dependencies()) {
+			for (ModuleInstance *dep : dependencies()) {
 				ModuleLauncherInstance *d = dynamic_cast<ModuleLauncherInstance*>(dep);
 				if (!d)
 					throw 0;
@@ -130,7 +131,7 @@ namespace Maditor {
 			if (isLoaded())
 				return true;
 
-			for (ModuleInstanceBase *dep : dependencies()) {
+			for (ModuleInstance *dep : dependencies()) {
 				ModuleLauncherInstance *d = dynamic_cast<ModuleLauncherInstance*>(dep);
 				if (!d)
 					throw 0;
@@ -158,8 +159,8 @@ namespace Maditor {
 			mSceneComponentHashes.clear();
 			mGlobalAPIComponentHashes.clear();
 
-			Engine::UniqueComponentCollector<Engine::Scene::SceneComponentBase> *sceneComponentCollector = Engine::UniqueComponentCollector<Engine::Scene::SceneComponentBase>::getSingletonPtr();
-			Engine::UniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase> *globalAPIComponentCollector = Engine::UniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase>::getSingletonPtr();
+			Engine::BaseUniqueComponentCollector<Engine::Scene::SceneComponentBase> *sceneComponentCollector = Engine::BaseUniqueComponentCollector<Engine::Scene::SceneComponentBase>::getSingletonPtr();
+			Engine::BaseUniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase> *globalAPIComponentCollector = Engine::BaseUniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase>::getSingletonPtr();
 
 			std::set<std::string> beforeEntityComponents = Engine::Scene::Entity::Entity::registeredComponentNames();
 			std::list<void *> beforeSceneComponentsHashesList = sceneComponentCollector->registeredComponentsHashes();
@@ -211,9 +212,9 @@ namespace Maditor {
 					}
 				}
 
-				for (const std::pair<const std::string, std::list<Engine::Scene::Entity::Entity*>> &ents : mStoredComponentEntities) {
-					for (Engine::Scene::Entity::Entity* e : ents.second) {
-						e->addComponent(ents.first);
+				for (const std::pair<const std::string, std::list<std::pair<Engine::Scene::Entity::Entity*, Engine::Scripting::ArgumentList>>> &ents : mStoredComponentEntities) {
+					for (const std::pair<Engine::Scene::Entity::Entity*, Engine::Scripting::ArgumentList> &p : ents.second) {
+						p.first->addComponent(p.second, ents.first);
 					}
 				}
 				mStoredComponentEntities.clear();
@@ -238,20 +239,20 @@ namespace Maditor {
 			std::cout << "Unloading " << name() << std::endl;
 
 
-			const std::list<Engine::Scene::Entity::Entity*> &entities = Engine::Scene::SceneManager::getSingletonPtr() ? Engine::Scene::SceneManager::getSingleton().entities() : std::list<Engine::Scene::Entity::Entity*>();
+			const std::list<Engine::Scene::Entity::Entity*> &entities = Engine::Scene::SceneManagerBase::getSingletonPtr() ? Engine::Scene::SceneManagerBase::getSingleton().entities() : std::list<Engine::Scene::Entity::Entity*>();
 
 
 			for (const std::string &comp : mEntityComponentNames) {
-				std::list<Engine::Scene::Entity::Entity*> &componentEntities = mStoredComponentEntities[comp];
+				std::list<std::pair<Engine::Scene::Entity::Entity*, Engine::Scripting::ArgumentList>> &componentEntities = mStoredComponentEntities[comp];
 				for (Engine::Scene::Entity::Entity* e : entities) {
 					if (e->hasComponent(comp)) {
-						componentEntities.push_back(e);
+						componentEntities.push_back(std::make_pair(e, e->getComponent(comp)->creationArguments()));
 						e->removeComponent(comp);
 					}
 				}
 			}
 
-			Engine::UniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase> *globalAPIComponentCollector = Engine::UniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase>::getSingletonPtr();
+			Engine::BaseUniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase> *globalAPIComponentCollector = Engine::BaseUniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase>::getSingletonPtr();
 			if (globalAPIComponentCollector) {
 				std::list<void*> globalAPIComponentsHashesList = globalAPIComponentCollector->registeredComponentsHashes();
 				for (void *h : mSceneComponentHashes) {
@@ -261,7 +262,7 @@ namespace Maditor {
 				}
 			}
 
-			Engine::UniqueComponentCollector<Engine::Scene::SceneComponentBase> *sceneComponentCollector = Engine::UniqueComponentCollector<Engine::Scene::SceneComponentBase>::getSingletonPtr();
+			Engine::BaseUniqueComponentCollector<Engine::Scene::SceneComponentBase> *sceneComponentCollector = Engine::BaseUniqueComponentCollector<Engine::Scene::SceneComponentBase>::getSingletonPtr();
 			if (sceneComponentCollector) {
 				std::list<void*> sceneComponentsHashesList = sceneComponentCollector->registeredComponentsHashes();
 				for (void *h : mSceneComponentHashes) {

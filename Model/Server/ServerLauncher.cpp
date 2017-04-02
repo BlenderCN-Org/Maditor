@@ -23,7 +23,7 @@ namespace Maditor {
 			mServerClass(serverClass),
 			mUtil(true)
 		{
-			network()->addTopLevelItem(&mUtil);
+			postConstruct();
 
 			startTimer(10);
 
@@ -85,7 +85,7 @@ namespace Maditor {
 			CloseHandle(pi.hThread);
 
 			emit processStarted(mPID, serverInfo);
-			mUtil.stats()->setProcess(mHandle);
+			mUtil->stats()->setProcess(mHandle);
 
 			Engine::Network::NetworkManager *net = network();
 			
@@ -116,7 +116,7 @@ namespace Maditor {
 
 		UtilModel * ServerLauncher::util()
 		{
-			return &mUtil;
+			return mUtil.ptr();
 		}
 
 		LogsModel * ServerLauncher::logs()
@@ -179,7 +179,7 @@ namespace Maditor {
 
 				mLoader->reset();
 				mWaitingForLoader = false;
-				mUtil.reset();
+				mUtil->reset();
 
 				mPingTimer.stop();
 
@@ -196,6 +196,10 @@ namespace Maditor {
 		{
 			mPingTimer.start(10000);
 			ping({});
+		}
+
+		size_t ServerLauncher::getSize() const {
+			return sizeof(ServerLauncher);
 		}
 
 	}

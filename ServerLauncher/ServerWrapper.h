@@ -9,12 +9,12 @@
 namespace Maditor {
 	namespace Launcher {
 
-		class ServerWrapper : public Engine::Hierarchy::HierarchyObject<ServerWrapper>, public Shared::ServerControl {
+		class ServerWrapper : public Shared::ServerControl {
 
 		public:
 			ServerWrapper();
 
-			int init();
+			int start();
 			
 		protected:
 			// Inherited via AppControl
@@ -23,6 +23,8 @@ namespace Maditor {
 			bool update(float timeSinceLastFrame);
 
 		private:
+			virtual size_t getSize() const override;
+
 			Engine::Serialize::Serialized<LogListener> mLog;
 
 			Engine::Serialize::Serialized<ModuleLoader> mLoader;

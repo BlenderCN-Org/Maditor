@@ -380,12 +380,12 @@
     <string>Load Project</string>
    </property>
   </action>
-  <action name="actionInit">
+  <action name="actionSetup">
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Init</string>
+    <string>Setup</string>
    </property>
   </action>
   <action name="actionClear_List">
@@ -434,9 +434,9 @@
     <string>Stop</string>
    </property>
   </action>
-  <action name="actionInit_No_Debug">
+  <action name="actionSetup_No_Debug">
    <property name="text">
-    <string>Init (No Debug)</string>
+    <string>Setup (No Debug)</string>
    </property>
   </action>
   <action name="actionShutdown">
@@ -460,7 +460,6 @@
     <string>Kill</string>
    </property>
   </action>
-  
  </widget>
  <customwidgets>
   <customwidget>
