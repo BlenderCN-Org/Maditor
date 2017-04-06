@@ -4,19 +4,18 @@
 
 namespace Maditor {
 	namespace View {
-		namespace Dialogs {
 
 			namespace Ui {
-				class ModulePropertiesDialog;
+				class ModuleListPropertiesWidget;
 			}
 
-class ModulePropertiesDialog : public QDialog
+class ModuleListPropertiesWidget : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit ModulePropertiesDialog(Model::ModuleList *list);
-    ~ModulePropertiesDialog();
+    explicit ModuleListPropertiesWidget(Model::ModuleList *list);
+    ~ModuleListPropertiesWidget();
 
 public slots:
 	bool apply();
@@ -25,11 +24,10 @@ private:
 	Model::ModuleList *mModules;
 	std::list<ModulePropertiesWidget*> mModuleWidgets;
 
-    Ui::ModulePropertiesDialog *ui;
+    Ui::ModuleListPropertiesWidget *ui;
 };
 
 
-		}
 	}
 }
 

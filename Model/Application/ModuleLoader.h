@@ -29,12 +29,12 @@ namespace Maditor {
 			Q_OBJECT
 
 		public:
-			ModuleLoader(const QString &binaryDir, const ModuleList &moduleList);
+			ModuleLoader(ApplicationConfig *config);
 			~ModuleLoader();
 
 			void reset();
 
-			void setup(bool server);
+			void setup();
 			void setup2();
 
 			bool done();
@@ -73,6 +73,8 @@ namespace Maditor {
 			Engine::Serialize::Action<decltype(&ModuleLoader::setupDoneImpl), &ModuleLoader::setupDoneImpl, Engine::Serialize::ActionPolicy::request> setupDone;
 			
 			int mModulesCount;
+
+			ApplicationConfig *mConfig;
 			
 
 		};

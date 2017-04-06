@@ -6,8 +6,6 @@
 
 #include "Model\TreeModel.h"
 
-#include "Model\Server\ServerLauncher.h"
-
 
 namespace Maditor {
 	namespace Model {
@@ -29,7 +27,9 @@ namespace Maditor {
 					
 			void save();
 
+			LogsModel *logs();
 			ModuleList *moduleList();
+			ConfigList *configList();
 
 			virtual Project *project() override;
 
@@ -47,16 +47,6 @@ namespace Maditor {
 
 			virtual void write(QTextStream & stream, int index) override;
 
-			ApplicationLauncher *application();
-
-			void startDefaultServer();
-			void startServer(Generators::ServerClassGenerator *generator = nullptr);
-
-		private:
-			ServerLauncher *getServer(Generators::ServerClassGenerator *generator);
-
-		signals:
-			void serverCreated(ServerLauncher *);
 
 		public slots:
 			void deleteClass(Generators::ClassGenerator *generator, bool deleteFiles);
@@ -81,14 +71,9 @@ namespace Maditor {
 			static const QString sProjectFileName;
 
 			std::unique_ptr<ModuleList> mModules;
+			std::unique_ptr<ConfigList> mConfigs;
 
 			QFileSystemModel mMediaFolder;
-
-			std::unique_ptr<ApplicationLauncher> mApplication;
-
-			Generators::ServerClassGenerator *mCurrentServer;
-
-			std::map<Generators::ClassGenerator*, ServerLauncher> mServers;
 
 			LogsModel *mLogs;
 

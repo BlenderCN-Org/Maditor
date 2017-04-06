@@ -1,7 +1,7 @@
 #include "maditorviewlib.h"
 
-#include "modulepropertiesdialog.h"
-#include "ui_modulepropertiesdialog.h"
+#include "modulelistpropertieswidget.h"
+#include "ui_modulelistpropertieswidget.h"
 #include "Model\Project\Module.h"
 #include "Model\Project\Project.h"
 #include "Model\Project\ModuleList.h"
@@ -9,18 +9,17 @@
 
 namespace Maditor {
 	namespace View {
-		namespace Dialogs {
 
-			ModulePropertiesDialog::ModulePropertiesDialog(Model::ModuleList *list) :
+			ModuleListPropertiesWidget::ModuleListPropertiesWidget(Model::ModuleList *list) :
 				QDialog(),
 				mModules(list),
-				ui(new Ui::ModulePropertiesDialog)
+				ui(new Ui::ModuleListPropertiesWidget)
 			{
 				ui->setupUi(this);
 
 				ui->propertiesWidget->setRowCount(list->childCount());
 
-				int i = 0;
+				//int i = 0;
 
 				//setWindowTitle(windowTitle().arg(module->name()));
 				for (const std::unique_ptr<Model::Module> &module : *list) {
@@ -32,7 +31,7 @@ namespace Maditor {
 					
 
 					
-					ui->propertiesWidget->setItem(i, 0, new QTableWidgetItem(module->name()));
+					/*ui->propertiesWidget->setItem(i, 0, new QTableWidgetItem(module->name()));
 
 					QTableWidgetItem *clientItem = new QTableWidgetItem;
 
@@ -46,21 +45,21 @@ namespace Maditor {
 					serverItem->setCheckState(module->serverCode() ? Qt::Checked : Qt::Unchecked);
 					ui->propertiesWidget->setItem(i, 2, serverItem);
 
-					++i;
+					++i;*/
 				}
 
-				connect(ui->buttonBox->button(QDialogButtonBox::Apply), &QPushButton::clicked, this, &ModulePropertiesDialog::apply);
+				connect(ui->buttonBox->button(QDialogButtonBox::Apply), &QPushButton::clicked, this, &ModuleListPropertiesWidget::apply);
 				//connect(ui->propertiesWidget, &QTableView::clicked, list, &Model::ModuleList::onItemClicked);
 				
 
 			}
 
-			ModulePropertiesDialog::~ModulePropertiesDialog()
+			ModuleListPropertiesWidget::~ModuleListPropertiesWidget()
 			{
 				delete ui;
 			}
 
-			bool ModulePropertiesDialog::apply()
+			bool ModuleListPropertiesWidget::apply()
 			{
 				bool valid = true;
 
@@ -68,7 +67,7 @@ namespace Maditor {
 					valid &= widget->apply();
 				}
 
-				int i = 0;
+				/*int i = 0;
 				for (const std::unique_ptr<Model::Module> &module : *mModules) {
 					if (!module->setClientCode(ui->propertiesWidget->item(i, 1)->checkState() == Qt::Checked))
 						QMessageBox::critical(0, "Cannot update ClientCode-Property!",
@@ -77,7 +76,7 @@ namespace Maditor {
 						QMessageBox::critical(0, "Cannot update ServerCode-Property!",
 							QString("ServerCode can not be set to %1 for Module '%2'").arg(module->clientCode() ? "true" : "false", module->name()));
 					++i;
-				}
+				}*/
 
 				
 
@@ -89,6 +88,6 @@ namespace Maditor {
 				return valid;
 			}
 
-		}
+	
 	}
 }

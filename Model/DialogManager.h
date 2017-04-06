@@ -29,6 +29,10 @@ namespace Maditor {
 
 				virtual bool showNewProjectDialog(QString &path, QString &name) = 0;
 				virtual bool showLoadProjectDialog(QString &path) = 0;
+				virtual bool showNewConfigDialog(Model::ConfigList *list, QString &name) = 0;
+				static bool showNewConfigDialogStatic(Model::ConfigList *list, QString &name) {
+					return sSingleton->showNewConfigDialog(list, name);
+				}
 				virtual bool showNewModuleDialog(Model::ModuleList *list, QString &name) = 0;
 				static bool showNewModuleDialogStatic(Model::ModuleList *list, QString &name) {
 					return sSingleton->showNewModuleDialog(list, name);
@@ -65,11 +69,6 @@ namespace Maditor {
 				}
 				static bool showNewServerClassDialogStatic(Model::Module *module, const QString &name) {
 					return sSingleton->showNewServerClassDialog(module, name);
-				}
-
-				virtual void showModulePropertiesDialog(Model::ModuleList *list) = 0;
-				static void showModulePropertiesDialogStatic(Model::ModuleList *list) {
-					sSingleton->showModulePropertiesDialog(list);
 				}
 
 				virtual void showSettingsDialog() = 0;

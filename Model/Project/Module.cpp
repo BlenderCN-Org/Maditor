@@ -76,35 +76,7 @@ namespace Maditor {
 
 			project()->save();
 		}
-		bool Module::serverCode()
-		{
-			return element().attribute("ServerCode", "1") == "1";
 
-		}
-		bool Module::clientCode()
-		{
-			return element().attribute("ClientCode", "1") == "1";
-		}
-		bool Module::setServerCode(bool b)
-		{
-			for (Module *dep : (b ? mDependencies : mDependedBy)) {
-				if (dep->serverCode() != b)
-					return false;
-			}
-
-			element().setAttribute("ServerCode", b);
-			return true;
-		}
-		bool Module::setClientCode(bool b)
-		{
-			for (Module *dep : (b ? mDependencies : mDependedBy)) {
-				if (dep->clientCode() != b)
-					return false;
-			}
-
-			element().setAttribute("ClientCode", b);
-			return true;
-		}
 		void Module::addClassImpl(Generators::ClassGenerator * generator, bool callInsert)
 		{
 			if (callInsert)
@@ -146,12 +118,7 @@ namespace Maditor {
 
 		bool Module::addDependency(const QString & dep)
 		{
-			
-
 			Module *other = mParent->getModule(dep);
-
-			if ((clientCode() && !other->clientCode()) || (serverCode() && !other->serverCode()))
-				return false;
 
 			std::list<const Module*> modules;
 			fillReloadOrder(modules);

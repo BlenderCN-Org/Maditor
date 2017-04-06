@@ -10,19 +10,23 @@
 
 #include "InputWrapper.h"
 
+#include "ApplicationConfig.h"
+
+#include "Project\Project.h"
 
 namespace Maditor {
 	namespace Model {
-		ApplicationLauncher::ApplicationLauncher(const QString &path, const ModuleList &modules, LogsModel *logs) :
-			AppControl(true),
+		ApplicationLauncher::ApplicationLauncher(ApplicationConfig *config) :
 			mInput(new InputWrapper(sharedMemory().mInput)),
 			mWindow(new OgreWindow(mInput.get())),
-			mPath(path),
-			mLoader(path + "debug/bin/", modules),
+			mLoader(config),
 			mPID(0),
-			mLog(logs, std::list<std::string>{ "Ogre.log" }),
-			mWaitingForLoader(false),
-			mUtil(false)
+			mLog(config->project()->logs(), std::list<std::string>{ "Ogre.log" }),
+			mWaitingForLoader(false),			
+			mAboutToBeDestroyed(false),
+			mRunning(false),
+			mSetup(false),
+			mConfig(config)
 		{
 			connect(mWindow, &OgreWindow::resized, this, &ApplicationLauncher::resizeWindow);
 
@@ -30,14 +34,27 @@ namespace Maditor {
 
 			mPingTimer.setSingleShot(true);
 
-			connect(&mPingTimer, &QTimer::timeout, this, &ApplicationLauncher::kill);
+			connect(&mPingTimer, &QTimer::timeout, this, &ApplicationLauncher::timeout);
 
 			postConstruct();
 		}
 
 		ApplicationLauncher::~ApplicationLauncher()
 		{
-			kill();
+			kill(CLEANUP);
+		}
+
+		void ApplicationLauncher::destroy()
+		{
+			if (!mPID) {
+				emit destroyApplication(this);
+			}
+			else {
+				mAboutToBeDestroyed = true;
+				connect(&mPingTimer, &QTimer::timeout, this, &ApplicationLauncher::destroy);
+				shutdown();
+				mPingTimer.start(3000);
+			}
 		}
 
 		void ApplicationLauncher::setup()
@@ -51,12 +68,9 @@ namespace Maditor {
 
 			Shared::ApplicationInfo &appInfo = sharedMemory().mAppInfo;
 
-			appInfo.mMediaDir = (mPath + "Data/").toStdString().c_str();
-			appInfo.mProjectDir = mPath.toStdString().c_str();
-			appInfo.mWindowHandle = (size_t)(mWindow->winId());
-			appInfo.mWindowWidth = mWindow->width();
-			appInfo.mWindowHeight = mWindow->height();
-			appInfo.mDebugged = debug;
+			mConfig->generateInfo(appInfo, mWindow);
+
+			appInfo.mDebugged = debug;			
 
 			STARTUPINFO si;
 			PROCESS_INFORMATION pi;
@@ -64,11 +78,11 @@ namespace Maditor {
 			// set the size of the structures
 			ZeroMemory(&si, sizeof(si));
 			si.cb = sizeof(si);
-			ZeroMemory(&pi, sizeof(pi));
+			ZeroMemory(&pi, sizeof(pi));			
 
 			// start the program up
 			CreateProcess(NULL,   // the path
-				"Maditor_Launcher.exe",
+				const_cast<char*>((std::string("Maditor_Launcher.exe ") + std::to_string(appId())).c_str()),
 				NULL,           // Process handle not inheritable
 				NULL,           // Thread handle not inheritable
 				FALSE,          // Set handle inheritance to FALSE
@@ -87,13 +101,18 @@ namespace Maditor {
 			mUtil->stats()->setProcess(mHandle);
 
 			Engine::Network::NetworkManager *net = network();
-			
-			if (!net->connect("127.0.0.1", 1000, 2000)) {
-				kill();
+			size_t id = appInfo.waitForAppId();
+			if (!id) {
+				kill(NO_APPLICATION_NOTIFICATION);
+				return;
+			}
+			setStaticSlaveId(id);
+			if (!net->connect("127.0.0.1", 1000, 1000)) {
+				kill(FAILED_CONNECTION);
 				return;
 			}
 
-			mLoader->setup(false);
+			mLoader->setup();
 
 			mWaitingForLoader = true;	
 
@@ -119,10 +138,12 @@ namespace Maditor {
 
 		void ApplicationLauncher::startImpl()
 		{
+			mRunning = true;
 			emit applicationStarted();
 		}
 		void ApplicationLauncher::stopImpl()
 		{
+			mRunning = false;
 			emit applicationStopped();
 		}
 		void ApplicationLauncher::pauseImpl()
@@ -149,6 +170,21 @@ namespace Maditor {
 			return mPID;
 		}
 
+		bool ApplicationLauncher::isRunning()
+		{
+			return mRunning;
+		}
+
+		bool ApplicationLauncher::isLaunched()
+		{
+			return mPID != 0;
+		}
+
+		bool ApplicationLauncher::isSetup()
+		{
+			return mSetup;
+		}
+
 		void ApplicationLauncher::timerEvent(QTimerEvent * te)
 		{
 			if (mPID) {
@@ -156,6 +192,9 @@ namespace Maditor {
 				if (GetExitCodeProcess(mHandle, &exitCode) == FALSE)
 					throw 0;
 				if (exitCode != STILL_ACTIVE) {
+					if (exitCode != 0) {
+						LOG_ERROR(std::string("Application returned: ") + std::to_string(static_cast<long>(exitCode)));
+					}
 					cleanup();
 					return;
 				}
@@ -169,8 +208,32 @@ namespace Maditor {
 
 		void ApplicationLauncher::kill()
 		{
+			kill(USER_REQUEST);
+		}
+
+		void ApplicationLauncher::kill(KillCause cause)
+		{
 			if (mPID) {
 				TerminateProcess(mHandle, -1);
+				std::string msg = "Process killed! (";
+				switch (cause) {
+				case USER_REQUEST:
+					msg += "User request";
+					break;
+				case TIMEOUT:
+					msg += "No Response from App";
+					break;
+				case FAILED_CONNECTION:
+					msg = "Unable to connect to process";
+					break;
+				case NO_APPLICATION_NOTIFICATION:
+					msg = "Application data not set up correctly";
+					break;
+				default:
+					msg += "unknown cause";
+				}
+				msg += ")";
+				LOG_ERROR(msg);
 				cleanup();
 			}
 		}
@@ -179,9 +242,8 @@ namespace Maditor {
 		{
 			if (mPID) {
 				AppControl::stop({});
+				mPingTimer.stop();
 				AppControl::shutdown({});
-				/*if (!mPingTimer.isActive())
-					pingImpl();*/
 			}
 		}
 
@@ -194,12 +256,15 @@ namespace Maditor {
 
 				mLoader->reset();
 				mWaitingForLoader = false;
-				mUtil->reset();
+				mUtil->reset();		
 
 				mPingTimer.stop();
 
+				mSetup = false;
 				emit applicationShutdown();
 			}			
+			if (mAboutToBeDestroyed)
+				destroy();
 		}
 
 		void ApplicationLauncher::shutdownImpl()
@@ -210,13 +275,19 @@ namespace Maditor {
 
 		void ApplicationLauncher::onApplicationSetup()
 		{
+			mSetup = true;
 			emit applicationSetup();
 		}
 
 		void ApplicationLauncher::pingImpl()
 		{
-			mPingTimer.start(10000);
+			mPingTimer.start(3000);
 			ping({});
+		}
+
+		void ApplicationLauncher::timeout()
+		{
+			kill(TIMEOUT);
 		}
 
 		void ApplicationLauncher::resizeWindow() {

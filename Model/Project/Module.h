@@ -16,8 +16,6 @@ namespace Maditor {
 
 			virtual QString path() const override;
 
-			
-			
 			QString moduleInclude();
 
 			bool hasClass(const QString &name);
@@ -49,11 +47,6 @@ namespace Maditor {
 			void addClass(Generators::ClassGenerator *generator);
 			void deleteClass(Generators::ClassGenerator *generator);
 			void removeClass(Generators::ClassGenerator *generator);
-
-			bool serverCode();
-			bool clientCode();
-			bool setServerCode(bool b);
-			bool setClientCode(bool b);
 
 		private:
 			void addClassImpl(Generators::ClassGenerator *generator, bool callInsert = true);

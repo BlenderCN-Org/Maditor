@@ -16,7 +16,7 @@ endif (MINGW)
 include_directories(${BOOST_PATH})
 
 set (sources "")
-FolderSources(sources "" "" AppControl.cpp AppControl.h ApplicationInfo.h InputInfo.h maditorsharedlib.cpp maditorsharedlib.h maditorsharedforward.h moduleinstance.cpp moduleinstance.h ServerControl.cpp ServerControl.h ServerInfo.h ServerSharedMemory.cpp ServerSharedMemory.h SharedBase.h sharedmemory.cpp sharedmemory.h)
+FolderSources(sources "" "" AppControl.cpp AppControl.h ApplicationInfo.h InputInfo.h maditorsharedlib.cpp maditorsharedlib.h maditorsharedforward.h moduleinstance.cpp moduleinstance.h SharedBase.h sharedmemory.cpp sharedmemory.h)
 
 
 include_directories(${MADGINE_INCLUDE_DIRS} ${Maditor_Shared_SOURCE_DIR})

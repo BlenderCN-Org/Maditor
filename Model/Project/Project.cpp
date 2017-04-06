@@ -10,6 +10,7 @@
 
 #include "Generators\ServerClassGenerator.h"
 
+#include "ConfigList.h"
 
 namespace Maditor {
 	namespace Model {
@@ -23,9 +24,8 @@ namespace Maditor {
 			mDocument(doc),
 			mPath(QDir(path + name).absolutePath() + "/"),
 			mModules(new ModuleList(this)),
+			mConfigs(new ConfigList(this)),
 			mValid(false),
-			mApplication(new ApplicationLauncher(mPath, *mModules, logs)),
-			mCurrentServer(nullptr),
 			mLogs(logs)
 		{
 			init();
@@ -56,18 +56,11 @@ namespace Maditor {
 			mDocument(doc),
 			mPath(QDir(path).absolutePath() + "/"),
 			mModules(new ModuleList(element().firstChildElement("Modules"), this)),
+			mConfigs(new ConfigList(element().firstChildElement("Configs"), this)),
 			mValid(true),
-			mApplication(new ApplicationLauncher(mPath, *mModules, logs)),
-			mCurrentServer(0),
 			mLogs(logs)
 		{
 			init();		
-			if (!element().attribute("CurrentServer").isEmpty()) {
-				mCurrentServer = dynamic_cast<Generators::ServerClassGenerator*>(mModules->getClass(element().attribute("CurrentServer")));
-				if (!mCurrentServer) {
-					element().removeAttribute("CurrentServer");
-				}
-			 }
 		}
 
 		Project::~Project()
@@ -89,10 +82,6 @@ namespace Maditor {
 		}
 
 		void Project::onClassAdded(Generators::ClassGenerator *generator) {
-			if (!mCurrentServer && generator->type() == "Server") {
-				mCurrentServer = static_cast<Generators::ServerClassGenerator*>(generator);
-				element().setAttribute("CurrentServer", generator->fullName());
-			}
 		}
 
 		void Project::copyTemplate(QMessageBox::StandardButton *answer)
@@ -136,37 +125,6 @@ namespace Maditor {
 			QString content = templateFile("main.cpp");
 
 			stream << content;
-		}
-
-		ApplicationLauncher * Project::application()
-		{
-			return mApplication.get();
-		}
-
-		void Project::startDefaultServer()
-		{
-			startServer();
-		}
-
-		void Project::startServer(Generators::ServerClassGenerator * generator)
-		{
-			if (!generator)
-				generator = mCurrentServer;
-			if (generator) {
-				mCurrentServer = generator;
-				element().setAttribute("CurrentServer", generator->fullName());
-				getServer(generator)->start();
-			}
-		}
-
-		ServerLauncher * Project::getServer(Generators::ServerClassGenerator * generator)
-		{
-			auto p = mServers.try_emplace(generator, generator, mPath, *mModules);
-			ServerLauncher *result = &p.first->second;
-			if (p.second) {
-				emit serverCreated(result);
-			}
-			return result;
 		}
 
 		QString Project::path() const
@@ -215,9 +173,19 @@ namespace Maditor {
 			file.close();
 		}
 
+		LogsModel * Project::logs()
+		{
+			return mLogs;
+		}
+
 		ModuleList * Project::moduleList()
 		{
 			return mModules.get();
+		}
+
+		ConfigList * Project::configList()
+		{
+			return mConfigs.get();
 		}
 
 		Project * Project::project()
@@ -226,13 +194,15 @@ namespace Maditor {
 		}
 
 		int Project::childCount() const {
-			return 1;
+			return 2;
 		}
 
 		ProjectElement * Project::child(int i) {
 			switch (i) {
 			case 0:
 				return mModules.get();
+			case 1:
+				return mConfigs.get();
 			default:
 				throw 0;
 			}

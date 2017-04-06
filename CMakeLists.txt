@@ -50,8 +50,6 @@ add_subdirectory(Shared)
 
 add_subdirectory(Launcher)
 
-add_subdirectory(ServerLauncher)
-
 add_subdirectory(Model)
 
 add_subdirectory(Tools)

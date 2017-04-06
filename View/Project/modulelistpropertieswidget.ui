@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Maditor::View::Dialogs::ModulePropertiesDialog</class>
- <widget class="QDialog" name="Maditor::View::Dialogs::ModulePropertiesDialog">
+ <class>Maditor::View::ModuleListPropertiesWidget</class>
+ <widget class="QDialog" name="Maditor::View::ModuleListPropertiesWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -30,7 +30,7 @@
        <item row="0" column="0">
         <widget class="QTabWidget" name="modulesWidget">
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="propertiesTab">
           <attribute name="title">
@@ -97,7 +97,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>Maditor::View::Dialogs::ModulePropertiesDialog</receiver>
+   <receiver>Maditor::View::ModuleListPropertiesWidget</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -113,7 +113,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>Maditor::View::Dialogs::ModulePropertiesDialog</receiver>
+   <receiver>Maditor::View::ModuleListPropertiesWidget</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

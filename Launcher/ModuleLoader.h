@@ -44,6 +44,10 @@ private:
 		std::list<Engine::UI::GameHandlerBase*> mGameHandlers;
 		std::list<Engine::UI::GuiHandlerBase*> mGuiHandlers;
 		std::list<Engine::Scripting::GlobalAPIComponentBase*> mGlobalAPIComponents;
+		std::list<void*> mSceneComponentHashes;
+		std::list<void*> mGlobalAPIComponentHashes;
+		std::list<void*> mGameHandlerHashes;
+		std::list<void*> mGuiHandlerHashes;
 		std::map<std::string, std::list<std::pair<Engine::Scene::Entity::Entity*, Engine::Scripting::ArgumentList>>> mStoredComponentEntities;
 
 		ModuleLoader *mParent;

@@ -9,6 +9,7 @@ namespace Maditor {
 			TreeUnit(4)
 		{
 			setContainer(mTopLevelItems);
+			mTopLevelItems.setParent(this);
 		}
 
 		ProfilerItem::ProfilerItem(TreeUnitItemBase * parent, const std::string & name) :
@@ -21,6 +22,7 @@ namespace Maditor {
 		{
 			setContainer(mChildren);
 			mDuration.setCallback(mUpdateSlot);
+			mChildren.setParent(this);
 		}
 
 		ProfilerItem::ProfilerItem(ProfilerItem * parent, const std::string & name) :
@@ -33,6 +35,7 @@ namespace Maditor {
 		{
 			setContainer(mChildren);
 			mDuration.setCallback(mUpdateSlot);
+			mChildren.setParent(this);
 		}
 
 		int ProfilerItem::childCount() const

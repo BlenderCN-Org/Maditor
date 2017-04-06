@@ -23,3 +23,7 @@
 #include <QTreeView>
 #include <QHeaderView>
 #include <QPlainTextEdit>
+#include <QComboBox>
+#include <QInputDialog>
+#include <QGridLayout>
+#include <QLabel>

@@ -41,130 +41,9 @@
     </property>
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
-      <widget class="QWidget" name="gameTab">
-       <attribute name="title">
-        <string>Game</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <item row="0" column="0">
-         <widget class="Maditor::View::ApplicationWindow" name="game">
-          <property name="palette">
-           <palette>
-            <active>
-             <colorrole role="Base">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>197</red>
-                <green>197</green>
-                <blue>197</blue>
-               </color>
-              </brush>
-             </colorrole>
-             <colorrole role="Window">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>177</red>
-                <green>177</green>
-                <blue>177</blue>
-               </color>
-              </brush>
-             </colorrole>
-            </active>
-            <inactive>
-             <colorrole role="Base">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>197</red>
-                <green>197</green>
-                <blue>197</blue>
-               </color>
-              </brush>
-             </colorrole>
-             <colorrole role="Window">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>177</red>
-                <green>177</green>
-                <blue>177</blue>
-               </color>
-              </brush>
-             </colorrole>
-            </inactive>
-            <disabled>
-             <colorrole role="Base">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>177</red>
-                <green>177</green>
-                <blue>177</blue>
-               </color>
-              </brush>
-             </colorrole>
-             <colorrole role="Window">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>177</red>
-                <green>177</green>
-                <blue>177</blue>
-               </color>
-              </brush>
-             </colorrole>
-            </disabled>
-           </palette>
-          </property>
-          <property name="autoFillBackground">
-           <bool>true</bool>
-          </property>
-          <property name="currentIndex">
-           <number>0</number>
-          </property>
-          <widget class="QWidget" name="notLoaded">
-           <layout class="QGridLayout" name="gridLayout_8">
-            <item row="0" column="0">
-             <widget class="QLabel" name="notLoadedLabel">
-              <property name="text">
-               <string>No Application Loaded!</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="notStarted">
-           <layout class="QGridLayout" name="gridLayout_9">
-            <item row="0" column="0">
-             <widget class="QLabel" name="notStartedLabel">
-              <property name="text">
-               <string>Application not Started!</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+      <property name="tabsClosable">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
    </layout>
@@ -435,6 +314,9 @@
    </property>
   </action>
   <action name="actionSetup_No_Debug">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Setup (No Debug)</string>
    </property>
@@ -462,12 +344,6 @@
   </action>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>Maditor::View::ApplicationWindow</class>
-   <extends>QStackedWidget</extends>
-   <header>application/applicationwindow.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>Maditor::View::LogsTabWidget</class>
    <extends>QTabWidget</extends>

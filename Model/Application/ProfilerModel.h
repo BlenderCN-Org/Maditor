@@ -28,7 +28,7 @@ namespace Maditor {
 
 		private:
 			Engine::Serialize::Observed<size_t> mDuration;
-			Engine::Serialize::ObservableMap<std::string, ProfilerItem, Engine::Serialize::ContainerPolicy::masterOnly, Engine::Serialize::CustomCreator<decltype(&ProfilerItem::createNode)>> mChildren;
+			Engine::Serialize::ObservableMap<std::string, ProfilerItem, Engine::Serialize::ContainerPolicy::masterOnly, Engine::Serialize::ParentCreator<decltype(&ProfilerItem::createNode), &ProfilerItem::createNode>> mChildren;
 
 			Engine::SignalSlot::Slot<decltype(&ProfilerItem::update), &ProfilerItem::update> mUpdateSlot;
 
@@ -58,7 +58,7 @@ namespace Maditor {
 			std::tuple<std::string, TreeUnitItemBase*, std::string> createNode(const std::string &name);
 
 		private:
-			Engine::Serialize::ObservableMap<std::string, ProfilerItem, Engine::Serialize::ContainerPolicy::masterOnly, Engine::Serialize::CustomCreator<decltype(&ProfilerModel::createNode)>> mTopLevelItems;
+			Engine::Serialize::ObservableMap<std::string, ProfilerItem, Engine::Serialize::ContainerPolicy::masterOnly, Engine::Serialize::ParentCreator<decltype(&ProfilerModel::createNode), &ProfilerModel::createNode>> mTopLevelItems;
 
 			
 

@@ -4,10 +4,9 @@ namespace Maditor {
 	namespace View {
 		class EditorSettingsWidget;
 		class ApplicationView;
+		class ApplicationWindow;
 		class LogsView;
 		class ProjectView;
-		class ServerView;
-		class ServerWindow;
 		class ModulePropertiesWidget;
 		namespace Ui {
 			class MainWindow;

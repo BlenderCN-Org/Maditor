@@ -16,7 +16,8 @@
 #include "VSLinkView.h"
 
 #include "Shared\ApplicationInfo.h"
-#include "Shared\ServerInfo.h"
+
+#include "Model\Project\ConfigList.h"
 
 
 Maditor::Addons::Addon *createAddon(Maditor::Model::Maditor *editor) {
@@ -91,14 +92,6 @@ void VSLink::onProcessStarted(DWORD pid, const Maditor::Shared::ApplicationInfo 
 	}
 }
 
-void VSLink::onServerProcessStarted(DWORD pid, const Maditor::Shared::ServerInfo & info)
-{
-	if (mAutoAttachDebugger && info.mDebugged) {
-		sendPID(pid);
-	}
-}
-
-
 void VSLink::receiveMessage(const VSMsg & msg)
 {
 	handle(msg.mCmd, msg.mArg1, msg.mArg2);
@@ -129,13 +122,12 @@ QString VSLink::resourceGroupName()
 
 void VSLink::onProjectOpened(Maditor::Model::Project * project)
 {
-	connect(project->application(), &Maditor::Model::ApplicationLauncher::processStarted, this, &VSLink::onProcessStarted);
-	connect(project, &Maditor::Model::Project::serverCreated, this, &VSLink::onServerCreated);
+	connect(project->configList(), &Maditor::Model::ConfigList::instanceAdded, this, &VSLink::onInstanceAdded);
 }
 
-void VSLink::onServerCreated(Maditor::Model::ServerLauncher * server)
+void VSLink::onInstanceAdded(Maditor::Model::ApplicationLauncher * app)
 {
-	connect(server, &Maditor::Model::ServerLauncher::processStarted, this, &VSLink::onServerProcessStarted);
+	connect(app, &Maditor::Model::ApplicationLauncher::processStarted, this, &VSLink::onProcessStarted);
 }
 
 bool VSLink::autoAttachDebugger()
@@ -173,9 +165,9 @@ void VSLink::handle(VSCommands::VSCommand cmd, const std::string & arg1, int64_t
 			sendMsg(mEnqueuedMsg, "VSInstance");
 		}
 		break;
-	case VSCommands::PIDRequest:
+	/*case VSCommands::PIDRequest:
 		sendPID(mEditor->project()->application()->pid());
-		break;
+		break;*/
 	default:
 		qDebug() << "Unknwon Command:" << cmd << arg1.c_str() << arg2;
 	}

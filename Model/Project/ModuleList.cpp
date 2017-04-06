@@ -194,7 +194,7 @@ namespace Maditor {
 
 		void ModuleList::showPropertiesDialog()
 		{
-			DialogManager::showModulePropertiesDialogStatic(this);
+			//DialogManager::showModuleListPropertiesWidgetStatic(this);
 		}
 
 

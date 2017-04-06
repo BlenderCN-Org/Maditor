@@ -13,8 +13,10 @@ namespace Maditor {
 			Q_OBJECT
 
 		public:
-			ApplicationLauncher(const QString &path, const ModuleList &modules, LogsModel *logs);
+			ApplicationLauncher(ApplicationConfig *config);
 			virtual ~ApplicationLauncher();
+
+			void destroy();
 
 			void setup();
 			void setupImpl(bool debug);
@@ -31,6 +33,10 @@ namespace Maditor {
 
 			DWORD pid();
 
+			bool isRunning();
+			bool isLaunched();
+			bool isSetup();
+
 		protected:
 			virtual void timerEvent(QTimerEvent * te) override;
 
@@ -38,7 +44,6 @@ namespace Maditor {
 
 			// Inherited via AppControl
 			virtual void shutdownImpl() override;
-
 
 			// Inherited via AppControl
 			virtual void startImpl() override;
@@ -52,8 +57,18 @@ namespace Maditor {
 
 			virtual void pingImpl() override;
 
+			enum KillCause {
+				TIMEOUT,
+				NO_APPLICATION_NOTIFICATION,
+				FAILED_CONNECTION,
+				CLEANUP,
+				USER_REQUEST
+			};
+
 		protected slots:
 		    void resizeWindow();
+			void timeout();
+			void kill(KillCause cause);
 
 		signals:
 			void applicationSettingup();
@@ -64,6 +79,8 @@ namespace Maditor {
 
 			void processStarted(DWORD, const Shared::ApplicationInfo &);
 
+			void destroyApplication(ApplicationLauncher *launcher);
+
 		private:
 
 			virtual size_t getSize() const override;
@@ -71,7 +88,7 @@ namespace Maditor {
 			std::unique_ptr<InputWrapper> mInput;
 			OgreWindow *mWindow;
 
-			QString mPath;
+			ApplicationConfig *mConfig;
 
 			DWORD mPID;
 			HANDLE mHandle;
@@ -84,8 +101,10 @@ namespace Maditor {
 
 			QTimer mPingTimer;
 
-			
+			bool mAboutToBeDestroyed;
 
+			bool mRunning;
+			bool mSetup;
 
 		};
 

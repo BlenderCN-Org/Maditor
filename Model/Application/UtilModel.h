@@ -13,7 +13,7 @@ namespace Maditor {
 		class MADITOR_MODEL_EXPORT UtilModel : public Engine::Serialize::TopLevelSerializableUnit<UtilModel> {
 		public:
 
-			UtilModel(bool server);
+			UtilModel();
 			UtilModel(const UtilModel &) = delete;
 
 			ProfilerModel *profiler();

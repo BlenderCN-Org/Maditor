@@ -10,38 +10,40 @@
 
 #include "Network\networkmanager.h"
 
-#include "Util\Util.h"
+
 
 namespace Maditor {
 	namespace Launcher {
 
-		ApplicationWrapper::ApplicationWrapper() :
-			AppControl(false),
+		ApplicationWrapper::ApplicationWrapper(size_t id) :
+			AppControl(id),
 			mInput(new InputWrapper(sharedMemory().mInput)),
 			mRunning(false),
-			mStartRequested(false)
+			mStartRequested(false),
+			mUtil(&mApplication)
 		{
 		}
 
 
 		int ApplicationWrapper::start()
 		{
+			Shared::ApplicationInfo &appInfo = sharedMemory().mAppInfo;
+			appInfo.setAppId(masterId());
+			
 			Engine::Network::NetworkManager *net = network();
 
 			net->startServer(1000);
 			if (!net->acceptConnection(2000)) {
 				net->close();
 				return -1;
-			}
-
-			Shared::ApplicationInfo &appInfo = sharedMemory().mAppInfo;
+			}			
 
 			size_t j = 0;
 			while (appInfo.mDebugged &&
 				!IsDebuggerPresent() &&
 				!GetAsyncKeyState(VK_F10))
 			{
-				::Sleep(100);
+				::Sleep(1);
 				if (++j > 5000) {
 					return -1;
 				}
@@ -84,9 +86,12 @@ namespace Maditor {
 			mRunning = true;
 
 			mApplication.setup(mSettings);
+			mUtil->setup();
 
-			Ogre::LogManager::getSingleton().getLog("Madgine.log")->addListener(mLog.ptr());
-			Ogre::LogManager::getSingleton().getLog("Ogre.log")->addListener(mLog.ptr());
+			Engine::Util::UtilMethods::addListener(mLog.ptr());
+
+			/*Ogre::LogManager::getSingleton().getLog("Madgine.log")->addListener(mLog.ptr());
+			Ogre::LogManager::getSingleton().getLog("Ogre.log")->addListener(mLog.ptr());*/
 
 			mInput->setSystem(&Engine::GUI::GUISystem::getSingleton());
 			std::string project = appInfo.mProjectDir.c_str();
@@ -96,15 +101,17 @@ namespace Maditor {
 				net->receiveMessages();
 			}
 			if (net->clientCount() != 1 || !mRunning) {
+				mUtil->shutdown();
 				//net->close();
 				return -1;
 			}
 
-			if (!mApplication.init())
+			if (!mApplication.init()) {
+				mUtil->shutdown();
 				return -1;
+			}
 
-			net->addTopLevelItem(&Engine::Util::Util::getSingleton());					
-
+					
 			applicationSetup({});
 
 			Ogre::Root::getSingleton().addFrameListener(this);
@@ -112,7 +119,7 @@ namespace Maditor {
 			while (mRunning) {
 				net->receiveMessages();
 				if (net->clientCount() != 1) {
-					net->removeTopLevelItem(&Engine::Util::Util::getSingleton());
+					mUtil->shutdown();
 					//net->close();
 					return -1;
 				}
@@ -122,10 +129,9 @@ namespace Maditor {
 					stop({});
 				}
 
-			}
+			}			
 
-			net->removeTopLevelItem(&Engine::Util::Util::getSingleton());
-
+			mUtil->shutdown();
 			return 0;
 		}
 
@@ -142,11 +148,35 @@ namespace Maditor {
 
 		bool ApplicationWrapper::frameRenderingQueued(const Ogre::FrameEvent & evt)
 		{
+			mUtil->profiler()->stopProfiling(); // PreRender
+
+			mUtil->profiler()->startProfiling("Rendering");
+
+
 			network()->receiveMessages();
 			if (network()->clientCount() != 1) {
 				shutdownImpl();
 			}
 			return mRunning;
+		}
+
+
+		bool ApplicationWrapper::frameStarted(const Ogre::FrameEvent & fe)
+		{	
+
+			mUtil->update();
+			mUtil->profiler()->startProfiling("Frame");
+			mUtil->profiler()->startProfiling("PreRender");
+
+			return true;
+		}
+
+		bool ApplicationWrapper::frameEnded(const Ogre::FrameEvent & fe)
+		{
+			mUtil->profiler()->stopProfiling(); // Rendering
+			mUtil->profiler()->stopProfiling(); // Frame
+
+			return true;
 		}
 
 

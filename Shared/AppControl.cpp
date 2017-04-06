@@ -10,30 +10,29 @@
 namespace Maditor {
 	namespace Shared {
 
-		AppControl::AppControl(bool isLauncher) :
-			TopLevelSerializableUnit(Engine::Serialize::RESERVED_ID_COUNT - 1),
-			mNetwork(new Engine::Network::NetworkManager)/*,
-			shutdown(this),
-			applicationSetup(this),
-			start(this),
-			stop(this),
-			pause(this),
-			resizeWindow(this),
-			ping(this)*/
-{
-	if (isLauncher) {
-		mMemory = new SharedMemory(SharedMemory::create);
-	}
-	else {
-		mMemory = new SharedMemory(SharedMemory::open);
-	}
-	mNetwork->addTopLevelItem(this);
-}
+		AppControl::AppControl() :
+			mNetwork(new Engine::Network::NetworkManager),
+			mMemory(new SharedMemory)
+		{			
+			mNetwork->addTopLevelItem(this);
+		}
+
+		AppControl::AppControl(size_t id) :
+			mNetwork(new Engine::Network::NetworkManager),
+			mMemory(new SharedMemory(id))
+		{
+			mNetwork->addTopLevelItem(this);
+		}
 
 AppControl::~AppControl()
 {
 	delete mMemory;
 	delete mNetwork;
+}
+
+size_t AppControl::appId()
+{
+	return mMemory->id();
 }
 
 Shared & AppControl::sharedMemory()

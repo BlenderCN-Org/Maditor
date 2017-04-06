@@ -10,8 +10,6 @@
 
 #include "newguihandlerdialog.h"
 
-#include "modulepropertiesdialog.h"
-
 #include "settingsdialog.h"
 
 
@@ -76,6 +74,17 @@ namespace Maditor {
 				path = QFileDialog::getExistingDirectory(nullptr, "Project Path", QString(), QFileDialog::ShowDirsOnly );
 				
 				return !path.isEmpty();
+			}
+
+			bool DialogManager::showNewConfigDialog(Model::ConfigList * list, QString & name)
+			{
+				bool ok;
+				QString s = QInputDialog::getText(nullptr, "New Config...", "Name:", QLineEdit::Normal, QString(), &ok);
+				if (s.isEmpty())
+					return false;
+				if (ok)
+					name = s;
+				return ok;
 			}
 
 			bool DialogManager::showNewModuleDialog(Model::ModuleList *list, QString &name)
@@ -150,20 +159,6 @@ namespace Maditor {
 			bool DialogManager::showNewServerClassDialog(Model::Module * module, const QString & name)
 			{
 				return true;
-			}
-
-			void DialogManager::showModulePropertiesDialog(Model::ModuleList *list)
-			{
-				ModulePropertiesDialog dialog(list);
-				
-				bool done = false;
-
-				while (!done) {
-					done = true;
-					if (dialog.exec() == QDialog::Accepted)
-						if (!dialog.apply())
-							done = false;
-				}
 			}
 
 			void DialogManager::showSettingsDialog()

@@ -7,12 +7,14 @@ namespace Maditor {
 
 		class Maditor;
 		class Project;
+		class ApplicationConfig;
 		class ApplicationLauncher;
-		class ServerLauncher;
 		class OgreWindow;
 
 		class Module;
 		class ModuleList;
+
+		class ConfigList;
 
 		class ModuleLoader;
 

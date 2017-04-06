@@ -8,11 +8,13 @@ PROJECT(Maditor_Launcher)
 
 
 set (sources "")
-FolderSources(sources "" "" ApplicationWrapper.cpp ApplicationWrapper.h InputWrapper.cpp InputWrapper.h LogListener.cpp LogListener.h maditorlauncherlib.cpp maditorlauncherlib.h maditorlauncherforward.h main.cpp ModuleLoader.cpp ModuleLoader.h)
+FolderSources(sources "" "" ApplicationWrapper.cpp ApplicationWrapper.h InputWrapper.cpp InputWrapper.h maditorlauncherlib.cpp maditorlauncherlib.h maditorlauncherforward.h main.cpp ModuleLoader.cpp ModuleLoader.h)
+	FolderSources(sources "" Util AppStats.cpp AppStats.h LogListener.cpp LogListener.h OgreUtilLog.cpp OgreUtilLog.h Util.cpp Util.h)
 
 include_directories(${BOOST_PATH})
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${MADGINE_INCLUDE_DIRS})
+include_directories(${Maditor_Launcher_SOURCE_DIR})
 
 if (OGRE_FOUND)
   include_directories(${OGRE_INCLUDE_DIRS} ${OGRE_Terrain_INCLUDE_DIRS} ${OGRE_RTShaderSystem_INCLUDE_DIRS})

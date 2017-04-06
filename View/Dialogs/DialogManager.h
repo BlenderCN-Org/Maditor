@@ -23,6 +23,7 @@ namespace Maditor {
 
 				virtual bool showNewProjectDialog(QString &path, QString &name) override;
 				virtual bool showLoadProjectDialog(QString &path) override;
+				virtual bool showNewConfigDialog(Model::ConfigList *list, QString &name) override;
 				virtual bool showNewModuleDialog(Model::ModuleList *list, QString &name) override;
 				virtual bool showNewClassDialog(Model::Module *module, QString &name, Model::Generators::ClassGeneratorFactory::ClassType &type) override;
 
@@ -33,8 +34,6 @@ namespace Maditor {
 				virtual bool showNewGameHandlerDialog(Model::Module *module, const QString &name) override;
 				virtual bool showNewOtherClassDialog(Model::Module *module, const QString &name) override;
 				virtual bool showNewServerClassDialog(Model::Module *module, const QString &name) override;
-
-				virtual void showModulePropertiesDialog(Model::ModuleList *list) override;
 
 				virtual void showSettingsDialog() override;
 

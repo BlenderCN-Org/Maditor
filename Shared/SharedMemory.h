@@ -26,8 +26,8 @@ public:
 	struct open_t {};
 	static constexpr open_t open = open_t();
 
-	SharedMemory(create_t);
-	SharedMemory(open_t);
+	SharedMemory();//create
+	SharedMemory(size_t id);//open
 
 	~SharedMemory();
 
@@ -35,12 +35,20 @@ public:
 
 	Shared &data();
 
+	size_t id();
+
 private:
+	static size_t sRunningId;
+
+	size_t mId;
+	
 	Shared *mData;
 
 	boost::interprocess::managed_shared_memory mMemory;
 
 	bool mCreate;
+
+	
 };
 
 

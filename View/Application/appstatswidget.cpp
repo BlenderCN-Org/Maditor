@@ -25,8 +25,8 @@ void AppStatsWidget::setModel(Model::StatsModel * model)
 	connect(model, &Model::StatsModel::averageFPSChanged, this, &AppStatsWidget::setFPS);
 	connect(model, &Model::StatsModel::memoryUsageChanged, this, &AppStatsWidget::setMemUsage);
 	connect(model, &Model::StatsModel::ogreMemoryUsageChanged, this, &AppStatsWidget::setOgreMem);
-	connect(ui->StartTrackAllocationsButton, &QPushButton::clicked, model, &Model::StatsModel::trackAllocations);
-	connect(ui->StopTrackAllocationsButton, &QPushButton::clicked, model, &Model::StatsModel::logTrackedAllocations);
+	/*connect(ui->StartTrackAllocationsButton, &QPushButton::clicked, model, &Model::StatsModel::trackAllocations);
+	connect(ui->StopTrackAllocationsButton, &QPushButton::clicked, model, &Model::StatsModel::logTrackedAllocations);*/
 }
 
 void AppStatsWidget::setFPS(float fps)

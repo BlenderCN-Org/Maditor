@@ -18,9 +18,9 @@ namespace Maditor {
 
 			void setProcess(HANDLE handle);
 
-			void trackAllocations();
+			/*void trackAllocations();
 			void logTrackedAllocations();
-
+			*/
 		protected:
 			void dummy();			
 
@@ -30,10 +30,10 @@ namespace Maditor {
 			void ogreMemoryUsageChanged(size_t mem);
 
 		private:
-			Engine::Serialize::Observed<size_t> mOgreMemoryUsage;
+			/*Engine::Serialize::Observed<size_t> mOgreMemoryUsage;
 			
 			Engine::Serialize::Action<decltype(&StatsModel::dummy), &StatsModel::dummy, Engine::Serialize::ActionPolicy::request> startTrack, stopTrack;			
-			
+			*/
 			Engine::Serialize::Observed<float> mAverageFPS;		
 			
 

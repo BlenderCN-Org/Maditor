@@ -28,7 +28,7 @@ public:
 	virtual QString resourceGroupName() override;
 
 	virtual void onProjectOpened(Maditor::Model::Project *project) override;
-	void onServerCreated(Maditor::Model::ServerLauncher *server);
+	void onInstanceAdded(Maditor::Model::ApplicationLauncher *app);
 
 	bool autoAttachDebugger();
 	void setAutoAttachDebugger(bool b);
@@ -45,7 +45,6 @@ private:
 	void sendPID(DWORD pid);
 
 	void onProcessStarted(DWORD pid, const Maditor::Shared::ApplicationInfo &info);
-	void onServerProcessStarted(DWORD pid, const Maditor::Shared::ServerInfo &info);
 
 	VSMsg mEnqueuedMsg;
 	bool mMessageEnqueued;

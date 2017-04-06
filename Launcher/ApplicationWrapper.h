@@ -6,8 +6,10 @@
 #include "App/OgreApplication.h"
 
 #include "ModuleLoader.h"
-#include "LogListener.h"
+#include "Util\LogListener.h"
 #include "Serialize\Container\serialized.h"
+
+#include "Util\Util.h"
 
 namespace Maditor {
 	namespace Launcher {
@@ -15,7 +17,7 @@ namespace Maditor {
 		class ApplicationWrapper : public Shared::AppControl, public Ogre::FrameListener {
 
 		public:
-			ApplicationWrapper();
+			ApplicationWrapper(size_t id);
 
 			int start();
 			
@@ -26,7 +28,9 @@ namespace Maditor {
 			// Inherited via AppControl
 			virtual void onApplicationSetup() override;
 
+			virtual bool frameStarted(const Ogre::FrameEvent &evt) override;
 			virtual bool frameRenderingQueued(const Ogre::FrameEvent &evt) override;
+			virtual bool frameEnded(const Ogre::FrameEvent &evt) override;
 
 			void startImpl();
 
@@ -40,13 +44,15 @@ namespace Maditor {
 			virtual size_t getSize() const override;
 
 			Engine::Serialize::Serialized<LogListener> mLog;
+			Engine::Serialize::Serialized<ModuleLoader> mLoader;
+			Engine::Serialize::Serialized<Util> mUtil;
 
 			Engine::App::OgreAppSettings mSettings;
 			Engine::App::OgreApplication mApplication;
 
 			InputWrapper *mInput;
 
-			Engine::Serialize::Serialized<ModuleLoader> mLoader;
+			
 
 			bool mRunning;			
 			bool mStartRequested;

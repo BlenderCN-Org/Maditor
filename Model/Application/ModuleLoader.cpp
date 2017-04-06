@@ -10,16 +10,18 @@
 
 #include "ApplicationLauncher.h"
 
+#include "ApplicationConfig.h"
+
 namespace Maditor {
 	namespace Model {
 
 
-		ModuleLoader::ModuleLoader(const QString & binaryDir, const ModuleList &moduleList) :			
-			mBinaryDir(binaryDir),
-			mModules(moduleList),
+		ModuleLoader::ModuleLoader(ApplicationConfig *config) :			
+			mBinaryDir(config->path() + "debug/bin/"),
+			mModules(*config->project()->moduleList()),
 			TableUnit(2),
-			mModulesCount(-1)/*,
-			setupDone(this)*/
+			mModulesCount(-1),
+			mConfig(config)
 		{
 			setContainer(mInstances);
 			/*const Shared::ModuleInstance *ptr = &*it;
@@ -30,14 +32,14 @@ namespace Maditor {
 						
 			mInstances.setCreator(std::bind(&ModuleLoader::createModule, this, std::placeholders::_1));
 
-			QDir dir(binaryDir);
+			QDir dir(mBinaryDir);
 			mFiles = QSet<QString>::fromList(dir.entryList({ "*.dll" }, QDir::NoDotAndDotDot | QDir::Files));
 
 
 			connect(&mWatcher, &QFileSystemWatcher::fileChanged, this, &ModuleLoader::onFileChanged);
 			connect(&mWatcher, &QFileSystemWatcher::directoryChanged, this, &ModuleLoader::onFolderChanged);
 
-			mWatcher.addPath(binaryDir);
+			mWatcher.addPath(mBinaryDir);
 		}
 
 
@@ -127,11 +129,11 @@ namespace Maditor {
 		}
 
 
-		void ModuleLoader::setup(bool server)
+		void ModuleLoader::setup()
 		{
 			mModulesCount = 0;
 			for (const std::unique_ptr<Module> &module : mModules) {
-				if (server ? module->serverCode() : module->clientCode()) {
+				if (mConfig->hasModuleEnabled(module.get())) {
 					addModule(module.get());
 					++mModulesCount;
 				}

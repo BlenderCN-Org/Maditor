@@ -10,10 +10,19 @@ class ApplicationWindow : public QStackedWidget
     Q_OBJECT
 
 public:
-	ApplicationWindow(QWidget *parent = nullptr);
+	ApplicationWindow(Model::ApplicationLauncher *app);
 
-	void setModel(Model::ApplicationLauncher *app);
+	Model::ApplicationLauncher *app();
 
+private slots:
+	void onApplicationSettingup();
+	void onApplicationSetup();
+	void onApplicationStarted();
+	void onApplicationStopped();
+	void onApplicationShutdown();
+
+private:
+	Model::ApplicationLauncher *mApp;
 
 };
 

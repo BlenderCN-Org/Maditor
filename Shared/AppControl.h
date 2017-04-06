@@ -11,10 +11,13 @@ namespace Maditor {
 		class MADITOR_SHARED_EXPORT AppControl : public Engine::Serialize::TopLevelSerializableUnit<AppControl> {
 
 		public:
-			AppControl(bool isLauncher);
+			AppControl();
+			AppControl(size_t id);
 			virtual ~AppControl();
 
 		protected:
+
+			size_t appId();
 
 			Shared &sharedMemory();
 

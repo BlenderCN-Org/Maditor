@@ -15,7 +15,6 @@
 #include "Application\applicationview.h"
 #include "Logs\logsview.h"
 #include "Project\projectview.h"
-#include "Server\serverview.h"
 
 namespace Maditor {
 namespace View {
@@ -25,8 +24,7 @@ namespace View {
 		mDialogManager(new Dialogs::DialogManager),
 		mApplication(new ApplicationView),
 		mLogs(new LogsView),
-		mProject(new ProjectView),
-		mServer(new ServerView)
+		mProject(new ProjectView)
 	{
 		ui->setupUi(this);
 
@@ -102,13 +100,11 @@ void MainWindow::setupUi()
 	mLogs->setupUi(ui, this);
 	mProject->setupUi(ui, this);
 	model()->addons()->setupUi(ui, this);
-	mServer->setupUi(ui, this);
 }
 
 void MainWindow::onProjectOpened(Model::Project *project) {
-	mApplication->setModel(project->application());
+	mApplication->setConfigModel(project->configList());
 	mProject->setModel(project);
-	mServer->setModel(project);
 }
 
 void MainWindow::clearRecentProjects()

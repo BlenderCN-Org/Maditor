@@ -14,13 +14,13 @@ namespace Maditor {
 			stopTrack(this)*/
 		{
 			mAverageFPS.setCallback([this](const float &f) {emit averageFPSChanged(f); });
-			mOgreMemoryUsage.setCallback([this](const size_t &mem) {emit ogreMemoryUsageChanged(mem); });
+			//mOgreMemoryUsage.setCallback([this](const size_t &mem) {emit ogreMemoryUsageChanged(mem); });
 		}
 
 		void StatsModel::reset()
 		{
 			mAverageFPS = 0.0f;
-			mOgreMemoryUsage = 0;
+			//mOgreMemoryUsage = 0;
 			if (mCurrentUsage) {
 				mCurrentUsage = 0;
 				emit memoryUsageChanged(0);
@@ -54,7 +54,7 @@ namespace Maditor {
 			}
 		}
 
-		void StatsModel::trackAllocations()
+		/*void StatsModel::trackAllocations()
 		{
 			startTrack({});
 		}
@@ -62,7 +62,7 @@ namespace Maditor {
 		void StatsModel::logTrackedAllocations()
 		{
 			stopTrack({});
-		}
+		}*/
 
 		void StatsModel::dummy()
 		{
