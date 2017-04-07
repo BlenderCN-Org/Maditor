@@ -1,11 +1,13 @@
 #pragma once
 
+#include "Documents\DocumentView.h"
+
 namespace Maditor {
 namespace View {
 
 
 
-class ApplicationWindow : public QStackedWidget
+class ApplicationWindow : public QStackedWidget, public DocumentView
 {
     Q_OBJECT
 

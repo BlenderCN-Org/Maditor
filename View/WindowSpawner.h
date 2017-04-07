@@ -18,11 +18,13 @@ public:
 
 	void setupUi(Ui::MainWindow * ui) {
 		mTabWidget = ui->tabWidget;		
-		QObject::connect(ui->tabWidget, &QTabWidget::tabCloseRequested, std::bind(&WindowSpawner<Model, View>::onTabCloseRequestBase, this, std::placeholders::_1));
+		QObject::connect(ui->tabWidget, &QTabWidget::tabCloseRequested, std::bind(&WindowSpawner<Model, View>::onTabCloseRequest, this, std::placeholders::_1));
 	}
 
 protected:
-	virtual void onTabCloseRequest(View *w) = 0;
+	virtual bool tabCloseRequest(View *w) {
+		return true;
+	}
 
 	template <class... _Ty>
 	void spawn(Model *model, _Ty&&... args) {
@@ -44,9 +46,10 @@ protected:
 		mViews.erase(it);
 	}
 
-	void onTabCloseRequestBase(int index) {
+	void onTabCloseRequest(int index) {
 		if (View *w = dynamic_cast<View*>(mTabWidget->widget(index))) {
-			onTabCloseRequest(w);
+			if (tabCloseRequest(w))
+				w->document()->destroy();
 		}
 	}
 

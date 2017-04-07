@@ -34,15 +34,6 @@ namespace Maditor {
 		{
 		}
 
-		ApplicationLauncher * ApplicationConfig::createInstance()
-		{
-			ApplicationLauncher *instance = new ApplicationLauncher(this);
-			mInstances.emplace_back(instance);
-			connect(instance, &ApplicationLauncher::destroyApplication, this, &ApplicationConfig::destroyInstance);
-			emit instanceCreated(instance);
-			return instance;
-		}
-
 		void ApplicationConfig::generateInfo(Shared::ApplicationInfo &appInfo, QWindow * w)
 		{
 			appInfo.mMediaDir = (path() + "Data/").toStdString().c_str();
@@ -59,16 +50,25 @@ namespace Maditor {
 			return true;
 		}
 
-		void ApplicationConfig::init()
+		ApplicationLauncher * ApplicationConfig::createInstace()
 		{
+			return createDocument<ApplicationLauncher>(this);
 		}
 
-		void ApplicationConfig::destroyInstance(ApplicationLauncher * instance)
+		void ApplicationConfig::init()
 		{
-			auto it = std::find_if(mInstances.begin(), mInstances.end(), [=](const std::unique_ptr<ApplicationLauncher> &app) {return app.get() == instance; });
-			assert(it != mInstances.end());
-			emit instanceDestroyed(instance);
-			mInstances.erase(it);
+			connect(this, &DocumentStore::documentCreated, this, &ApplicationConfig::onDocumentCreated);
+			connect(this, &DocumentStore::documentDestroyed, this, &ApplicationConfig::onDocumentDestroyed);
+		}
+
+		void ApplicationConfig::onDocumentCreated(Document * doc)
+		{
+			emit documentCreated(static_cast<ApplicationLauncher*>(doc));
+		}
+
+		void ApplicationConfig::onDocumentDestroyed(Document * doc)
+		{
+			emit documentDestroyed(static_cast<ApplicationLauncher*>(doc));
 		}
 
 		int ApplicationConfig::childCount() const

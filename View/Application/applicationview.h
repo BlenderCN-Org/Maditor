@@ -30,8 +30,6 @@ protected:
 	void selectConfig(QAction *action);
 	void selectConfigName(const QString &name);
 
-	virtual void onTabCloseRequest(ApplicationWindow *win) override;
-
 private slots:
 	void onConfigAdded(Model::ApplicationConfig *config);
 	void onInstanceAdded(Model::ApplicationLauncher *instance);

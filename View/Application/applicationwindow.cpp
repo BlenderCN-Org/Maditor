@@ -13,6 +13,7 @@ namespace View {
 
 	ApplicationWindow::ApplicationWindow(Model::ApplicationLauncher *app) :
 		QStackedWidget(nullptr),
+		DocumentView(app),
 		mApp(app)
 	{
 		setWindowTitle(QStringLiteral("game"));

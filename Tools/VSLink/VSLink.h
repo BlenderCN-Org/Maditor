@@ -28,7 +28,7 @@ public:
 	virtual QString resourceGroupName() override;
 
 	virtual void onProjectOpened(Maditor::Model::Project *project) override;
-	void onInstanceAdded(Maditor::Model::ApplicationLauncher *app);
+	void onInstanceAdded(Maditor::Model::Document *app);
 
 	bool autoAttachDebugger();
 	void setAutoAttachDebugger(bool b);

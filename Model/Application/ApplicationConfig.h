@@ -1,11 +1,13 @@
 #pragma once
 
 #include "Model\Project\ProjectElement.h"
+#include "Model\Documents\DocumentStore.h"
+#include "ApplicationLauncher.h"
 
 namespace Maditor {
 	namespace Model {
 
-		class MADITOR_MODEL_EXPORT ApplicationConfig : public QObject, public ProjectElement{
+		class MADITOR_MODEL_EXPORT ApplicationConfig : public DocumentStore, public ProjectElement {
 			Q_OBJECT
 
 		public:
@@ -13,20 +15,22 @@ namespace Maditor {
 			ApplicationConfig(QDomElement data, ConfigList *parent);
 			~ApplicationConfig();
 
-			ApplicationLauncher *createInstance();
-
 			void generateInfo(Shared::ApplicationInfo &appInfo, QWindow *w = nullptr);
 
 			bool hasModuleEnabled(Module *module);
 
-		signals:
-			void instanceCreated(ApplicationLauncher*);
-			void instanceDestroyed(ApplicationLauncher*);
+			ApplicationLauncher *createInstace();
 
 		private:
 			void init();
 
-			void destroyInstance(ApplicationLauncher*);
+		signals:
+			void documentCreated(ApplicationLauncher *);
+			void documentDestroyed(ApplicationLauncher *);
+
+		private slots:
+			void onDocumentCreated(Document *doc);
+			void onDocumentDestroyed(Document *doc);
 
 		public:
 			// Inherited via ProjectElement
@@ -36,9 +40,7 @@ namespace Maditor {
 			virtual QString path() const override;
 
 		private:
-			ConfigList *mParent;
-
-			std::list<std::unique_ptr<ApplicationLauncher>> mInstances;
+			ConfigList *mParent;			
 
 		};
 

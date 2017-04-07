@@ -5,6 +5,8 @@
 namespace Maditor {
 	namespace Model {
 
+		class Document;
+
 		class Maditor;
 		class Project;
 		class ApplicationConfig;

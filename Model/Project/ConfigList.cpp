@@ -53,9 +53,9 @@ namespace Maditor {
 			mConfigs.emplace_back(config);
 			//endInsertRows();
 
-			connect(config, &ApplicationConfig::instanceCreated, this, &ConfigList::instanceAdded);
-			connect(config, &ApplicationConfig::instanceDestroyed, this, &ConfigList::instanceDestroyed);
-
+			connect(config, &ApplicationConfig::documentCreated, this, &ConfigList::instanceAdded);
+			connect(config, &ApplicationConfig::documentDestroyed, this, &ConfigList::instanceDestroyed);
+			
 			//emit moduleAdded(module);
 		}
 

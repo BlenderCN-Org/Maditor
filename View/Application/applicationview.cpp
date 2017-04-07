@@ -110,12 +110,7 @@ namespace View {
 	{
 		Model::ApplicationConfig *config = mList->getConfig(name);
 		assert(config);
-		setModel(config->createInstance());
-	}
-
-	void ApplicationView::onTabCloseRequest(ApplicationWindow * win)
-	{
-		win->app()->destroy();
+		setModel(config->createInstace());
 	}
 
 	void ApplicationView::onConfigAdded(Model::ApplicationConfig *config) {

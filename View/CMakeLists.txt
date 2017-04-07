@@ -19,6 +19,7 @@ set (sources "")
 FolderSources(sources "" "" componentview.h editorsettingswidget.cpp editorsettingswidget.h editorsettingswidget.ui maditorviewforward.h maditorviewlib.cpp maditorviewlib.h mainwindow.cpp mainwindow.h mainwindow.ui resources.qrc TreeView.cpp TreeView.h WindowSpawner.h)
 	FolderSources(sources "" Application ApplicationView.cpp ApplicationView.h ApplicationWindow.cpp ApplicationWindow.h appstatswidget.cpp appstatswidget.h appstatswidget.ui)
 	FolderSources(sources "" Dialogs DialogManager.cpp DialogManager.h NewClassDialog.cpp NewClassDialog.h NewClassDialog.ui NewGuiHandlerDialog.cpp NewGuiHandlerDialog.h NewGuiHandlerDialog.ui NewModuleDialog.cpp NewModuleDialog.h NewModuleDialog.ui NewProjectDialog.cpp NewProjectDialog.h NewProjectDialog.ui settingsdialog.cpp settingsdialog.h settingsdialog.ui settingstab.h)
+	FolderSources(sources "" Documents DocumentView.cpp DocumentView.h)
 	FolderSources(sources "" Logs LogsTabWidget.cpp LogsTabWidget.h LogsView.cpp LogsView.h LogWidget.cpp LogWidget.h)
 	FolderSources(sources "" Project FilesView.cpp FilesView.h ModuleListPropertiesWidget.cpp ModuleListPropertiesWidget.h ModuleListPropertiesWidget.ui ModulePropertiesWidget.cpp ModulePropertiesWidget.h ModulePropertiesWidget.ui ProjectView.cpp ProjectView.h)
 

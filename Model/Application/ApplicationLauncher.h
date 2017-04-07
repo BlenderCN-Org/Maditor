@@ -5,18 +5,19 @@
 #include "Serialize\Container\serialized.h"
 #include "UtilModel.h"
 #include "OgreLogReader.h"
+#include "Model\Documents\Document.h"
 
 namespace Maditor {
 	namespace Model {
 
-		class MADITOR_MODEL_EXPORT ApplicationLauncher : public QObject, public Shared::AppControl {
+		class MADITOR_MODEL_EXPORT ApplicationLauncher : public Document, public Shared::AppControl {
 			Q_OBJECT
 
 		public:
 			ApplicationLauncher(ApplicationConfig *config);
 			virtual ~ApplicationLauncher();
 
-			void destroy();
+			virtual void destroy() override;
 
 			void setup();
 			void setupImpl(bool debug);

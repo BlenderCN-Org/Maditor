@@ -125,9 +125,10 @@ void VSLink::onProjectOpened(Maditor::Model::Project * project)
 	connect(project->configList(), &Maditor::Model::ConfigList::instanceAdded, this, &VSLink::onInstanceAdded);
 }
 
-void VSLink::onInstanceAdded(Maditor::Model::ApplicationLauncher * app)
+void VSLink::onInstanceAdded(Maditor::Model::Document * app)
 {
-	connect(app, &Maditor::Model::ApplicationLauncher::processStarted, this, &VSLink::onProcessStarted);
+	if (Maditor::Model::ApplicationLauncher *launcher = dynamic_cast<Maditor::Model::ApplicationLauncher*>(app))
+		connect(launcher, &Maditor::Model::ApplicationLauncher::processStarted, this, &VSLink::onProcessStarted);
 }
 
 bool VSLink::autoAttachDebugger()

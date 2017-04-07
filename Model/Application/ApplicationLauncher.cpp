@@ -47,7 +47,7 @@ namespace Maditor {
 		void ApplicationLauncher::destroy()
 		{
 			if (!mPID) {
-				emit destroyApplication(this);
+				Document::destroy();
 			}
 			else {
 				mAboutToBeDestroyed = true;
