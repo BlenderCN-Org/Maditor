@@ -14,7 +14,7 @@ namespace Maditor {
 			Q_OBJECT
 
 		public:
-			ApplicationLauncher(ApplicationConfig *config);
+			ApplicationLauncher(ApplicationConfig *config, const QString &uniqueName);
 			virtual ~ApplicationLauncher();
 
 			virtual void destroy() override;
@@ -37,6 +37,8 @@ namespace Maditor {
 			bool isRunning();
 			bool isLaunched();
 			bool isSetup();
+
+			bool needsWindow();
 
 		protected:
 			virtual void timerEvent(QTimerEvent * te) override;

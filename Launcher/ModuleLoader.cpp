@@ -108,6 +108,24 @@ namespace Maditor {
 			}
 		}
 
+		Engine::Server::ServerBase * ModuleLoader::createServer(const std::string & fullName, const std::string &mediaDir)
+		{
+			size_t delimPos = fullName.find(':');
+			std::string moduleName(fullName.c_str(), delimPos);
+			std::string className(fullName.c_str() + (delimPos + 1));
+
+			auto it = std::find_if(mInstances.begin(), mInstances.end(), [&](const ModuleLauncherInstance &mod) {return mod.name() == moduleName; });
+			if (it != mInstances.end() && it->isLoaded()) {
+				void *symbol = it->getSymbol(std::string("create") + className);
+				if (symbol) {
+					typedef Engine::Server::ServerBase *(*Factory)(const std::string &);
+					return (*static_cast<Factory>(symbol))(mediaDir);
+				}
+			}
+
+			return nullptr;
+		}
+
 		bool ModuleLoader::ModuleLauncherInstance::load(bool callInit)
 		{
 			if (isLoaded())
@@ -194,34 +212,41 @@ namespace Maditor {
 			std::set<void *> afterGuiHandlerHashes(afterGuiHandlerHashesList.begin(), afterGuiHandlerHashesList.end());
 			std::set_difference(afterGuiHandlerHashes.begin(), afterGuiHandlerHashes.end(), beforeGuiHandlerHashes.begin(), beforeGuiHandlerHashes.end(), std::inserter(mGuiHandlerHashes, mGuiHandlerHashes.end()));
 
-
-			for (void *h : mSceneComponentHashes) {
-				auto it = sceneComponentCollector->postCreate(h);
-				Engine::Serialize::UnitHelper<Engine::Scene::SceneComponentBase>::setItemTopLevel(**it, &Engine::Scene::SceneManagerBase::getSingleton());
-				if (callInit)
-					(*it)->init();
-				mSceneComponents.push_back(it->get());
+			if (sceneComponentCollector) {
+				for (void *h : mSceneComponentHashes) {
+					auto it = sceneComponentCollector->postCreate(h);
+					Engine::Serialize::UnitHelper<Engine::Scene::SceneComponentBase>::setItemTopLevel(**it, &Engine::Scene::SceneManagerBase::getSingleton());
+					if (callInit)
+						(*it)->init();
+					mSceneComponents.push_back(it->get());
+				}
 			}
 
-			for (void *h : mGlobalAPIComponentHashes) {
-				auto it = globalAPIComponentCollector->postCreate(h);
-				if (callInit)
-					(*it)->init();
-				mGlobalAPIComponents.push_back(it->get());
+			if (globalAPIComponentCollector) {
+				for (void *h : mGlobalAPIComponentHashes) {
+					auto it = globalAPIComponentCollector->postCreate(h);
+					if (callInit)
+						(*it)->init();
+					mGlobalAPIComponents.push_back(it->get());
+				}
 			}
 
-			for (void *h : mGuiHandlerHashes) {
-				auto it = guiHandlerCollector->postCreate(h);
-				if (callInit)
-					(*it)->init();
-				mGuiHandlers.push_back(it->get());
+			if (guiHandlerCollector) {
+				for (void *h : mGuiHandlerHashes) {
+					auto it = guiHandlerCollector->postCreate(h);
+					if (callInit)
+						(*it)->init();
+					mGuiHandlers.push_back(it->get());
+				}
 			}
 
-			for (void *h : mGameHandlerHashes) {
-				auto it = gameHandlerCollector->postCreate(h);
-				if (callInit)
-					(*it)->init();
-				mGameHandlers.push_back(it->get());
+			if (gameHandlerCollector) {
+				for (void *h : mGameHandlerHashes) {
+					auto it = gameHandlerCollector->postCreate(h);
+					if (callInit)
+						(*it)->init();
+					mGameHandlers.push_back(it->get());
+				}
 			}
 
 			for (const std::pair<const std::string, std::list<std::pair<Engine::Scene::Entity::Entity*, Engine::Scripting::ArgumentList>>> &ents : mStoredComponentEntities) {
@@ -307,6 +332,11 @@ namespace Maditor {
 			if (isLoaded() && unload()) {
 				load(true);
 			}
+		}
+
+		void * ModuleLoader::ModuleLauncherInstance::getSymbol(const std::string symbolName)
+		{
+			return GetProcAddress(mHandle, symbolName.c_str());
 		}
 
 	}

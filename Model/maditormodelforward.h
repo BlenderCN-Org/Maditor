@@ -6,6 +6,7 @@ namespace Maditor {
 	namespace Model {
 
 		class Document;
+		class DocumentStore;
 
 		class Maditor;
 		class Project;

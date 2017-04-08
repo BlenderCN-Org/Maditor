@@ -20,6 +20,8 @@ public:
 	const std::string &binaryDir();
 	const std::string &runtimeDir();
 
+	Engine::Server::ServerBase * createServer(const std::string & fullName, const std::string &mediaDir);
+
 private:
 
 	class ModuleLauncherInstance : public Shared::ModuleInstance {
@@ -33,6 +35,8 @@ private:
 		bool unload();
 
 		virtual void reloadImpl() override;
+
+		void * getSymbol(const std::string symbolName);
 
 	private:
 		HINSTANCE mHandle;

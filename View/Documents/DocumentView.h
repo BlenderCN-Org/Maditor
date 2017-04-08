@@ -7,16 +7,21 @@ namespace Maditor {
 class DocumentView
 {
 public:
-	DocumentView(Model::Document *doc);
-	virtual ~DocumentView() = default;	
+	DocumentView(Model::Document *doc, QWidget *widget);
+	virtual ~DocumentView();	
 
 	Model::Document *document();
 
-protected:
+	void updateTitle();
 
+	virtual bool requestClose();
 
 private:
 	Model::Document *mDocument;
+	QWidget *mWidget;
+	QMetaObject::Connection mConnection;
+
+	QShortcut mSaveShortcut;
 	
 };
 

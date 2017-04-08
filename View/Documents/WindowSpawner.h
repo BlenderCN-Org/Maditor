@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ui_mainwindow.h"
+#include "mainwindow_ui.h"
 
 namespace Maditor{
 	namespace View{
@@ -21,24 +21,24 @@ public:
 		QObject::connect(ui->tabWidget, &QTabWidget::tabCloseRequested, std::bind(&WindowSpawner<Model, View>::onTabCloseRequest, this, std::placeholders::_1));
 	}
 
-protected:
-	virtual bool tabCloseRequest(View *w) {
-		return true;
-	}
-
 	template <class... _Ty>
 	void spawn(Model *model, _Ty&&... args) {
+		assert(mTabWidget);
 		auto it = mViews.find(model);
 		if (it == mViews.end()) {
 			View *win = new View(model, std::forward<_Ty>(args)...);
 			mViews[model] = win;
-			mTabWidget->addTab(win, win->windowTitle());
+			win->updateTitle();
+			mTabWidget->setCurrentIndex(mTabWidget->addTab(win, win->windowTitle()));
+			QObject::connect(win, &View::windowTitleChanged, [=](const QString &title) {mTabWidget->setTabText(mTabWidget->indexOf(win), title); });
 		}
 		else {
 			mTabWidget->setCurrentWidget(it->second);
-		}		
+		}
 	}
 
+protected:
+	
 	void remove(Model *model) {
 		auto it = mViews.find(model);
 		assert(it != mViews.end());
@@ -48,8 +48,9 @@ protected:
 
 	void onTabCloseRequest(int index) {
 		if (View *w = dynamic_cast<View*>(mTabWidget->widget(index))) {
-			if (tabCloseRequest(w))
-				w->document()->destroy();
+			if (std::find_if(mViews.begin(), mViews.end(), [=](const std::pair<Model * const, View *> &p) {return p.second == w; }) != mViews.end())
+				if (w->requestClose())
+					w->document()->destroy();
 		}
 	}
 

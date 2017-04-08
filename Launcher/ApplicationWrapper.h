@@ -18,6 +18,7 @@ namespace Maditor {
 
 		public:
 			ApplicationWrapper(size_t id);
+			~ApplicationWrapper();
 
 			int start();
 			
@@ -31,6 +32,8 @@ namespace Maditor {
 			virtual bool frameStarted(const Ogre::FrameEvent &evt) override;
 			virtual bool frameRenderingQueued(const Ogre::FrameEvent &evt) override;
 			virtual bool frameEnded(const Ogre::FrameEvent &evt) override;
+
+			bool update();
 
 			void startImpl();
 

@@ -13,10 +13,9 @@ namespace View {
 
 	ApplicationWindow::ApplicationWindow(Model::ApplicationLauncher *app) :
 		QStackedWidget(nullptr),
-		DocumentView(app),
+		DocumentView(app, this),
 		mApp(app)
 	{
-		setWindowTitle(QStringLiteral("game"));
 		QPalette palette;
 		QBrush brush(QColor(197, 197, 197, 255));
 		brush.setStyle(Qt::SolidPattern);

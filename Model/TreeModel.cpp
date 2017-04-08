@@ -108,10 +108,13 @@ namespace Maditor {
 			return static_cast<TreeItem*>(index.internalPointer());
 		}	
 
-		void TreeModel::handleContextMenuRequest(const QModelIndex & p, QMenu & menu)
+		void TreeModel::handleContextMenuRequest(const QModelIndex & p, QMenu& menu)
 		{
 			if (p.isValid()) {
 				item(p)->extendContextMenu(menu);
+			}
+			else {
+				mRoot->extendContextMenu(menu);
 			}
 		}
 

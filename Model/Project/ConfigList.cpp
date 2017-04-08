@@ -71,7 +71,7 @@ namespace Maditor {
 		{
 			addConfig(new ApplicationConfig(this, name));
 
-			mParent->save();
+			mParent->writeToDisk();
 		}
 
 		bool ConfigList::hasConfig(const QString & name) const

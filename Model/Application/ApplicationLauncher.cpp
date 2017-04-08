@@ -16,9 +16,10 @@
 
 namespace Maditor {
 	namespace Model {
-		ApplicationLauncher::ApplicationLauncher(ApplicationConfig *config) :
+		ApplicationLauncher::ApplicationLauncher(ApplicationConfig *config, const QString &uniqueName) :
+			Document(uniqueName),
 			mInput(new InputWrapper(sharedMemory().mInput)),
-			mWindow(new OgreWindow(mInput.get())),
+			mWindow(config->launcher() == ApplicationConfig::MADITOR_LAUNCHER ? new OgreWindow(mInput.get()) : nullptr),
 			mLoader(config),
 			mPID(0),
 			mLog(config->project()->logs(), std::list<std::string>{ "Ogre.log" }),
@@ -28,7 +29,8 @@ namespace Maditor {
 			mSetup(false),
 			mConfig(config)
 		{
-			connect(mWindow, &OgreWindow::resized, this, &ApplicationLauncher::resizeWindow);
+			if (mWindow)
+				connect(mWindow, &OgreWindow::resized, this, &ApplicationLauncher::resizeWindow);
 
 			startTimer(10);
 
@@ -64,13 +66,22 @@ namespace Maditor {
 
 		void ApplicationLauncher::setupImpl(bool debug)
 		{
-			emit applicationSettingup();
-
+			
 			Shared::ApplicationInfo &appInfo = sharedMemory().mAppInfo;
+			appInfo.mDebugged = debug;
 
-			mConfig->generateInfo(appInfo, mWindow);
+			std::string cmd;
 
-			appInfo.mDebugged = debug;			
+			if (mConfig->launcher() == ApplicationConfig::MADITOR_LAUNCHER) {
+				emit applicationSettingup();
+
+				mConfig->generateInfo(appInfo, mWindow);
+
+				cmd = std::string("Maditor_Launcher.exe ") + std::to_string(appId());
+			}
+			else {
+				cmd = mConfig->customExecutableCmd().toStdString();
+			}
 
 			STARTUPINFO si;
 			PROCESS_INFORMATION pi;
@@ -82,7 +93,7 @@ namespace Maditor {
 
 			// start the program up
 			CreateProcess(NULL,   // the path
-				const_cast<char*>((std::string("Maditor_Launcher.exe ") + std::to_string(appId())).c_str()),
+				const_cast<char*>(cmd.c_str()),
 				NULL,           // Process handle not inheritable
 				NULL,           // Thread handle not inheritable
 				FALSE,          // Set handle inheritance to FALSE
@@ -100,24 +111,29 @@ namespace Maditor {
 			emit processStarted(mPID, appInfo);
 			mUtil->stats()->setProcess(mHandle);
 
-			Engine::Network::NetworkManager *net = network();
-			size_t id = appInfo.waitForAppId();
-			if (!id) {
-				kill(NO_APPLICATION_NOTIFICATION);
-				return;
+			if (mConfig->launcher() == ApplicationConfig::MADITOR_LAUNCHER) {				
+				Engine::Network::NetworkManager *net = network();
+				size_t id = appInfo.waitForAppId();
+				if (!id) {
+					kill(NO_APPLICATION_NOTIFICATION);
+					return;
+				}
+				setStaticSlaveId(id);
+				if (!net->connect("127.0.0.1", 1000, 1000)) {
+					kill(FAILED_CONNECTION);
+					return;
+				}
+
+				mLoader->setup();
+
+				mWaitingForLoader = true;
+
+				if (!debug)
+					pingImpl();
 			}
-			setStaticSlaveId(id);
-			if (!net->connect("127.0.0.1", 1000, 1000)) {
-				kill(FAILED_CONNECTION);
-				return;
+			else {
+				onApplicationSetup();
 			}
-
-			mLoader->setup();
-
-			mWaitingForLoader = true;	
-
-			if (!debug)
-				pingImpl();
 		}
 		void ApplicationLauncher::setupNoDebug()
 		{
@@ -185,6 +201,11 @@ namespace Maditor {
 			return mSetup;
 		}
 
+		bool ApplicationLauncher::needsWindow()
+		{
+			return mConfig->launcher() == Model::ApplicationConfig::MADITOR_LAUNCHER && mConfig->launcherType() == Model::ApplicationConfig::CLIENT_LAUNCHER;
+		}
+
 		void ApplicationLauncher::timerEvent(QTimerEvent * te)
 		{
 			if (mPID) {
@@ -224,10 +245,10 @@ namespace Maditor {
 					msg += "No Response from App";
 					break;
 				case FAILED_CONNECTION:
-					msg = "Unable to connect to process";
+					msg += "Unable to connect to process";
 					break;
 				case NO_APPLICATION_NOTIFICATION:
-					msg = "Application data not set up correctly";
+					msg += "Application data not set up correctly";
 					break;
 				default:
 					msg += "unknown cause";

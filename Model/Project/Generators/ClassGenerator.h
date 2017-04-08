@@ -8,7 +8,7 @@ namespace Maditor {
 
 		namespace Generators {
 
-			class MADITOR_MODEL_EXPORT ClassGenerator : public QObject, public Generator, public ProjectElement {
+			class MADITOR_MODEL_EXPORT ClassGenerator : public QObject, public ProjectElement, public Generator {
 				Q_OBJECT
 
 			public:
@@ -26,7 +26,7 @@ namespace Maditor {
 				// Inherited via ProjectElement
 				virtual int childCount() const override;
 
-				virtual TreeItem* child(int i) override;
+				virtual ProjectElement* child(int i) override;
 
 				virtual QVariant icon() const override;
 
@@ -60,7 +60,6 @@ namespace Maditor {
 
 				std::list<std::pair<QString, QString>> mModuleKeys;
 				std::list<std::pair<QString, QString>> mKeys;
-
 
 			};
 

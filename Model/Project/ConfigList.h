@@ -18,6 +18,7 @@ namespace Maditor {
 
 			ConfigList(Project *parent);
 			ConfigList(QDomElement element, Project *parent);
+			ConfigList(const ConfigList &) = delete;
 			~ConfigList();			
 
 			virtual QString path() const override;
@@ -56,6 +57,7 @@ namespace Maditor {
 			void instanceAdded(ApplicationLauncher *);
 			void instanceDestroyed(ApplicationLauncher *);
 
+			void openConfig(ApplicationConfig *);
 
 		private:
 			Project *mParent;

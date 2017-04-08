@@ -1,18 +1,19 @@
 #pragma once
 
 #include "ComponentView.h"
-#include "WindowSpawner.h"
+#include "Documents\WindowSpawner.h"
 
 #include "Model\Application\ApplicationLauncher.h"
 
 #include "applicationwindow.h"
+#include "applicationlog.h"
 
 namespace Maditor {
 namespace View {
 
 
 
-class ApplicationView : public QObject, public ComponentView<Model::ApplicationLauncher>, public WindowSpawner<Model::ApplicationLauncher, ApplicationWindow>
+class ApplicationView : public QObject, public ComponentView<Model::ApplicationLauncher>, public WindowSpawner<Model::ApplicationLauncher, ApplicationWindow>, public WindowSpawner<Model::ApplicationLauncher, ApplicationLog>
 {
     Q_OBJECT
 

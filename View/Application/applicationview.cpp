@@ -21,7 +21,8 @@ namespace View {
 
 	void ApplicationView::setupUi(Ui::MainWindow * ui, MainWindow * window)
 	{
-		WindowSpawner::setupUi(ui);
+		WindowSpawner<Model::ApplicationLauncher, ApplicationWindow>::setupUi(ui);
+		WindowSpawner<Model::ApplicationLauncher, ApplicationLog>::setupUi(ui);
 
 		mUi = ui;
 
@@ -123,12 +124,18 @@ namespace View {
 
 	void ApplicationView::onInstanceAdded(Model::ApplicationLauncher * instance)
 	{
-		spawn(instance);
+		if (instance->needsWindow())
+			WindowSpawner<Model::ApplicationLauncher, ApplicationWindow>::spawn(instance);
+		else
+			WindowSpawner<Model::ApplicationLauncher, ApplicationLog>::spawn(instance);
 	}
 
 	void ApplicationView::onInstanceDestroyed(Model::ApplicationLauncher * instance)
 	{
-		remove(instance);
+		if (instance->needsWindow())
+			WindowSpawner<Model::ApplicationLauncher, ApplicationWindow>::remove(instance);
+		else
+			WindowSpawner<Model::ApplicationLauncher, ApplicationLog>::spawn(instance);
 	}
 
 	void ApplicationView::createCurrentConfig()

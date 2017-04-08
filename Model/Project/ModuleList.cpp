@@ -50,8 +50,7 @@ namespace Maditor {
 			setContextMenuItems({
 				{ "New Module", [=]() {newModule(); } },
 				{ "Rebuild Structure", [=]() {generate(); } },
-				{ "Draw Dependencies", [=]() {drawDependenciesGraph(); } },
-				{ "Properties", [this]() {showPropertiesDialog(); } }
+				{ "Draw Dependencies", [=]() {drawDependenciesGraph(); } }
 			});
 		}
 
@@ -110,8 +109,8 @@ namespace Maditor {
 		{
 			addModule(new Module(this, name));
 
-			generate();
-			mParent->save();
+			writeData();
+			mParent->writeToDisk();
 
 		}
 
@@ -125,7 +124,7 @@ namespace Maditor {
 		{
 			QStringList l = fullName.split(":");
 			if (l.size() != 2)
-				throw 0;
+				return nullptr;
 			return getModule(l[0])->getClass(l[1]);
 		}
 
@@ -179,6 +178,11 @@ namespace Maditor {
 			return it->get();
 		}
 
+		void ModuleList::writeData()
+		{
+			generate();
+		}
+
 		QVariant ModuleList::icon() const
 		{
 			QIcon icon;
@@ -192,10 +196,6 @@ namespace Maditor {
 			return mParent;
 		}
 
-		void ModuleList::showPropertiesDialog()
-		{
-			//DialogManager::showModuleListPropertiesWidgetStatic(this);
-		}
 
 
 	}

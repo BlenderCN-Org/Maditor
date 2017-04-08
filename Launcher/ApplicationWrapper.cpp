@@ -10,6 +10,7 @@
 
 #include "Network\networkmanager.h"
 
+#include "Server\serverbase.h"
 
 
 namespace Maditor {
@@ -17,11 +18,17 @@ namespace Maditor {
 
 		ApplicationWrapper::ApplicationWrapper(size_t id) :
 			AppControl(id),
-			mInput(new InputWrapper(sharedMemory().mInput)),
+			mInput(nullptr),
 			mRunning(false),
 			mStartRequested(false),
 			mUtil(&mApplication)
 		{
+		}
+
+		ApplicationWrapper::~ApplicationWrapper()
+		{
+			if (mInput)
+				delete mInput;
 		}
 
 
@@ -48,52 +55,55 @@ namespace Maditor {
 					return -1;
 				}
 			}
-			
-			mSettings.mInput = mInput;
-			mSettings.mUseExternalSettings = true;
-			mSettings.mWindowName = "QtOgre";
-			mSettings.mWindowWidth = appInfo.mWindowWidth;
-			mSettings.mWindowHeight = appInfo.mWindowHeight;
+
 			mSettings.mRootDir = appInfo.mMediaDir.c_str();
 			mSettings.mPluginsFile = mSettings.mRootDir + "plugins.cfg";
 
-			Ogre::NameValuePairList &parameters = mSettings.mWindowParameters;
+			if (appInfo.mServerClass.empty()) {
 
-			/*
-			Flag within the parameters set so that Ogre3D initializes an OpenGL context on it's own.
-			*/
-			parameters["currentGLContext"] = Ogre::String("false");
+				mInput = new InputWrapper(sharedMemory().mInput);
+				mSettings.mInput = mInput;
+				mSettings.mUseExternalSettings = true;
+				mSettings.mWindowName = "QtOgre";
+				mSettings.mWindowWidth = appInfo.mWindowWidth;
+				mSettings.mWindowHeight = appInfo.mWindowHeight;				
 
-			/*
-			We need to supply the low level OS window handle to this QWindow so that Ogre3D knows where to draw
-			the scene. Below is a cross-platform method on how to do this.
-			If you set both options (externalWindowHandle and parentWindowHandle) this code will work with OpenGL
-			and DirectX.
-			*/
+				Ogre::NameValuePairList &parameters = mSettings.mWindowParameters;
+
+				/*
+				Flag within the parameters set so that Ogre3D initializes an OpenGL context on it's own.
+				*/
+				parameters["currentGLContext"] = Ogre::String("false");
+
+				/*
+				We need to supply the low level OS window handle to this QWindow so that Ogre3D knows where to draw
+				the scene. Below is a cross-platform method on how to do this.
+				If you set both options (externalWindowHandle and parentWindowHandle) this code will work with OpenGL
+				and DirectX.
+				*/
 #if defined(Q_OS_MAC) || defined(Q_OS_WIN)
-			parameters["externalWindowHandle"] = Ogre::StringConverter::toString();
-			parameters["parentWindowHandle"] = Ogre::StringConverter::toString((size_t)(target->winId()));
+				parameters["externalWindowHandle"] = Ogre::StringConverter::toString();
+				parameters["parentWindowHandle"] = Ogre::StringConverter::toString((size_t)(target->winId()));
 #else
-			parameters["externalWindowHandle"] = Ogre::StringConverter::toString(appInfo.mWindowHandle);
-			parameters["parentWindowHandle"] = Ogre::StringConverter::toString(appInfo.mWindowHandle);
+				parameters["externalWindowHandle"] = Ogre::StringConverter::toString(appInfo.mWindowHandle);
+				parameters["parentWindowHandle"] = Ogre::StringConverter::toString(appInfo.mWindowHandle);
 #endif
 
 #if defined(Q_OS_MAC)
-			parameters["macAPI"] = "cocoa";
-			parameters["macAPICocoaUseNSView"] = "true";
+				parameters["macAPI"] = "cocoa";
+				parameters["macAPICocoaUseNSView"] = "true";
 #endif
 
-			mRunning = true;
+				mApplication.setup(mSettings);
+				mUtil->setup();
+			}
 
-			mApplication.setup(mSettings);
-			mUtil->setup();
+			mRunning = true;			
 
 			Engine::Util::UtilMethods::addListener(mLog.ptr());
 
-			/*Ogre::LogManager::getSingleton().getLog("Madgine.log")->addListener(mLog.ptr());
-			Ogre::LogManager::getSingleton().getLog("Ogre.log")->addListener(mLog.ptr());*/
+			/*Ogre::LogManager::getSingleton().getLog("Ogre.log")->addListener(mLog.ptr());*/
 
-			mInput->setSystem(&Engine::GUI::GUISystem::getSingleton());
 			std::string project = appInfo.mProjectDir.c_str();
 
 			mLoader->setup(project + "debug/bin/", project + "debug/runtime/");
@@ -106,33 +116,45 @@ namespace Maditor {
 				return -1;
 			}
 
-			if (!mApplication.init()) {
-				mUtil->shutdown();
-				return -1;
-			}
-
-					
-			applicationSetup({});
-
-			Ogre::Root::getSingleton().addFrameListener(this);
-
-			while (mRunning) {
-				net->receiveMessages();
-				if (net->clientCount() != 1) {
+			Engine::Server::ServerBase *server;
+			int result = 0;
+			if (appInfo.mServerClass.empty()) {
+				Ogre::Root::getSingleton().addFrameListener(this);
+				mInput->setSystem(&Engine::GUI::GUISystem::getSingleton());
+				if (!mApplication.init()) {
 					mUtil->shutdown();
-					//net->close();
 					return -1;
 				}
-				if (mStartRequested) {
-					mApplication.go();
-					mStartRequested = false;
-					stop({});
+				applicationSetup({});
+
+				while (mRunning) {
+					net->receiveMessages();
+					if (net->clientCount() != 1) {
+						mUtil->shutdown();
+						//net->close();
+						return -1;
+					}
+					if (mStartRequested) {
+						mApplication.go();
+						mStartRequested = false;
+						stop({});
+					}
+
 				}
+				mUtil->shutdown();
+			}
+			else {
+				server = mLoader->createServer(appInfo.mServerClass.c_str(), appInfo.mMediaDir.c_str());
+				if (!server)
+					return -1;
+				server->addFrameCallback([this](float timeSinceLastFrame) {return update(); });
+				applicationSetup({});
+				result = server->run();
+				delete server;
+			}		
 
-			}			
-
-			mUtil->shutdown();
-			return 0;
+			
+			return result;
 		}
 
 		void ApplicationWrapper::shutdownImpl()
@@ -152,13 +174,10 @@ namespace Maditor {
 
 			mUtil->profiler()->startProfiling("Rendering");
 
-
-			network()->receiveMessages();
-			if (network()->clientCount() != 1) {
-				shutdownImpl();
-			}
-			return mRunning;
+			return update();
 		}
+
+			
 
 
 		bool ApplicationWrapper::frameStarted(const Ogre::FrameEvent & fe)
@@ -177,6 +196,15 @@ namespace Maditor {
 			mUtil->profiler()->stopProfiling(); // Frame
 
 			return true;
+		}
+
+		bool ApplicationWrapper::update()
+		{
+			network()->receiveMessages();
+			if (network()->clientCount() != 1) {
+				shutdownImpl();
+			}
+			return mRunning;
 		}
 
 

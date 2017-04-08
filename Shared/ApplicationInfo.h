@@ -10,21 +10,16 @@ namespace Maditor {
 			ApplicationInfo(boost::interprocess::managed_shared_memory::segment_manager *mgr) :
 				mMediaDir(SharedCharAllocator(mgr)),
 				mProjectDir(SharedCharAllocator(mgr)),
+				mServerClass(SharedCharAllocator(mgr)),
 				mAppId(0) {}
 
-			int mWindowWidth;
-			int mWindowHeight;
-			size_t mWindowHandle;
-			SharedString mMediaDir;
-			SharedString mProjectDir;
-			bool mDebugged;
+			//App-Id
 			size_t mAppId;
 			boost::interprocess::interprocess_mutex mAppIdMutex;
 			boost::interprocess::interprocess_condition mAppIdCondition;
-
 			void setAppId(size_t id) {
 				mAppId = id;
-				mAppIdCondition.notify_one();				
+				mAppIdCondition.notify_one();
 			}
 			size_t waitForAppId() {
 				boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(mAppIdMutex);
@@ -34,6 +29,20 @@ namespace Maditor {
 				}
 				return mAppId;
 			}
+
+			//General Info
+			bool mDebugged;
+			SharedString mMediaDir;
+			SharedString mProjectDir;
+			
+			//Client
+			int mWindowWidth;
+			int mWindowHeight;
+			size_t mWindowHandle;
+
+			//Server
+			SharedString mServerClass;
+			
 		};
 
 

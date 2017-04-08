@@ -74,19 +74,19 @@ namespace Maditor {
 
 			mParent->generate();
 
-			project()->save();
+			project()->writeToDisk();
 		}
 
 		void Module::addClassImpl(Generators::ClassGenerator * generator, bool callInsert)
 		{
 			if (callInsert)
-				project()->beginInsertRows(ownIndex(), mClasses.size(), mClasses.size());
+				project()->model()->beginInsertRows(ownIndex(), mClasses.size(), mClasses.size());
 			mClasses.emplace_back(generator);
 
 			mCmake.addFiles(generator->fileNames());
 
 			if (callInsert)
-				project()->endInsertRows();
+				project()->model()->endInsertRows();
 
 			emit classAdded(generator);
 		}
@@ -120,45 +120,32 @@ namespace Maditor {
 		{
 			Module *other = mParent->getModule(dep);
 
-			std::list<const Module*> modules;
+			std::set<const Module*> modules;
 			fillReloadOrder(modules);
 			if (std::find(modules.begin(), modules.end(), other) != modules.end()) {
 				return false;
 			}
 
-			QDomElement el = document().createElement("Dependency");
-			el.setAttribute("name", dep);
-			element().appendChild(el);
-
 			mCmake.addDependency(dep);
-
 			
 			mDependencies.insert(other);
 			other->mDependedBy.insert(this);	
+
+			dirty();
 
 			return true;
 		}
 
 		void Module::removeDependency(const QString & dep)
 		{
-			bool found = false;
-			for (QDomElement el = element().firstChildElement("Dependency"); !el.isNull() && !found; el = el.nextSiblingElement("Dependency")) {
-				if (el.attribute("name") == dep) {
-					element().removeChild(el);
-					found = true;
-				}
-			}
-
-			if (!found)
-				throw 0;			
 
 			mCmake.removeDependency(dep);
 
 			Module *other = mParent->getModule(dep);
 			mDependencies.erase(other);
 			other->mDependedBy.erase(this);
-
 			
+			dirty();
 		}
 
 		const QStringList & Module::dependencies() const
@@ -180,13 +167,13 @@ namespace Maditor {
 			}
 		}
 
-		void Module::fillReloadOrder(std::list<const Module*>& reloadOrder) const
+		void Module::fillReloadOrder(std::set<const Module*>& reloadOrder) const
 		{
-			if (std::find(reloadOrder.begin(), reloadOrder.end(), this) == reloadOrder.end()) {
+			if (reloadOrder.find(this) == reloadOrder.end()) {
+				reloadOrder.insert(this);
 				for (Module *m : mDependedBy) {
 					m->fillReloadOrder(reloadOrder);
-				}
-				reloadOrder.push_back(this);
+				}				
 			}
 		}
 
@@ -204,7 +191,7 @@ namespace Maditor {
 		{
 			auto it = std::find_if(mClasses.begin(), mClasses.end(), [&](const std::unique_ptr<Generators::ClassGenerator> &c) {return c->name() == name; });
 			if (it == mClasses.end())
-				throw 0;
+				return nullptr;
 			return it->get();
 		}
 
@@ -239,16 +226,16 @@ namespace Maditor {
 				throw 0;
 			size_t i = std::distance(mClasses.begin(), it);
 
-			project()->beginRemoveRows(ownIndex(), i, i);
+			project()->model()->beginRemoveRows(ownIndex(), i, i);
 			mCmake.removeFiles(generator->fileNames());
 			
 			mClasses.erase(it);			
 
-			project()->endRemoveRows();
+			project()->model()->endRemoveRows();
 
 			mParent->generate();
 
-			project()->save();
+			project()->writeToDisk();
 			
 		}
 		

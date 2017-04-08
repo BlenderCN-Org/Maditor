@@ -19,7 +19,8 @@ namespace Maditor {
 
 		Project::Project(LogsModel *logs, const QString & path, const QString & name, QDomDocument doc) :
 			ProjectElement(name, "MadProject", doc),
-			TreeModel(this, 1),
+			Document(name),
+			mModel(this, 1),
 			Generator(false),
 			mDocument(doc),
 			mPath(QDir(path + name).absolutePath() + "/"),
@@ -43,7 +44,7 @@ namespace Maditor {
 
 			if (answer != QMessageBox::Abort) {
 				mModules->generate();
-				save();
+				writeToDisk();
 				mValid = true;
 			}
 
@@ -52,7 +53,8 @@ namespace Maditor {
 
 		Project::Project(LogsModel *logs, QDomDocument doc, const QString &path) :
 			ProjectElement(doc.documentElement()),
-			TreeModel(this, 1),
+			Document(doc.documentElement().attribute("name")),
+			mModel(this, 1),
 			mDocument(doc),
 			mPath(QDir(path).absolutePath() + "/"),
 			mModules(new ModuleList(element().firstChildElement("Modules"), this)),
@@ -79,6 +81,10 @@ namespace Maditor {
 			mMediaFolder.setRootPath(mPath + "data/media");
 
 			connect(mModules.get(), &ModuleList::classAdded, this, &Project::onClassAdded);
+
+			setContextMenuItems({
+				{ "Properties", [this]() {emit showProperties(); } }
+			});
 		}
 
 		void Project::onClassAdded(Generators::ClassGenerator *generator) {
@@ -127,6 +133,11 @@ namespace Maditor {
 			stream << content;
 		}
 
+		TreeModel * Project::model()
+		{
+			return &mModel;
+		}
+
 		QString Project::path() const
 		{
 			return mPath;
@@ -147,7 +158,7 @@ namespace Maditor {
 			return mValid;
 		}
 
-		QVariant Project::headerData(int section, Qt::Orientation orientation, int role) const
+		/*QVariant Project::headerData(int section, Qt::Orientation orientation, int role) const
 		{
 			if (role != Qt::DisplayRole)
 				return QVariant();
@@ -162,15 +173,32 @@ namespace Maditor {
 			else {
 				return QVariant();
 			}
-		}
+		}*/
 
 		void Project::save()
 		{
+			if (ProjectElement::save() && writeToDisk()) {
+				writeImpl();
+				Document::save();
+			}
+		}
+
+
+		void Project::discardChanges()
+		{
+			ProjectElement::discardChanges();
+			Document::discardChanges();
+		}
+
+		bool Project::writeToDisk()
+		{
 			QFile file(mPath + sProjectFileName);
-			file.open(QIODevice::WriteOnly | QIODevice::Truncate);
+			if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+				return false;
 			QTextStream stream(&file);
 			mDocument.save(stream, 4);
 			file.close();
+			return true;
 		}
 
 		LogsModel * Project::logs()

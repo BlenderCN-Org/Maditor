@@ -11,11 +11,11 @@ namespace Maditor {
 	namespace Model {
 		class MADITOR_MODEL_EXPORT ModuleList : public QObject, public ProjectElement{
 			Q_OBJECT
-
 		public:
 
 			ModuleList(Project *parent);
 			ModuleList(QDomElement element, Project *parent);
+			ModuleList(const ModuleList &) = delete;
 			~ModuleList();
 
 			virtual QString path() const override;
@@ -46,7 +46,25 @@ namespace Maditor {
 
 			virtual Module * child(int i) override;
 
-			void showPropertiesDialog();
+			template <class T>
+			T *getClass(const QString &fullName) {
+				QStringList l = fullName.split(":");
+				if (l.size() != 2)
+					return nullptr;
+				return getModule(l[0])->getClass<T>(l[1]);
+			}
+
+			template <class T>
+			std::list<T*> getClasses() {
+				std::list<T*> result;
+				for (const std::unique_ptr<Module> &module : mModules) {
+					result.splice(result.end(), module->getClasses<T>());
+				}
+				return result;
+			}
+
+		protected:
+			virtual void writeData() override;
 
 		public slots:
 			void createModule(const QString &name);
@@ -61,7 +79,7 @@ namespace Maditor {
 		signals:
 			void moduleAdded(Module *);
 			void classAdded(Generators::ClassGenerator*);
-
+			
 
 		private:
 			Project *mParent;

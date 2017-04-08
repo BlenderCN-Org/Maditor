@@ -9,7 +9,7 @@
 
 namespace Maditor {
 	namespace Model {
-		class MADITOR_MODEL_EXPORT Project : public TreeModel, public ProjectElement, public Generators::Generator {
+		class MADITOR_MODEL_EXPORT Project : public Document, public ProjectElement, public Generators::Generator {
 			Q_OBJECT
 
 		public:
@@ -21,31 +21,29 @@ namespace Maditor {
 
 			bool isValid();
 
-			virtual QString path() const override;			
-
-			virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+			//virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 					
-			void save();
+			bool writeToDisk();
+			virtual void save() override;
+			virtual void discardChanges() override;
 
 			LogsModel *logs();
 			ModuleList *moduleList();
 			ConfigList *configList();
+			QFileSystemModel *getMedia();
+			TreeModel *model();
 
 			virtual Project *project() override;
-
-			// Inherited via ProjectElement
 			virtual int childCount() const override;
-
 			virtual ProjectElement* child(int i) override;
-
-			QFileSystemModel *getMedia();
+			virtual QString path() const override;
+			virtual QStringList filePaths() override;
+			virtual void write(QTextStream & stream, int index) override;		
 
 			void release();
 
-			// Geerbt über Generator
-			virtual QStringList filePaths() override;
-
-			virtual void write(QTextStream & stream, int index) override;
+		signals:
+			void showProperties();
 
 
 		public slots:
@@ -76,6 +74,8 @@ namespace Maditor {
 			QFileSystemModel mMediaFolder;
 
 			LogsModel *mLogs;
+
+			TreeModel mModel;
 
 		};
 	}

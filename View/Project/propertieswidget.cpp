@@ -1,7 +1,7 @@
 #include "maditorviewlib.h"
 
-#include "modulelistpropertieswidget.h"
-#include "ui_modulelistpropertieswidget.h"
+#include "propertieswidget.h"
+#include "ui_propertieswidget.h"
 #include "Model\Project\Module.h"
 #include "Model\Project\Project.h"
 #include "Model\Project\ModuleList.h"
@@ -10,19 +10,19 @@
 namespace Maditor {
 	namespace View {
 
-			ModuleListPropertiesWidget::ModuleListPropertiesWidget(Model::ModuleList *list) :
-				QDialog(),
-				mModules(list),
-				ui(new Ui::ModuleListPropertiesWidget)
+			PropertiesWidget::PropertiesWidget(Model::Project *project) :
+				mProject(project),
+				ui(new Ui::PropertiesWidget),
+				DocumentView(project, this)
 			{
 				ui->setupUi(this);
 
-				ui->propertiesWidget->setRowCount(list->childCount());
+				//ui->propertiesWidget->setRowCount(list->childCount());
 
 				//int i = 0;
 
 				//setWindowTitle(windowTitle().arg(module->name()));
-				for (const std::unique_ptr<Model::Module> &module : *list) {
+				for (const std::unique_ptr<Model::Module> &module : *mProject->moduleList()) {
 					
 					ModulePropertiesWidget *widget = new ModulePropertiesWidget(module.get());
 					ui->dependenciesWidget->addTab(widget, module->name());
@@ -48,24 +48,24 @@ namespace Maditor {
 					++i;*/
 				}
 
-				connect(ui->buttonBox->button(QDialogButtonBox::Apply), &QPushButton::clicked, this, &ModuleListPropertiesWidget::apply);
+				//connect(ui->buttonBox->button(QDialogButtonBox::Apply), &QPushButton::clicked, this, &PropertiesWidget::apply);
 				//connect(ui->propertiesWidget, &QTableView::clicked, list, &Model::ModuleList::onItemClicked);
 				
 
 			}
 
-			ModuleListPropertiesWidget::~ModuleListPropertiesWidget()
+			PropertiesWidget::~PropertiesWidget()
 			{
 				delete ui;
 			}
 
-			bool ModuleListPropertiesWidget::apply()
+			/*bool PropertiesWidget::apply()
 			{
 				bool valid = true;
 
 				for (ModulePropertiesWidget *widget : mModuleWidgets) {
 					valid &= widget->apply();
-				}
+				}*/
 
 				/*int i = 0;
 				for (const std::unique_ptr<Model::Module> &module : *mModules) {
@@ -80,13 +80,13 @@ namespace Maditor {
 
 				
 
-				if (valid) {
+			/*	if (valid) {
 					mModules->project()->save();
 					mModules->generate();
 				}
 
 				return valid;
-			}
+			}*/
 
 	
 	}

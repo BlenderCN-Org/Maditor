@@ -36,7 +36,7 @@ namespace Maditor {
 			void EntityComponentGenerator::init()
 			{
 				setKeys({
-					{"componentName", element().attribute("componentName")}
+					{"componentName", stringAttribute("componentName")}
 				});
 			}
 		}

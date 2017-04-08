@@ -20,6 +20,8 @@ ModulePropertiesWidget::ModulePropertiesWidget(Model::Module *module) :
 		item->setCheckState(module->dependencies().contains(dep->name()) ? Qt::Checked : Qt::Unchecked);
 	}
 
+	connect(ui->dependenciesList, &QListWidget::itemChanged, this, &ModulePropertiesWidget::update);
+
 	ui->dependenciesList->sortItems();
 
 }
@@ -29,29 +31,22 @@ ModulePropertiesWidget::~ModulePropertiesWidget()
     delete ui;
 }
 
-bool ModulePropertiesWidget::apply()
+void ModulePropertiesWidget::update(QListWidgetItem * item)
 {
-	bool valid = true;
-
-	for (int i = 0; i < ui->dependenciesList->count(); ++i) {
-		QListWidgetItem *item = ui->dependenciesList->item(i);
-		bool isChecked = item->checkState() == Qt::Checked;
-		bool isDep = mModule->dependencies().contains(item->text());
-		if (isChecked != isDep) {
-			if (!isChecked) {
-				mModule->removeDependency(item->text());
-			}
-			else {
-				if (!mModule->addDependency(item->text())) {
-					QMessageBox::critical(0, "Cannot set Dependencies!",
-						QString("Dependency to '%1' can not be set to Module '%2'").arg(item->text(), mModule->name()));
-					valid = false;
-				}
+	bool isChecked = item->checkState() == Qt::Checked;
+	bool isDep = mModule->dependencies().contains(item->text());
+	if (isChecked != isDep) {
+		if (!isChecked) {
+			mModule->removeDependency(item->text());
+		}
+		else {
+			if (!mModule->addDependency(item->text())) {
+				QMessageBox::critical(0, "Cannot set Dependencies!",
+					QString("Dependency to '%1' can not be set to Module '%2'").arg(item->text(), mModule->name()));
+				item->setCheckState(Qt::Unchecked);
 			}
 		}
 	}
-
-	return valid;
 }
 
 } // namespace View

@@ -1,7 +1,6 @@
 #ifndef MADITOR_VIEW_MODULEPROPERTIESWIDGET_H
 #define MADITOR_VIEW_MODULEPROPERTIESWIDGET_H
 
-#include <QWidget>
 
 namespace Maditor {
 namespace View {
@@ -18,7 +17,8 @@ public:
     explicit ModulePropertiesWidget(Model::Module *module);
     ~ModulePropertiesWidget();
 
-	bool apply();
+protected:
+	void update(QListWidgetItem *item);
 
 private:
     Ui::ModulePropertiesWidget *ui;

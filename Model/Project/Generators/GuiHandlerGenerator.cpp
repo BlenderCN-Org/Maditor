@@ -55,10 +55,10 @@ namespace Maditor {
 					throw 0;
 				}
 
-				QString layout = (boolAttribute("layout") ? QString(", \"%1\"").arg(element().attribute("window")) : "");
+				QString layout = (boolAttribute("layout") ? QString(", \"%1\"").arg(stringAttribute("window")) : "");
 
 				setKeys({
-					{"window", element().attribute("window")},
+					{"window", stringAttribute("window")},
 					{"type", type},
 					{"layout", layout}
 				});

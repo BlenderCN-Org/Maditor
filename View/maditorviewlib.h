@@ -27,3 +27,5 @@
 #include <QInputDialog>
 #include <QGridLayout>
 #include <QLabel>
+#include <QListWidget>
+#include <QShortcut>

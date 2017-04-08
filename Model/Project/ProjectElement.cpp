@@ -8,14 +8,14 @@ namespace Maditor {
 	namespace Model {
 
 		ProjectElement::ProjectElement(const QString & name, const QString &type, ProjectElement *parent) :
-			mRootElement(parent->document().createElement(type)),
+			mRootElement(parent->mRootElement.ownerDocument().createElement(type)),
 			mName(name),
 			mParent(parent)
 		{
 			mRootElement.setAttribute("name", mName);
 			parent->mRootElement.appendChild(mRootElement);
 		}
-		ProjectElement::ProjectElement(const QString & name, const QString & type, QDomDocument &doc) :
+		ProjectElement::ProjectElement(const QString & name, const QString & type, QDomDocument &doc) :			
 			mRootElement(doc.createElement(type)),
 			mName(name),
 			mParent(nullptr)
@@ -49,21 +49,57 @@ namespace Maditor {
 
 		QModelIndex ProjectElement::ownIndex()
 		{
-			return parentItem() == 0 ? QModelIndex() : project()->index(parentIndex(), 0, parentItem()->ownIndex());
+			return parentItem() == nullptr ? QModelIndex() : project()->model()->index(parentIndex(), 0, parentItem()->ownIndex());
 		}
 
-		QString ProjectElement::type() const
-		{
-			return mRootElement.attribute("type");
-		}
 
-		QDomDocument ProjectElement::document()
-		{
-			return mRootElement.ownerDocument();
-		}
-		QDomElement ProjectElement::element()
+		QDomElement & ProjectElement::element()
 		{
 			return mRootElement;
+		}
+
+		QDomElement ProjectElement::createElement(const QString & name)
+		{
+			QDomElement el = mRootElement.ownerDocument().createElement(name);
+			mRootElement.appendChild(el);
+			return el;
+		}
+
+		bool ProjectElement::save()
+		{
+			if (!storeData())
+				return false;
+			for (int i = 0; i < childCount(); ++i) {
+				if (!child(i)->save())
+					return false;
+			}
+			return true;
+		}
+
+		void ProjectElement::discardChanges()
+		{
+			restoreData();
+		}
+
+		void ProjectElement::writeImpl()
+		{
+			for (int i = 0; i < childCount(); ++i) {
+				child(i)->writeImpl();
+			}
+			writeData();
+		}
+
+		bool ProjectElement::storeData()
+		{
+			return true;
+		}
+
+		void ProjectElement::restoreData()
+		{
+		}
+
+		void ProjectElement::writeData()
+		{
 		}
 
 		int ProjectElement::intAttribute(const QString & name)
@@ -71,11 +107,25 @@ namespace Maditor {
 			return std::stoi(mRootElement.attribute(name).toStdString());
 		}
 
+		int ProjectElement::intAttribute(const QString & name, int defaultValue)
+		{
+			return mRootElement.hasAttribute(name) ? intAttribute(name) : defaultValue;
+		}
+
 		bool ProjectElement::boolAttribute(const QString & name)
 		{
 			return mRootElement.attribute(name) != "0";
 		}
 
+		QString ProjectElement::stringAttribute(const QString & name)
+		{
+			return mRootElement.attribute(name);
+		}
+
+		void ProjectElement::dirty()
+		{
+			project()->setDirtyFlag(true);
+		}
 
 		ProjectElement * ProjectElement::parentItem()
 		{

@@ -93,7 +93,7 @@ namespace Maditor {
 				return 0;
 			}
 
-			TreeItem * ClassGenerator::child(int i)
+			ProjectElement * ClassGenerator::child(int i)
 			{
 				throw 0;
 			}
