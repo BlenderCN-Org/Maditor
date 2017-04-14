@@ -17,6 +17,7 @@ public:
     ~AppStatsWidget();
 
 	void setModel(Model::StatsModel *model);
+	void clearModel();
 
 	void setFPS(float fps);
 	void setMemUsage(size_t mem);
@@ -24,6 +25,8 @@ public:
 
 private:
     Ui::AppStatsWidget *ui;
+
+	std::list<QMetaObject::Connection> mCurrentConnections;
 };
 
 

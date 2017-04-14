@@ -8,16 +8,20 @@
 namespace Maditor {
 	namespace Launcher {
 
-		AppStats::AppStats(Engine::App::Application *app) :
-			mApp(app)
+		AppStats::AppStats()
 		{
 		}
 
 
 
+		void AppStats::setApp(Engine::App::Application * app)
+		{
+			mApp = app;
+		}
+
 		void AppStats::update()
 		{
-			mAverageFPS = mApp->getFPS();
+			mAverageFPS = mApp ? mApp->getFPS() : 0.0f;
 		}
 		
 	}

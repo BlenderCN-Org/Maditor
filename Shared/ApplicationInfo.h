@@ -11,6 +11,7 @@ namespace Maditor {
 				mMediaDir(SharedCharAllocator(mgr)),
 				mProjectDir(SharedCharAllocator(mgr)),
 				mServerClass(SharedCharAllocator(mgr)),
+				mAppName(SharedCharAllocator(mgr)),
 				mAppId(0) {}
 
 			//App-Id
@@ -34,6 +35,7 @@ namespace Maditor {
 			bool mDebugged;
 			SharedString mMediaDir;
 			SharedString mProjectDir;
+			SharedString mAppName;
 			
 			//Client
 			int mWindowWidth;

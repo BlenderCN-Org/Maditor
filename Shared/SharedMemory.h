@@ -37,6 +37,8 @@ public:
 
 	size_t id();
 
+	std::string uniqueName();
+
 private:
 	static size_t sRunningId;
 

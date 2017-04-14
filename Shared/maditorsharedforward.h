@@ -9,5 +9,10 @@ namespace Maditor {
 		class ModuleInstance;
 		struct ApplicationInfo;
 
+		class BoostIPCStream;
+		class BoostIPCServer;
+		class BoostIPCConnection;
+		class BoostIPCManager;
+
 	}
 }

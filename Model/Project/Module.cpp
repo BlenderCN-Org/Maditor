@@ -195,11 +195,6 @@ namespace Maditor {
 			return it->get();
 		}
 
-		Project * Module::project()
-		{
-			return mParent->project();
-		}
-
 		const std::list<std::unique_ptr<Generators::ClassGenerator>> &Module::getClasses()
 		{
 			return mClasses;

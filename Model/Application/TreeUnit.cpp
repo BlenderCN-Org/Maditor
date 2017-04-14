@@ -36,7 +36,7 @@ namespace Maditor {
 		{
 		}
 
-		TreeUnitItemBase * TreeUnitItemBase::parentItem()
+		TreeUnitItemBase * TreeUnitItemBase::parentItem() const
 		{
 			return mParent;
 		}

@@ -1,13 +1,15 @@
 #pragma once
 
-#include "Model\Project\ProjectElement.h"
+#include "ProjectElement.h"
 #include "Model\Documents\DocumentStore.h"
-#include "ApplicationLauncher.h"
+#include "ModuleSelection.h"
+
+#include "Generators\Generator.h"
 
 namespace Maditor {
 	namespace Model {
 
-		class MADITOR_MODEL_EXPORT ApplicationConfig : public Document, public ProjectElement {
+		class MADITOR_MODEL_EXPORT ApplicationConfig : public Document, public ProjectElement, public Generators::Generator {
 			Q_OBJECT
 
 		public:
@@ -40,6 +42,8 @@ namespace Maditor {
 			virtual void save() override;
 			virtual void discardChanges() override;
 
+			ModuleSelection *modules();
+
 		public slots:
 			void setLauncher(Launcher launcher);
 			void setLauncherType(LauncherType type);
@@ -52,6 +56,9 @@ namespace Maditor {
 
 			virtual bool storeData() override;
 			virtual void restoreData() override;
+
+			virtual QStringList filePaths() override;
+			virtual void write(QTextStream & stream, int index) override;
 
 		private:
 			void init();
@@ -69,12 +76,6 @@ namespace Maditor {
 			void onDocumentCreated(Document *doc);
 			void onDocumentDestroyed(Document *doc);
 
-		public:
-			// Inherited via ProjectElement
-			virtual int childCount() const override;
-			virtual ProjectElement * child(int i) override;
-			virtual Project * project() override;
-			virtual QString path() const override;
 
 		private:
 			ConfigList *mParent;
@@ -87,6 +88,9 @@ namespace Maditor {
 			LauncherType mLauncherType;
 			Generators::ServerClassGenerator *mServer;
 
+			size_t mInstanceCounter;
+
+			ModuleSelection mModules;
 
 
 		};

@@ -13,7 +13,11 @@ namespace View {
 
 
 
-class ApplicationView : public QObject, public ComponentView<Model::ApplicationLauncher>, public WindowSpawner<Model::ApplicationLauncher, ApplicationWindow>, public WindowSpawner<Model::ApplicationLauncher, ApplicationLog>
+class ApplicationView : 
+	public QObject, 
+	public ComponentView<Model::ApplicationLauncher>, 
+	public WindowSpawner<Model::ApplicationLauncher, ApplicationWindow>, 
+	public WindowSpawner<Model::ApplicationLauncher, ApplicationLog>
 {
     Q_OBJECT
 
@@ -27,6 +31,11 @@ public:
 
 protected:
 	virtual void setModel(Model::ApplicationLauncher *app) override;
+	virtual void clearModel() override;
+
+	virtual void currentTabSet(ApplicationWindow *win) override;
+	virtual void currentTabSet(ApplicationLog *win) override;
+	virtual void currentTabCleared(QWidget *w) override;
 
 	void selectConfig(QAction *action);
 	void selectConfigName(const QString &name);
@@ -51,7 +60,7 @@ private:
 
 	QMenu mCurrentConfigSelector;
 
-	
+	QWidget *mCurrentWidget;
 
 	std::list<QMetaObject::Connection> mAppConnections;
 };

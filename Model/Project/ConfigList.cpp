@@ -132,11 +132,6 @@ namespace Maditor {
 			return icon;
 		}
 
-		Project * ConfigList::project()
-		{
-			return mParent;
-		}
-
 
 	}
 }

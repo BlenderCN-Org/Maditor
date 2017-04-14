@@ -21,6 +21,25 @@ namespace Maditor {
 		{
 		}
 
+		void LogListener::messageLogged(const Ogre::String & message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String & logName, bool & skipThisMessage)
+		{
+			Engine::Util::MessageType level;
+			switch (lml) {
+			case Ogre::LML_CRITICAL:
+				level = Engine::Util::ERROR_TYPE;
+				break;
+			case Ogre::LML_NORMAL:
+				level = Engine::Util::WARNING_TYPE;
+				break;
+			case Ogre::LML_TRIVIAL:
+				level = Engine::Util::LOG_TYPE;
+				break;
+			default:
+				throw 0;
+			}
+			receiveMessage(message.c_str(), level, logName.c_str(), "", "", -1, {});
+		}
+
 		void LogListener::messageLogged(const std::string & message, Engine::Util::MessageType lml, const std::list<Engine::Util::TraceBack> &traceback, const std::string & logName)
 		{
 			std::stringstream fullTraceback;

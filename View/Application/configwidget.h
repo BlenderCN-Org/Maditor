@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Documents\DocumentView.h"
-#include "Model\Application\ApplicationConfig.h"
+#include "Model\Project\ApplicationConfig.h"
 
 namespace Maditor {
 namespace View {

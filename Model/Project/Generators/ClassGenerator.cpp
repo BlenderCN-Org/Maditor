@@ -57,11 +57,6 @@ namespace Maditor {
 				return result;
 			}
 
-			QString ClassGenerator::path() const
-			{
-				return mModule->path();
-			}
-
 			QString ClassGenerator::templateFileByIndex(int index)
 			{
 				return templateFile(templateFileName(index));
@@ -86,16 +81,6 @@ namespace Maditor {
 				setContextMenuItems({
 					{ "Delete", [this]() {mModule->deleteClass(this); } }
 				});
-			}
-
-			int ClassGenerator::childCount() const
-			{
-				return 0;
-			}
-
-			ProjectElement * ClassGenerator::child(int i)
-			{
-				throw 0;
 			}
 
 			QVariant ClassGenerator::icon() const
@@ -123,11 +108,6 @@ namespace Maditor {
 			void ClassGenerator::doubleClicked()
 			{
 				//Editors::EditorManager::getSingleton().openByExtension((path() + fileNames().front()).toStdString());
-			}
-
-			Project * ClassGenerator::project()
-			{
-				return mModule->project();
 			}
 
 			Module * ClassGenerator::module()

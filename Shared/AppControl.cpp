@@ -3,7 +3,7 @@
 
 #include "AppControl.h"
 
-#include "Network\networkmanager.h"
+#include "IPCManager\boostIPCmanager.h"
 
 #include "SharedMemory.h"
 
@@ -11,23 +11,23 @@ namespace Maditor {
 	namespace Shared {
 
 		AppControl::AppControl() :
-			mNetwork(new Engine::Network::NetworkManager),
-			mMemory(new SharedMemory)
+			mMemory(new SharedMemory),
+			mNetwork(new BoostIPCManager(mMemory))
 		{			
 			mNetwork->addTopLevelItem(this);
 		}
 
 		AppControl::AppControl(size_t id) :
-			mNetwork(new Engine::Network::NetworkManager),
-			mMemory(new SharedMemory(id))
+			mMemory(new SharedMemory(id)),
+			mNetwork(new BoostIPCManager(mMemory))
 		{
 			mNetwork->addTopLevelItem(this);
 		}
 
 AppControl::~AppControl()
 {
-	delete mMemory;
 	delete mNetwork;
+	delete mMemory;
 }
 
 size_t AppControl::appId()
@@ -40,7 +40,7 @@ Shared & AppControl::sharedMemory()
 	return mMemory->data();
 }
 
-Engine::Network::NetworkManager * AppControl::network()
+BoostIPCManager * AppControl::network()
 {
 	return mNetwork;
 }

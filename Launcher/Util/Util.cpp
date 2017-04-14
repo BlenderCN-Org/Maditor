@@ -8,20 +8,13 @@
 namespace Maditor {
 	namespace Launcher {
 
-		Util::Util(Engine::App::Application *app) :			
-			mStats(app)
+		Util::Util()
 		{
-			Engine::Util::UtilMethods::setup(&mLog);
 		}
 
-		void Util::setup()
+		void Util::setApp(Engine::App::Application * app)
 		{
-			mLog.setup("Madgine.log");
-		}
-
-		void Util::shutdown()
-		{
-			mLog.shutdown();
+			mStats->setApp(app);
 		}
 
 		Engine::Util::Profiler * Util::profiler()

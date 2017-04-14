@@ -39,8 +39,6 @@ namespace Maditor {
 
 			virtual QVariant icon() const override;
 
-			virtual Project *project() override;
-
 			// Inherited via ProjectElement
 			virtual int childCount() const override;
 

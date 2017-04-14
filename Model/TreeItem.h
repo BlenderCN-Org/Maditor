@@ -9,11 +9,11 @@ class TreeItem
 public:
 	virtual ~TreeItem() = default;
 
-	virtual int childCount() const = 0;
+	virtual int childCount() const;
 	virtual int parentIndex();
 	virtual TreeItem *child(int i) = 0;
 
-	virtual TreeItem *parentItem() = 0;
+	virtual TreeItem *parentItem() const = 0;
 
 	virtual QVariant data(int col) const = 0;
 

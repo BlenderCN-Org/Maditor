@@ -15,7 +15,8 @@ namespace View {
 
 	ApplicationView::ApplicationView() :
 		mUi(nullptr),
-		mList(nullptr){
+		mList(nullptr),
+		mCurrentWidget(nullptr){
 
 	}
 
@@ -85,8 +86,6 @@ namespace View {
 		mUi->performanceWidget->setModel(app->util()->profiler());
 		mUi->appStatsWidget->setModel(app->util()->stats());
 
-		mUi->actionSetup->setEnabled(true);
-		mUi->actionSetup_No_Debug->setEnabled(true);
 		mAppConnections.emplace_back(connect(app, &Model::ApplicationLauncher::applicationSettingup, this, &ApplicationView::onApplicationSettingup));
 		mAppConnections.emplace_back(connect(app, &Model::ApplicationLauncher::applicationSetup, this, &ApplicationView::onApplicationSetup));
 		mAppConnections.emplace_back(connect(app, &Model::ApplicationLauncher::applicationStarted, this, &ApplicationView::onApplicationStarted));
@@ -97,9 +96,47 @@ namespace View {
 		mUi->actionSetup_No_Debug->setEnabled(!app->isLaunched());
 		mUi->actionShutdown->setEnabled(app->isSetup());
 		mUi->actionKill->setEnabled(app->isLaunched());
-		mUi->actionStart->setEnabled(!app->isRunning() && app->isSetup());
-		mUi->actionStop->setEnabled(app->isRunning());
-		mUi->actionPause->setEnabled(app->isRunning());
+		mUi->actionStart->setEnabled(!app->isRunning() && app->isSetup() && app->isClient());
+		mUi->actionStop->setEnabled(app->isRunning() && app->isClient());
+		mUi->actionPause->setEnabled(app->isRunning() && app->isClient());
+	}
+
+	void ApplicationView::clearModel()
+	{
+		ComponentView::clearModel();
+
+		for (QMetaObject::Connection &conn : mAppConnections)
+			disconnect(conn);
+
+		mUi->modulesWidget->setModel(nullptr);
+		mUi->appStatsWidget->clearModel();
+
+		mUi->actionSetup->setEnabled(false);
+		mUi->actionSetup_No_Debug->setEnabled(false);
+		mUi->actionShutdown->setEnabled(false);
+		mUi->actionKill->setEnabled(false);
+		mUi->actionStart->setEnabled(false);
+		mUi->actionStop->setEnabled(false);
+		mUi->actionPause->setEnabled(false);
+	}
+
+	void ApplicationView::currentTabSet(ApplicationWindow * win)
+	{
+		setModel(win->app());
+		mCurrentWidget = win;
+	}
+
+	void ApplicationView::currentTabSet(ApplicationLog * win)
+	{
+		setModel(win->app());
+		mCurrentWidget = win;
+	}
+
+	void ApplicationView::currentTabCleared(QWidget * w)
+	{
+		if (mCurrentWidget != w) {
+			clearModel();
+		}
 	}
 
 	void ApplicationView::selectConfig(QAction *action)
@@ -124,7 +161,7 @@ namespace View {
 
 	void ApplicationView::onInstanceAdded(Model::ApplicationLauncher * instance)
 	{
-		if (instance->needsWindow())
+		if (instance->isClient())
 			WindowSpawner<Model::ApplicationLauncher, ApplicationWindow>::spawn(instance);
 		else
 			WindowSpawner<Model::ApplicationLauncher, ApplicationLog>::spawn(instance);
@@ -132,10 +169,10 @@ namespace View {
 
 	void ApplicationView::onInstanceDestroyed(Model::ApplicationLauncher * instance)
 	{
-		if (instance->needsWindow())
+		if (instance->isClient())
 			WindowSpawner<Model::ApplicationLauncher, ApplicationWindow>::remove(instance);
 		else
-			WindowSpawner<Model::ApplicationLauncher, ApplicationLog>::spawn(instance);
+			WindowSpawner<Model::ApplicationLauncher, ApplicationLog>::remove(instance);
 	}
 
 	void ApplicationView::createCurrentConfig()
@@ -151,7 +188,7 @@ namespace View {
 
 	void ApplicationView::onApplicationSetup()
 	{		
-		mUi->actionStart->setEnabled(true);
+		mUi->actionStart->setEnabled(model()->isClient());
 		mUi->actionShutdown->setEnabled(true);		
 	}
 

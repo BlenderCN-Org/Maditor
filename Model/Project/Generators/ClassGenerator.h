@@ -21,20 +21,12 @@ namespace Maditor {
 
 				virtual QStringList fileNames();
 
-				virtual QString path() const override;
-
-				// Inherited via ProjectElement
-				virtual int childCount() const override;
-
-				virtual ProjectElement* child(int i) override;
 
 				virtual QVariant icon() const override;
 
 				virtual void extendContextMenu(QMenu &menu) override;
 
 				virtual void doubleClicked() override;
-
-				virtual Project *project() override;
 
 				Module *module();
 

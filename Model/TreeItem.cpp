@@ -29,6 +29,11 @@ namespace Maditor {
 			mContextMenuItems = std::forward<std::list<std::pair<QString, std::function<void()>>>>(contextMenuItems);
 		}
 
+		int TreeItem::childCount() const
+		{
+			return 0;
+		}
+
 		int TreeItem::parentIndex()
 		{
 			int i;

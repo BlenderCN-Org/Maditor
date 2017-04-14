@@ -191,11 +191,6 @@ namespace Maditor {
 			return icon;
 		}
 
-		Project * ModuleList::project()
-		{
-			return mParent;
-		}
-
 
 
 	}

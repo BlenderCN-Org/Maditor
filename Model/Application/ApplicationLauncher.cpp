@@ -6,13 +6,15 @@
 
 #include "Shared\SharedMemory.h"
 
-#include "Network\networkmanager.h"
+#include "Shared\IPCManager\boostIPCmanager.h"
 
 #include "InputWrapper.h"
 
-#include "ApplicationConfig.h"
+#include "Project\ApplicationConfig.h"
 
 #include "Project\Project.h"
+
+#include <iostream>
 
 namespace Maditor {
 	namespace Model {
@@ -27,7 +29,12 @@ namespace Maditor {
 			mAboutToBeDestroyed(false),
 			mRunning(false),
 			mSetup(false),
-			mConfig(config)
+			mConfig(config),
+			mName(uniqueName),
+			mChildInRead(NULL),
+			mChildInWrite(NULL),
+			mChildOutRead(NULL),
+			mChildOutWrite(NULL)
 		{
 			if (mWindow)
 				connect(mWindow, &OgreWindow::resized, this, &ApplicationLauncher::resizeWindow);
@@ -43,7 +50,7 @@ namespace Maditor {
 
 		ApplicationLauncher::~ApplicationLauncher()
 		{
-			kill(CLEANUP);
+			kill(Shared::KILL_CLEANUP);
 		}
 
 		void ApplicationLauncher::destroy()
@@ -69,6 +76,7 @@ namespace Maditor {
 			
 			Shared::ApplicationInfo &appInfo = sharedMemory().mAppInfo;
 			appInfo.mDebugged = debug;
+			appInfo.mAppName = mName.toStdString().c_str();
 
 			std::string cmd;
 
@@ -83,26 +91,53 @@ namespace Maditor {
 				cmd = mConfig->customExecutableCmd().toStdString();
 			}
 
+			SECURITY_ATTRIBUTES sa;
+
+			sa.nLength = sizeof(sa);
+			sa.bInheritHandle = true;
+			sa.lpSecurityDescriptor = NULL;
+
+			if (!CreatePipe(&mChildOutRead, &mChildOutWrite, &sa, 0))
+				return;
+
+			if (!SetHandleInformation(mChildOutRead, HANDLE_FLAG_INHERIT, 0))
+				return;
+
+			if (!CreatePipe(&mChildInRead, &mChildInWrite, &sa, 0))
+				return;
+
+			if (!SetHandleInformation(mChildInWrite, HANDLE_FLAG_INHERIT, 0))
+				return;
+
+
 			STARTUPINFO si;
 			PROCESS_INFORMATION pi;
 
 			// set the size of the structures
 			ZeroMemory(&si, sizeof(si));
 			si.cb = sizeof(si);
+			si.hStdError = mChildOutWrite;
+			si.hStdOutput = mChildOutWrite;
+			si.hStdInput = mChildInRead;
+			si.dwFlags |= STARTF_USESTDHANDLES;
+
 			ZeroMemory(&pi, sizeof(pi));			
 
 			// start the program up
-			CreateProcess(NULL,   // the path
+			bool result = CreateProcess(NULL,   // the path
 				const_cast<char*>(cmd.c_str()),
 				NULL,           // Process handle not inheritable
 				NULL,           // Thread handle not inheritable
-				FALSE,          // Set handle inheritance to FALSE
+				TRUE,          // Set handle inheritance to FALSE
 				0,              // No creation flags
 				NULL,           // Use parent's environment block
 				NULL,           // Use parent's starting directory 
 				&si,            // Pointer to STARTUPINFO structure
 				&pi           // Pointer to PROCESS_INFORMATION structure
 			);
+
+			if (!result)
+				return;
 
 			mPID = pi.dwProcessId;
 			mHandle = pi.hProcess;
@@ -112,15 +147,15 @@ namespace Maditor {
 			mUtil->stats()->setProcess(mHandle);
 
 			if (mConfig->launcher() == ApplicationConfig::MADITOR_LAUNCHER) {				
-				Engine::Network::NetworkManager *net = network();
+				Shared::BoostIPCManager *net = network();
 				size_t id = appInfo.waitForAppId();
 				if (!id) {
-					kill(NO_APPLICATION_NOTIFICATION);
+					kill(Shared::KILL_NO_APPLICATION_NOTIFICATION);
 					return;
 				}
 				setStaticSlaveId(id);
-				if (!net->connect("127.0.0.1", 1000, 1000)) {
-					kill(FAILED_CONNECTION);
+				if (!net->connect(1000)) {
+					kill(Shared::KILL_FAILED_CONNECTION);
 					return;
 				}
 
@@ -201,7 +236,7 @@ namespace Maditor {
 			return mSetup;
 		}
 
-		bool ApplicationLauncher::needsWindow()
+		bool ApplicationLauncher::isClient()
 		{
 			return mConfig->launcher() == Model::ApplicationConfig::MADITOR_LAUNCHER && mConfig->launcherType() == Model::ApplicationConfig::CLIENT_LAUNCHER;
 		}
@@ -209,53 +244,44 @@ namespace Maditor {
 		void ApplicationLauncher::timerEvent(QTimerEvent * te)
 		{
 			if (mPID) {
-				DWORD exitCode = 0;
-				if (GetExitCodeProcess(mHandle, &exitCode) == FALSE)
-					throw 0;
-				if (exitCode != STILL_ACTIVE) {
-					if (exitCode != 0) {
-						LOG_ERROR(std::string("Application returned: ") + std::to_string(static_cast<long>(exitCode)));
-					}
-					cleanup();
-					return;
-				}
 				network()->receiveMessages();
-				if (mLoader->done() && mWaitingForLoader) {
+				if (mWaitingForLoader && mLoader->done()) {
 					mLoader->setup2();
 					mWaitingForLoader = false;
-				}				
+				}		
+
+				DWORD dwRead;
+				CHAR buffer[256];
+
+				bool result = PeekNamedPipe(mChildOutRead, NULL, 0, NULL, &dwRead, NULL);
+				assert(result);
+
+				if (dwRead > 0){
+					result = ReadFile(mChildOutRead, buffer, std::min(sizeof(buffer)-1, size_t(dwRead)), &dwRead, NULL);
+					assert(result && dwRead > 0);
+					buffer[dwRead] = '\0';
+					emit outputReceived(buffer);
+				}
+
+				checkProcess();
 			}
 		}
 
 		void ApplicationLauncher::kill()
 		{
-			kill(USER_REQUEST);
+			kill(Shared::KILL_USER_REQUEST);
 		}
 
-		void ApplicationLauncher::kill(KillCause cause)
+		void ApplicationLauncher::kill(Shared::ErrorCode cause)
 		{
 			if (mPID) {
-				TerminateProcess(mHandle, -1);
-				std::string msg = "Process killed! (";
-				switch (cause) {
-				case USER_REQUEST:
-					msg += "User request";
-					break;
-				case TIMEOUT:
-					msg += "No Response from App";
-					break;
-				case FAILED_CONNECTION:
-					msg += "Unable to connect to process";
-					break;
-				case NO_APPLICATION_NOTIFICATION:
-					msg += "Application data not set up correctly";
-					break;
-				default:
-					msg += "unknown cause";
+				checkProcess();
+				if (mPID) {
+					TerminateProcess(mHandle, -1);
+					std::string msg = mName.toStdString() + ": Process killed! (" + Shared::to_string(cause) + ")";
+					LOG_ERROR(msg);
+					cleanup();
 				}
-				msg += ")";
-				LOG_ERROR(msg);
-				cleanup();
 			}
 		}
 
@@ -270,10 +296,14 @@ namespace Maditor {
 
 		void ApplicationLauncher::cleanup()
 		{
-			network()->close();
 			if (mPID) {
 				mPID = 0;
 				CloseHandle(mHandle);
+				mHandle = NULL;
+
+				//receive pending messages
+				while (network()->isConnected())
+					network()->receiveMessages();
 
 				mLoader->reset();
 				mWaitingForLoader = false;
@@ -283,9 +313,39 @@ namespace Maditor {
 
 				mSetup = false;
 				emit applicationShutdown();
-			}			
+			}
+			network()->close();
+			if (mChildInRead) {
+				CloseHandle(mChildInRead);
+				mChildInRead = NULL;
+			}
+			if (mChildInWrite) {
+				CloseHandle(mChildInWrite);
+				mChildInWrite = NULL;
+			}
+			if (mChildOutRead) {
+				CloseHandle(mChildOutRead);
+				mChildOutRead = NULL;
+			}
+			if (mChildOutWrite) {
+				CloseHandle(mChildOutWrite);
+				mChildOutWrite = NULL;
+			}
 			if (mAboutToBeDestroyed)
 				destroy();
+		}
+
+		void ApplicationLauncher::checkProcess()
+		{
+			DWORD exitCode = 0;
+			if (GetExitCodeProcess(mHandle, &exitCode) == FALSE)
+				throw 0;
+			if (exitCode != STILL_ACTIVE) {
+				if (exitCode != 0) {
+					LOG_ERROR(mName.toStdString() + " returned: " + Shared::to_string(static_cast<Shared::ErrorCode>(exitCode)));
+				}
+				cleanup();
+			}
 		}
 
 		void ApplicationLauncher::shutdownImpl()
@@ -308,7 +368,7 @@ namespace Maditor {
 
 		void ApplicationLauncher::timeout()
 		{
-			kill(TIMEOUT);
+			kill(Shared::KILL_PING_TIMEOUT);
 		}
 
 		void ApplicationLauncher::resizeWindow() {

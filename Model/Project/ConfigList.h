@@ -7,7 +7,7 @@
 
 #include "Module.h"
 
-#include "Model\Application\ApplicationConfig.h"
+#include "ApplicationConfig.h"
 
 namespace Maditor {
 	namespace Model {
@@ -33,8 +33,6 @@ namespace Maditor {
 			std::list<std::unique_ptr<ApplicationConfig>>::const_iterator end() const;
 
 			virtual QVariant icon() const override;
-
-			virtual Project *project() override;
 
 			// Inherited via ProjectElement
 			virtual int childCount() const override;

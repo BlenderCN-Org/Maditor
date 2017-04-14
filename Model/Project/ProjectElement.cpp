@@ -52,6 +52,16 @@ namespace Maditor {
 			return parentItem() == nullptr ? QModelIndex() : project()->model()->index(parentIndex(), 0, parentItem()->ownIndex());
 		}
 
+		QString ProjectElement::path() const
+		{
+			return parentItem()->path();
+		}
+
+		Project * ProjectElement::project()
+		{
+			return parentItem()->project();
+		}
+
 
 		QDomElement & ProjectElement::element()
 		{
@@ -63,6 +73,11 @@ namespace Maditor {
 			QDomElement el = mRootElement.ownerDocument().createElement(name);
 			mRootElement.appendChild(el);
 			return el;
+		}
+
+		ProjectElement * ProjectElement::child(int i)
+		{
+			throw 0;
 		}
 
 		bool ProjectElement::save()
@@ -127,7 +142,7 @@ namespace Maditor {
 			project()->setDirtyFlag(true);
 		}
 
-		ProjectElement * ProjectElement::parentItem()
+		ProjectElement * ProjectElement::parentItem() const
 		{
 			return mParent;
 		}

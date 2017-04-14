@@ -99,7 +99,7 @@ namespace Maditor {
 						throw 0;
 					}
 				}
-				return 0;
+				return nullptr;
 			}
 
 

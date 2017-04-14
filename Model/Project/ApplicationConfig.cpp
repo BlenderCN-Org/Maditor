@@ -2,27 +2,30 @@
 
 #include "ApplicationConfig.h"
 
-#include "Project\ConfigList.h"
+#include "ConfigList.h"
 
-#include "ApplicationLauncher.h"
+#include "Application\ApplicationLauncher.h"
 
-#include "Project\Project.h"
+#include "Project.h"
 
 #include "Shared\ApplicationInfo.h"
 
-#include "Project\ModuleList.h"
+#include "ModuleList.h"
 
-#include "Project\Generators\ServerClassGenerator.h"
+#include "Generators\ServerClassGenerator.h"
 
 namespace Maditor {
 	namespace Model {
 		ApplicationConfig::ApplicationConfig(ConfigList *parent, const QString & name) :
 			ProjectElement(name, "Config", parent),
 			Document(name),
+			Generator(false),
 			mParent(parent),
 			mLauncher(MADITOR_LAUNCHER),
 			mLauncherType(CLIENT_LAUNCHER),
-			mServer(nullptr)
+			mServer(nullptr),
+			mInstanceCounter(0),
+			mModules(this)
 		{
 			storeData();
 
@@ -32,11 +35,13 @@ namespace Maditor {
 		ApplicationConfig::ApplicationConfig(QDomElement data, ConfigList *parent) :
 			ProjectElement(data, parent),
 			Document(data.attribute("name")),
-			mParent(parent)
+			Generator(false),
+			mParent(parent),
+			mInstanceCounter(0),
+			mModules(data.firstChildElement("ModuleSelection"), this)
 		{
 			restoreData();
 			init();
-
 		}
 
 		ApplicationConfig::~ApplicationConfig()
@@ -68,7 +73,7 @@ namespace Maditor {
 
 		ApplicationLauncher * ApplicationConfig::createInstace()
 		{
-			return mDocuments.createDocument<ApplicationLauncher>(this, "Game");
+			return mDocuments.createDocument<ApplicationLauncher>(this, name() + ":" + QString::number(++mInstanceCounter));
 		}
 
 		ApplicationConfig::Launcher ApplicationConfig::launcher()
@@ -101,6 +106,11 @@ namespace Maditor {
 		{
 			ProjectElement::discardChanges();
 			Document::discardChanges();
+		}
+
+		ModuleSelection * ApplicationConfig::modules()
+		{
+			return &mModules;
 		}
 
 		void ApplicationConfig::setLauncherType(LauncherType type)
@@ -147,6 +157,7 @@ namespace Maditor {
 			element().setAttribute("launcherType", mLauncherType);
 			element().setAttribute("customExecutableCmd", mCustomExecutableCmd);
 			element().setAttribute("server", mServer->fullName());
+			mModules.storeData();
 			return true;
 		}
 
@@ -156,6 +167,7 @@ namespace Maditor {
 			setLauncherType((LauncherType)intAttribute("launcherType", CLIENT_LAUNCHER));			
 			setCustomExecutableCmd(stringAttribute("customExecutableCmd"));
 			setServerByName(stringAttribute("server"));
+			mModules.restoreData();
 			setDirtyFlag(false);
 		}
 
@@ -175,21 +187,17 @@ namespace Maditor {
 			emit documentDestroyed(static_cast<ApplicationLauncher*>(doc));
 		}
 
-		int ApplicationConfig::childCount() const
+		QStringList ApplicationConfig::filePaths()
 		{
-			return 0;
+			return{ path() + "src/main.cpp" };
 		}
-		ProjectElement * ApplicationConfig::child(int i)
+
+		void ApplicationConfig::write(QTextStream & stream, int index)
 		{
-			throw 0;
+			QString content = templateFile("main.cpp");
+
+			stream << content;
 		}
-		Project * ApplicationConfig::project()
-		{
-			return mParent->project();
-		}
-		QString ApplicationConfig::path() const
-		{
-			return mParent->path();
-		}
+
 	}
 }

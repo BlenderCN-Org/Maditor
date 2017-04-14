@@ -39,8 +39,6 @@ namespace Maditor {
 			virtual Generators::ClassGenerator * child(int i) override;
 			Generators::ClassGenerator *getClass(const QString &name);
 
-			virtual Project *project() override;
-
 			template <class T>
 			T *getClass(const QString &name) {
 				auto it = std::find_if(mClasses.begin(), mClasses.end(), [&](const std::unique_ptr<Generators::ClassGenerator> &c) {return c->name() == name; });

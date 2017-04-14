@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Generators\Generator.h"
 
 #include "ProjectElement.h"
 
@@ -9,7 +8,7 @@
 
 namespace Maditor {
 	namespace Model {
-		class MADITOR_MODEL_EXPORT Project : public Document, public ProjectElement, public Generators::Generator {
+		class MADITOR_MODEL_EXPORT Project : public Document, public ProjectElement {
 			Q_OBJECT
 
 		public:
@@ -37,10 +36,7 @@ namespace Maditor {
 			virtual int childCount() const override;
 			virtual ProjectElement* child(int i) override;
 			virtual QString path() const override;
-			virtual QStringList filePaths() override;
-			virtual void write(QTextStream & stream, int index) override;		
-
-			void release();
+		
 
 		signals:
 			void showProperties();

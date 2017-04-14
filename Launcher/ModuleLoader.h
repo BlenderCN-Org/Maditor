@@ -4,6 +4,9 @@
 #include "Serialize\Container\action.h"
 
 namespace Maditor {
+
+	
+
 	namespace Launcher {
 
 class ModuleLoader : public Engine::Serialize::SerializableUnit<ModuleLoader> {
@@ -20,7 +23,7 @@ public:
 	const std::string &binaryDir();
 	const std::string &runtimeDir();
 
-	Engine::Server::ServerBase * createServer(const std::string & fullName, const std::string &mediaDir);
+	Engine::Server::ServerBase * createServer(const std::string & fullName, const std::string &instanceName, const std::string &mediaDir);
 
 private:
 

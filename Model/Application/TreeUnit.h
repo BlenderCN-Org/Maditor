@@ -12,7 +12,7 @@ namespace Maditor {
 		public:
 			TreeUnitItemBase(TreeUnitItemBase *parent);
 
-			virtual TreeUnitItemBase *parentItem() override;
+			virtual TreeUnitItemBase *parentItem() const override;
 
 			QModelIndex getIndex();
 

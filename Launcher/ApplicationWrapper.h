@@ -11,10 +11,15 @@
 
 #include "Util\Util.h"
 
+#include "App\framelistener.h"
+
 namespace Maditor {
+
+	
+
 	namespace Launcher {
 
-		class ApplicationWrapper : public Shared::AppControl, public Ogre::FrameListener {
+		class ApplicationWrapper : public Shared::AppControl, public Engine::App::FrameListener {
 
 		public:
 			ApplicationWrapper(size_t id);
@@ -29,11 +34,9 @@ namespace Maditor {
 			// Inherited via AppControl
 			virtual void onApplicationSetup() override;
 
-			virtual bool frameStarted(const Ogre::FrameEvent &evt) override;
-			virtual bool frameRenderingQueued(const Ogre::FrameEvent &evt) override;
-			virtual bool frameEnded(const Ogre::FrameEvent &evt) override;
-
-			bool update();
+			virtual bool frameStarted(float timeSinceLastFrame) override;
+			virtual bool frameRenderingQueued(float timeSinceLastFrame) override;
+			virtual bool frameEnded(float timeSinceLastFrame) override;
 
 			void startImpl();
 
@@ -51,7 +54,8 @@ namespace Maditor {
 			Engine::Serialize::Serialized<Util> mUtil;
 
 			Engine::App::OgreAppSettings mSettings;
-			Engine::App::OgreApplication mApplication;
+			Engine::App::OgreApplication *mApplication;
+			Engine::Server::ServerBase *mServer;
 
 			InputWrapper *mInput;
 

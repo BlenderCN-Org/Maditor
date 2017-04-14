@@ -3,7 +3,7 @@
 #include "configwidget.h"
 #include "ui_configwidget.h"
 
-#include "Model\Application\ApplicationConfig.h"
+#include "Model\Project\ApplicationConfig.h"
 
 #include "Model\Project\Project.h"
 #include "Model\Project\ModuleList.h"
@@ -20,6 +20,7 @@ ConfigWidget::ConfigWidget(Model::ApplicationConfig *config) :
 {
     ui->setupUi(this);
 
+	ui->modulesView->setModel(config->modules());
 	
 	ui->launcherGroup->setId(ui->maditorLauncherButton, Model::ApplicationConfig::MADITOR_LAUNCHER);
 	ui->launcherGroup->setId(ui->customLauncherButton, Model::ApplicationConfig::CUSTOM_LAUNCHER);
@@ -49,6 +50,7 @@ ConfigWidget::ConfigWidget(Model::ApplicationConfig *config) :
 	connect(ui->launcherTypeGroup, static_cast<void(QButtonGroup::*)(int, bool)>(&QButtonGroup::buttonToggled), [=](int id, bool checked) {if (checked) mConfig->setLauncherType((Model::ApplicationConfig::LauncherType)id); });
 	connect(ui->customLauncherCmd, &QLineEdit::textChanged, config, &Model::ApplicationConfig::setCustomExecutableCmd);
 	connect(ui->serverName, &QComboBox::currentTextChanged, config, &Model::ApplicationConfig::setServerByName);
+	connect(ui->modulesView, &QListView::clicked, config->modules(), &Model::ModuleSelection::itemClicked);
 	connect(config, &Model::ApplicationConfig::launcherChanged, this, &ConfigWidget::setLauncher);
 }
 

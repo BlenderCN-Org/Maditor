@@ -8,10 +8,11 @@
 
 #include "GUI\GUISystem.h"
 
-#include "Network\networkmanager.h"
+#include "Shared\IPCManager\boostIPCmanager.h"
 
 #include "Server\serverbase.h"
 
+#include "Shared\errorcodes.h"
 
 namespace Maditor {
 	namespace Launcher {
@@ -21,7 +22,8 @@ namespace Maditor {
 			mInput(nullptr),
 			mRunning(false),
 			mStartRequested(false),
-			mUtil(&mApplication)
+			mApplication(nullptr),
+			mServer(nullptr)
 		{
 		}
 
@@ -37,12 +39,14 @@ namespace Maditor {
 			Shared::ApplicationInfo &appInfo = sharedMemory().mAppInfo;
 			appInfo.setAppId(masterId());
 			
-			Engine::Network::NetworkManager *net = network();
+			Shared::BoostIPCManager *net = network();
 
-			net->startServer(1000);
+			if (!net->startServer()) {
+				return Shared::FAILED_START_SERVER;
+			}
 			if (!net->acceptConnection(2000)) {
 				net->close();
-				return -1;
+				return Shared::MADITOR_CONNECTION_TIMEOUT;
 			}			
 
 			size_t j = 0;
@@ -52,7 +56,7 @@ namespace Maditor {
 			{
 				::Sleep(1);
 				if (++j > 5000) {
-					return -1;
+					return Shared::DEBUGGER_CONNECTION_TIMEOUT;
 				}
 			}
 
@@ -66,7 +70,8 @@ namespace Maditor {
 				mSettings.mUseExternalSettings = true;
 				mSettings.mWindowName = "QtOgre";
 				mSettings.mWindowWidth = appInfo.mWindowWidth;
-				mSettings.mWindowHeight = appInfo.mWindowHeight;				
+				mSettings.mWindowHeight = appInfo.mWindowHeight;		
+				mSettings.mAppName = appInfo.mAppName.c_str();
 
 				Ogre::NameValuePairList &parameters = mSettings.mWindowParameters;
 
@@ -94,15 +99,17 @@ namespace Maditor {
 				parameters["macAPICocoaUseNSView"] = "true";
 #endif
 
-				mApplication.setup(mSettings);
-				mUtil->setup();
+				mApplication = new Engine::App::OgreApplication;
+				mApplication->setup(mSettings);
+				mUtil->setApp(mApplication);
+
+				Ogre::LogManager::getSingleton().getLog("Ogre.log")->addListener(mLog.ptr());
 			}
 
 			mRunning = true;			
 
 			Engine::Util::UtilMethods::addListener(mLog.ptr());
-
-			/*Ogre::LogManager::getSingleton().getLog("Ogre.log")->addListener(mLog.ptr());*/
+					
 
 			std::string project = appInfo.mProjectDir.c_str();
 
@@ -111,46 +118,52 @@ namespace Maditor {
 				net->receiveMessages();
 			}
 			if (net->clientCount() != 1 || !mRunning) {
-				mUtil->shutdown();
 				//net->close();
-				return -1;
+				return Shared::MODULE_LOAD_FAILED;
 			}
 
-			Engine::Server::ServerBase *server;
+			
 			int result = 0;
 			if (appInfo.mServerClass.empty()) {
-				Ogre::Root::getSingleton().addFrameListener(this);
+				mApplication->addFrameListener(this);
 				mInput->setSystem(&Engine::GUI::GUISystem::getSingleton());
-				if (!mApplication.init()) {
-					mUtil->shutdown();
-					return -1;
+				if (!mApplication->init()) {
+					return Shared::APP_INIT_FAILED;
 				}
 				applicationSetup({});
 
 				while (mRunning) {
 					net->receiveMessages();
 					if (net->clientCount() != 1) {
-						mUtil->shutdown();
 						//net->close();
-						return -1;
+						return Shared::MADITOR_DISCONNECTED;
 					}
 					if (mStartRequested) {
-						mApplication.go();
+						mApplication->go();
 						mStartRequested = false;
 						stop({});
 					}
-
 				}
-				mUtil->shutdown();
+				delete mApplication;
+				mApplication = nullptr;
 			}
 			else {
-				server = mLoader->createServer(appInfo.mServerClass.c_str(), appInfo.mMediaDir.c_str());
-				if (!server)
-					return -1;
-				server->addFrameCallback([this](float timeSinceLastFrame) {return update(); });
+				mServer = mLoader->createServer(appInfo.mServerClass.c_str(), appInfo.mAppName.c_str(), appInfo.mMediaDir.c_str());
+				if (!mServer)
+					return Shared::FAILED_CREATE_SERVER_CLASS;
 				applicationSetup({});
-				result = server->run();
-				delete server;
+				std::thread([this]() {
+					while (mRunning) {
+						network()->receiveMessages();
+						if (network()->clientCount() != 1) {
+							shutdownImpl();
+						}
+					}
+				}).detach();
+				result = mServer->run();
+				delete mServer;
+				mServer = nullptr;
+				mRunning = false;
 			}		
 
 			
@@ -160,7 +173,7 @@ namespace Maditor {
 		void ApplicationWrapper::shutdownImpl()
 		{
 			mRunning = false;
-			mApplication.shutdown();
+			stopImpl();
 		}
 
 		void ApplicationWrapper::onApplicationSetup()
@@ -168,19 +181,23 @@ namespace Maditor {
 
 		}
 
-		bool ApplicationWrapper::frameRenderingQueued(const Ogre::FrameEvent & evt)
+		bool ApplicationWrapper::frameRenderingQueued(float timeSinceLastFrame)
 		{
 			mUtil->profiler()->stopProfiling(); // PreRender
 
 			mUtil->profiler()->startProfiling("Rendering");
 
-			return update();
+			network()->receiveMessages();
+			if (network()->clientCount() != 1) {
+				shutdownImpl();
+			}
+			return mRunning;
 		}
 
 			
 
 
-		bool ApplicationWrapper::frameStarted(const Ogre::FrameEvent & fe)
+		bool ApplicationWrapper::frameStarted(float timeSinceLastFrame)
 		{	
 
 			mUtil->update();
@@ -190,21 +207,12 @@ namespace Maditor {
 			return true;
 		}
 
-		bool ApplicationWrapper::frameEnded(const Ogre::FrameEvent & fe)
+		bool ApplicationWrapper::frameEnded(float timeSinceLastFrame)
 		{
 			mUtil->profiler()->stopProfiling(); // Rendering
 			mUtil->profiler()->stopProfiling(); // Frame
 
 			return true;
-		}
-
-		bool ApplicationWrapper::update()
-		{
-			network()->receiveMessages();
-			if (network()->clientCount() != 1) {
-				shutdownImpl();
-			}
-			return mRunning;
 		}
 
 
@@ -214,7 +222,10 @@ namespace Maditor {
 		}
 		void ApplicationWrapper::stopImpl()
 		{
-			mApplication.shutdown();
+			if (mApplication)
+				mApplication->shutdown();
+			if (mServer)
+				mServer->shutdown();
 		}
 		void ApplicationWrapper::pauseImpl()
 		{
@@ -223,7 +234,7 @@ namespace Maditor {
 
 		void ApplicationWrapper::resizeWindowImpl()
 		{
-			mApplication.resizeWindow();
+			mApplication->resizeWindow();
 		}
 
 		size_t ApplicationWrapper::getSize() const

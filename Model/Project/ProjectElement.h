@@ -18,9 +18,9 @@ namespace Maditor {
 			const QString &name() const;
 			QModelIndex ownIndex();
 
-			virtual QString path() const = 0;
-			virtual Project *project() = 0;
-			virtual ProjectElement * parentItem() override;
+			virtual QString path() const;
+			virtual Project *project();
+			virtual ProjectElement * parentItem() const override;
 			virtual QVariant data(int col) const override;
 
 			bool save();
@@ -30,7 +30,7 @@ namespace Maditor {
 			QDomElement &element();
 			QDomElement createElement(const QString &name);
 
-			virtual ProjectElement *child(int i) override = 0;
+			virtual ProjectElement *child(int i) override;
 
 			
 			void writeImpl();

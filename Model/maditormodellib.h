@@ -29,6 +29,7 @@
 #include <QDomElement>
 #include <QSortFilterProxyModel>
 #include <QAbstractItemModel>
+#include <QAbstractListModel>
 #include <QFileSystemModel>
 #include <QFileSystemWatcher>
 #include <QMessageBox>

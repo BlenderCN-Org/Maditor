@@ -22,11 +22,24 @@ AppStatsWidget::~AppStatsWidget()
 
 void AppStatsWidget::setModel(Model::StatsModel * model)
 {
-	connect(model, &Model::StatsModel::averageFPSChanged, this, &AppStatsWidget::setFPS);
-	connect(model, &Model::StatsModel::memoryUsageChanged, this, &AppStatsWidget::setMemUsage);
-	connect(model, &Model::StatsModel::ogreMemoryUsageChanged, this, &AppStatsWidget::setOgreMem);
+	clearModel();
+
+ 	mCurrentConnections.emplace_back(connect(model, &Model::StatsModel::averageFPSChanged, this, &AppStatsWidget::setFPS));
+	mCurrentConnections.emplace_back(connect(model, &Model::StatsModel::memoryUsageChanged, this, &AppStatsWidget::setMemUsage));
+	mCurrentConnections.emplace_back(connect(model, &Model::StatsModel::ogreMemoryUsageChanged, this, &AppStatsWidget::setOgreMem));
 	/*connect(ui->StartTrackAllocationsButton, &QPushButton::clicked, model, &Model::StatsModel::trackAllocations);
 	connect(ui->StopTrackAllocationsButton, &QPushButton::clicked, model, &Model::StatsModel::logTrackedAllocations);*/
+}
+
+void AppStatsWidget::clearModel()
+{
+	for (const QMetaObject::Connection &conn : mCurrentConnections)
+		disconnect(conn);
+	mCurrentConnections.clear();
+
+	setFPS(0);
+	setMemUsage(0);
+	setOgreMem(0);
 }
 
 void AppStatsWidget::setFPS(float fps)

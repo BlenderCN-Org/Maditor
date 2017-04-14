@@ -10,7 +10,7 @@
 
 #include "ApplicationLauncher.h"
 
-#include "ApplicationConfig.h"
+#include "Project\ApplicationConfig.h"
 
 namespace Maditor {
 	namespace Model {
@@ -24,9 +24,9 @@ namespace Maditor {
 			mConfig(config)
 		{
 			setContainer(mInstances);
-			/*const Shared::ModuleInstance *ptr = &*it;
+			/*const ModuleInstance *ptr = &*it;
 			it2->setCallback([&, ptr](int column) {
-				auto it = std::find_if(mInstances.begin(), mInstances.end(), [=](const Shared::ModuleInstance &module) {return &module == ptr; });
+				auto it = std::find_if(mInstances.begin(), mInstances.end(), [=](const ModuleInstance &module) {return &module == ptr; });
 				dataChanged(std::distance(mInstances.begin(), it), column);
 			})*/
 						

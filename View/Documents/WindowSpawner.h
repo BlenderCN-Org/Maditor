@@ -1,24 +1,26 @@
 #pragma once
 
 #include "mainwindow_ui.h"
+#include "DocumentView.h"
 
 namespace Maditor{
 	namespace View{
+
 
 
 template <class Model, class View>
 class WindowSpawner
 {
 public:
-	
 	WindowSpawner() :
 		mTabWidget(nullptr)
 	{
 	}
 
 	void setupUi(Ui::MainWindow * ui) {
-		mTabWidget = ui->tabWidget;		
-		QObject::connect(ui->tabWidget, &QTabWidget::tabCloseRequested, std::bind(&WindowSpawner<Model, View>::onTabCloseRequest, this, std::placeholders::_1));
+		mTabWidget = ui->tabWidget;
+		QObject::connect(ui->tabWidget, &QTabWidget::tabCloseRequested, std::bind(&WindowSpawner<Model, View>::tabCloseAction, this, std::placeholders::_1));
+		QObject::connect(ui->tabWidget, &QTabWidget::currentChanged, std::bind(&WindowSpawner<Model, View>::currentTabChangedAction, this, std::placeholders::_1));
 	}
 
 	template <class... _Ty>
@@ -46,7 +48,7 @@ protected:
 		mViews.erase(it);
 	}
 
-	void onTabCloseRequest(int index) {
+	void tabCloseAction(int index) {
 		if (View *w = dynamic_cast<View*>(mTabWidget->widget(index))) {
 			if (std::find_if(mViews.begin(), mViews.end(), [=](const std::pair<Model * const, View *> &p) {return p.second == w; }) != mViews.end())
 				if (w->requestClose())
@@ -54,6 +56,17 @@ protected:
 		}
 	}
 
+	void currentTabChangedAction(int index) {
+		if (View *w = dynamic_cast<View*>(mTabWidget->widget(index))) {
+			if (std::find_if(mViews.begin(), mViews.end(), [=](const std::pair<Model * const, View *> &p) {return p.second == w; }) != mViews.end()) {
+				currentTabSet(w);
+			}
+		}
+		currentTabCleared(mTabWidget->widget(index));
+	}
+
+	virtual void currentTabSet(View *win) {}
+	virtual void currentTabCleared(QWidget *w) {}
 
 private:
 	QTabWidget *mTabWidget;

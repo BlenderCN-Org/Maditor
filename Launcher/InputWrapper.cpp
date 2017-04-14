@@ -7,6 +7,9 @@
 #include "GUI\GUISystem.h"
 
 namespace Maditor {
+
+	//
+
 	namespace Launcher {
 
 		InputWrapper::InputWrapper(Shared::InputShared &shared) :

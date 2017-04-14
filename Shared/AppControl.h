@@ -21,7 +21,7 @@ namespace Maditor {
 
 			Shared &sharedMemory();
 
-			Engine::Network::NetworkManager *network();
+			BoostIPCManager *network();
 
 			virtual void onApplicationSetup() = 0;
 			virtual void shutdownImpl() = 0;
@@ -62,9 +62,10 @@ namespace Maditor {
 			Engine::Serialize::Action<decltype(&AppControl::pingImpl2), &AppControl::pingImpl2, Engine::Serialize::ActionPolicy::broadcast> ping;
 			
 		private:
-			Engine::Network::NetworkManager *mNetwork;
-
 			SharedMemory *mMemory;
+			BoostIPCManager *mNetwork;
+
+			
 		};
 
 

@@ -8,32 +8,38 @@
 namespace Maditor {
 namespace View {
 
-	ApplicationLog::ApplicationLog(Model::ApplicationLauncher *config) :
-	DocumentView(config, this),
+	ApplicationLog::ApplicationLog(Model::ApplicationLauncher *app) :
+	DocumentView(app, this),
     ui(new Ui::ApplicationLog),
-	mConfig(config)
+	mApp(app)
 {
     ui->setupUi(this);
 
-	
-	/*ui->launcherGroup->setId(ui->maditorLauncherButton, Model::ApplicationConfig::MADITOR_LAUNCHER);
-	ui->launcherGroup->setId(ui->customLauncherButton, Model::ApplicationConfig::CUSTOM_LAUNCHER);
-
-	ui->launcherTypeGroup->setId(ui->clientButton, Model::ApplicationConfig::CLIENT_LAUNCHER);
-	ui->launcherTypeGroup->setId(ui->serverButton, Model::ApplicationConfig::SERVER_LAUNCHER);
-
-	ui->launcherGroup->button(config->launcher())->setChecked(true);
-	ui->launcherTypeGroup->button(config->launcherType())->setChecked(true);
-
-	connect(ui->launcherGroup, static_cast<void(QButtonGroup::*)(int, bool)>(&QButtonGroup::buttonToggled), [=](int id, bool checked) {if (checked) mConfig->setLauncher((Model::ApplicationConfig::Launcher)id); });
-	connect(ui->launcherTypeGroup, static_cast<void(QButtonGroup::*)(int, bool)>(&QButtonGroup::buttonToggled), [=](int id, bool checked) {if (checked) mConfig->setLauncherType((Model::ApplicationConfig::LauncherType)id); });
-	connect(ui->customLauncherCmd, &QLineEdit::textChanged, config, &Model::ApplicationConfig::setCustomExecutableCmd);*/
+	connect(app, &Model::ApplicationLauncher::outputReceived, this, &ApplicationLog::output);
+	connect(ui->clearButton, &QPushButton::clicked, this, &ApplicationLog::clear);
 }
 
 	ApplicationLog::~ApplicationLog()
 {
     delete ui;
 }
+
+	Model::ApplicationLauncher * ApplicationLog::app()
+	{
+		return mApp;
+	}
+
+	void ApplicationLog::clear()
+	{
+		ui->log->clear();
+	}
+
+	void ApplicationLog::output(const QString & msg)
+	{
+		ui->log->moveCursor(QTextCursor::End);
+		ui->log->insertPlainText(msg);
+		ui->log->moveCursor(QTextCursor::End);
+	}
 
 
 } // namespace View

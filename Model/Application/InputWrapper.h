@@ -5,9 +5,10 @@
 
 
 namespace Maditor {
+
+	
+
 	namespace Model {
-
-
 
 			class InputWrapper {
 

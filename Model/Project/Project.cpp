@@ -21,7 +21,6 @@ namespace Maditor {
 			ProjectElement(name, "MadProject", doc),
 			Document(name),
 			mModel(this, 1),
-			Generator(false),
 			mDocument(doc),
 			mPath(QDir(path + name).absolutePath() + "/"),
 			mModules(new ModuleList(this)),
@@ -121,17 +120,7 @@ namespace Maditor {
 			}
 		}
 
-		QStringList Project::filePaths()
-		{
-			return{ mPath + "src/main.cpp" };
-		}
 
-		void Project::write(QTextStream & stream, int index)
-		{
-			QString content = templateFile("main.cpp");
-
-			stream << content;
-		}
 
 		TreeModel * Project::model()
 		{
@@ -239,12 +228,6 @@ namespace Maditor {
 		QFileSystemModel *Project::getMedia()
 		{
 			return &mMediaFolder;
-		}
-
-		void Project::release()
-		{
-			generate();
-			mModules->release();
 		}
 
 		void Project::deleteClass(Generators::ClassGenerator *generator, bool deleteFiles) {

@@ -14,13 +14,19 @@ class ApplicationLog : public QWidget, public DocumentView
     Q_OBJECT
 
 public:
-    explicit ApplicationLog(Model::ApplicationLauncher *config);
+    explicit ApplicationLog(Model::ApplicationLauncher *app);
     ~ApplicationLog();
+
+	Model::ApplicationLauncher *app();
+
+private slots:
+	void output(const QString &msg);
+	void clear();
 
 private:
     Ui::ApplicationLog *ui;
 
-	Model::ApplicationLauncher *mConfig;
+	Model::ApplicationLauncher *mApp;
 
 };
 

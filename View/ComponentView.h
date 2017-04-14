@@ -20,6 +20,11 @@ public:
 		setupConnections();
 	}
 
+	virtual void clearModel() {
+		mModel = nullptr;
+		deleteConnections();
+	}
+
 protected:
 	void setConnections(const std::list<std::pair<QAction*, void(T::*)()>> &connections) {
 		mConnections = connections;
@@ -28,9 +33,17 @@ protected:
 	}
 
 private:
+	void deleteConnections() {
+		for (const QMetaObject::Connection &conn : mCurrentConnections) {
+			QObject::disconnect(conn);
+		}
+		mCurrentConnections.clear();
+	}
+
 	void setupConnections() {
+		deleteConnections();
 		for (const std::pair<QAction*, void(T::*)()> &p : mConnections) {
-			QObject::connect(p.first, &QAction::triggered, mModel, p.second);
+			mCurrentConnections.emplace_back(QObject::connect(p.first, &QAction::triggered, mModel, p.second));
 		}
 	}
 
@@ -55,6 +68,7 @@ protected:
 	}
 
 private:
+	std::list<QMetaObject::Connection> mCurrentConnections;
 	std::list<std::pair<QAction *, void (T::*)()>> mConnections;
 
 	T *mModel;

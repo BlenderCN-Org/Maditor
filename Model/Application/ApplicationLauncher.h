@@ -6,8 +6,12 @@
 #include "UtilModel.h"
 #include "OgreLogReader.h"
 #include "Model\Documents\Document.h"
+#include "Shared\errorcodes.h"
 
 namespace Maditor {
+
+	//
+
 	namespace Model {
 
 		class MADITOR_MODEL_EXPORT ApplicationLauncher : public Document, public Shared::AppControl {
@@ -38,12 +42,13 @@ namespace Maditor {
 			bool isLaunched();
 			bool isSetup();
 
-			bool needsWindow();
+			bool isClient();
 
 		protected:
 			virtual void timerEvent(QTimerEvent * te) override;
 
 			void cleanup();
+			void checkProcess();
 
 			// Inherited via AppControl
 			virtual void shutdownImpl() override;
@@ -60,18 +65,10 @@ namespace Maditor {
 
 			virtual void pingImpl() override;
 
-			enum KillCause {
-				TIMEOUT,
-				NO_APPLICATION_NOTIFICATION,
-				FAILED_CONNECTION,
-				CLEANUP,
-				USER_REQUEST
-			};
-
 		protected slots:
 		    void resizeWindow();
 			void timeout();
-			void kill(KillCause cause);
+			void kill(Shared::ErrorCode cause);
 
 		signals:
 			void applicationSettingup();
@@ -84,6 +81,8 @@ namespace Maditor {
 
 			void destroyApplication(ApplicationLauncher *launcher);
 
+			void outputReceived(const QString &);
+
 		private:
 
 			virtual size_t getSize() const override;
@@ -95,6 +94,7 @@ namespace Maditor {
 
 			DWORD mPID;
 			HANDLE mHandle;
+			HANDLE mChildOutRead, mChildOutWrite, mChildInRead, mChildInWrite;
 
 			Engine::Serialize::Serialized<OgreLogReader> mLog;
 			Engine::Serialize::Serialized<ModuleLoader> mLoader;
@@ -108,6 +108,10 @@ namespace Maditor {
 
 			bool mRunning;
 			bool mSetup;
+
+			QString mName;
+
+			QString mOutput;
 
 		};
 
