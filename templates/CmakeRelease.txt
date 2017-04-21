@@ -1,0 +1,100 @@
+cmake_minimum_required (VERSION 2.6)
+
+cmake_policy(SET CMP0011 OLD)
+cmake_policy(SET CMP0049 OLD)
+
+
+PROJECT(%1)
+
+set(PROJECT_ROOT ${CMAKE_SOURCE_DIR}/../../..)
+
+set(LIBRARIES %2 Madgine Interfaces)
+set(LIBRARY_TARGETS )
+set(LIBRARY_FILES )
+
+set(Server %5)
+
+if (Server)
+    set(SPEC_LIBRARY MadgineServer)
+else()
+    set(SPEC_LIBRARY OgreMadgine)
+endif()
+
+foreach(lib ${LIBRARIES})
+
+    string(TOUPPER ${lib} lib_uc)
+    find_package(${lib} REQUIRED)
+    include_directories(${${lib_uc}_INCLUDE_DIRS})
+    if (NOT lib STREQUAL "Madgine")
+        foreach (target ${${lib_uc}_LIBRARIES})
+            get_target_property(lib_file ${target} LOCATION)
+            set(LIBRARY_FILES ${LIBRARY_FILES} ${lib_file})
+        endforeach(target)
+        set(LIBRARY_TARGETS ${LIBRARY_TARGETS} ${${lib_uc}_LIBRARIES})
+    else()
+        foreach (target ${SPEC_LIBRARY} Base)
+            get_target_property(lib_file ${target} LOCATION)
+            set(LIBRARY_FILES ${LIBRARY_FILES} ${lib_file})
+            set(LIBRARY_TARGETS ${LIBRARY_TARGETS} ${target})
+        endforeach(target)        
+    endif()
+
+endforeach(lib)
+
+
+include_directories(${INTERFACES_INCLUDE_DIRS})
+find_package(Madgine REQUIRED)
+include_directories(${MADGINE_INCLUDE_DIRS})
+
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/../bin)
+
+set(CMAKE_MODULE_PATH
+	"${PROJECT_ROOT}/CMake"
+)
+
+include(PrecompiledHeader)
+
+add_definitions(-DGAME_RELEASE)
+
+include_directories(%4)
+
+set (sources %3)
+
+if (NOT sources STREQUAL "")  
+    add_executable(%1 main.cpp ${sources})
+
+    target_link_libraries (%1 ${LIBRARY_TARGETS})
+
+    set_target_properties(%1 PROPERTIES LINKER_LANGUAGE CXX)
+
+endif()
+
+install(
+  FILES ${LIBRARY_FILES} 
+  DESTINATION ${CMAKE_SOURCE_DIR}/../install
+)
+
+install(
+  TARGETS %1 
+  RUNTIME 
+  DESTINATION ${CMAKE_SOURCE_DIR}/../install
+)
+
+if(NOT Server)
+  install(
+    FILES ${PROJECT_ROOT}/Data/plugins.cfg ${PROJECT_ROOT}/Data/resources.cfg
+    DESTINATION ${CMAKE_SOURCE_DIR}/../install
+  )
+  install(
+    DIRECTORY ${PROJECT_ROOT}/Data/Media
+    DESTINATION ${CMAKE_SOURCE_DIR}/../install
+  )
+  
+else()
+  install(
+    DIRECTORY ${PROJECT_ROOT}/Data/Media/Scripts
+    DESTINATION ${CMAKE_SOURCE_DIR}/../install
+  )
+  
+endif()

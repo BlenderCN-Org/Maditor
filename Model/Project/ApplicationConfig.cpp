@@ -14,6 +14,8 @@
 
 #include "Generators\ServerClassGenerator.h"
 
+#include "Generators\CommandLine.h"
+
 namespace Maditor {
 	namespace Model {
 		ApplicationConfig::ApplicationConfig(ConfigList *parent, const QString & name) :
@@ -28,7 +30,6 @@ namespace Maditor {
 			mModules(this)
 		{
 			storeData();
-
 			init();
 		}
 
@@ -96,6 +97,11 @@ namespace Maditor {
 			return mServer;
 		}
 
+		QString ApplicationConfig::path() const
+		{
+			return mParent->path() + "release/" + name() + "/";
+		}
+
 		void ApplicationConfig::save()
 		{
 			if (ProjectElement::save() && project()->writeToDisk())
@@ -111,6 +117,13 @@ namespace Maditor {
 		ModuleSelection * ApplicationConfig::modules()
 		{
 			return &mModules;
+		}
+
+		void ApplicationConfig::release()
+		{
+			generate();
+			std::string cmd = QString("\"\"" CMAKE_PATH "\" -G \"" CMAKE_GENERATOR "\" -B\"%1\" -H\"%2\"\"").arg(path() + "build/", path() + "src/").toStdString();
+			Generators::CommandLine::exec(cmd.c_str());
 		}
 
 		void ApplicationConfig::setLauncherType(LauncherType type)
@@ -144,6 +157,14 @@ namespace Maditor {
 			mLauncher = launcher;
 			setDirtyFlag(true);
 			emit launcherChanged(launcher);
+			if (launcher == MADITOR_LAUNCHER) {
+				setContextMenuItems({
+					{ "Release", [this]() {release(); } }
+				});
+			}
+			else {
+				setContextMenuItems({});
+			}
 		}
 
 		void ApplicationConfig::doubleClicked()
@@ -156,7 +177,7 @@ namespace Maditor {
 			element().setAttribute("launcher", mLauncher);
 			element().setAttribute("launcherType", mLauncherType);
 			element().setAttribute("customExecutableCmd", mCustomExecutableCmd);
-			element().setAttribute("server", mServer->fullName());
+			element().setAttribute("server", mServer ? mServer->fullName() : "");
 			mModules.storeData();
 			return true;
 		}
@@ -189,12 +210,39 @@ namespace Maditor {
 
 		QStringList ApplicationConfig::filePaths()
 		{
-			return{ path() + "src/main.cpp" };
+			return{ 
+				path() + "src/CmakeLists.txt",
+				path() + "src/main.cpp"				
+			};
 		}
 
 		void ApplicationConfig::write(QTextStream & stream, int index)
 		{
-			QString content = templateFile("main.cpp");
+			assert(mLauncher == MADITOR_LAUNCHER);
+
+			QString content;
+
+			if (index == 0) {
+
+				QString libraries = mModules.libraries().join(" ");
+
+				QString files = mModules.files().join("\n");
+
+				QString type = (mLauncherType == SERVER_LAUNCHER ? "TRUE" : "FALSE");
+
+				content = templateFile("CmakeRelease.txt").arg(name(), libraries, files, project()->moduleList()->path(), type);
+			}
+			else if (index == 1) {
+				if (mLauncherType == SERVER_LAUNCHER) {
+					content = templateFile("ServerMain.cpp").arg(mServer->header(), mServer->fullName(), project()->name(), name());
+				}
+				else {
+					content = templateFile("ClientMain.cpp");
+				}
+			}
+			else {
+				throw 0;
+			}
 
 			stream << content;
 		}

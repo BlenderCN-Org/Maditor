@@ -111,6 +111,11 @@ namespace Maditor {
 			return icon;
 		}
 
+		const QStringList & Module::files() const
+		{
+			return mCmake.files();
+		}
+
 		ModuleList * Module::parent()
 		{
 			return mParent;
@@ -151,6 +156,11 @@ namespace Maditor {
 		const QStringList & Module::dependencies() const
 		{
 			return mCmake.dependencies();
+		}
+
+		const QStringList & Module::libraryDependencies() const
+		{
+			return mCmake.libraryDependencies();
 		}
 
 		const std::set<Module*> &Module::dependencyModules()

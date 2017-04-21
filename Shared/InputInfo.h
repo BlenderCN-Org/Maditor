@@ -1,17 +1,11 @@
 #pragma once
 
-#define BOOST_DATE_TIME_NO_LIB
-#include <boost\interprocess\sync\interprocess_mutex.hpp>
-#include <boost\interprocess\containers\deque.hpp>
-#include <boost\interprocess\managed_shared_memory.hpp>
+#include "SharedBase.h"
 
-#include "OgreVector2.h"
 #include "GUI\GUIEvents.h"
 
 namespace Maditor {
 	namespace Shared {
-
-
 
 		enum InputEventType {
 			PRESS,

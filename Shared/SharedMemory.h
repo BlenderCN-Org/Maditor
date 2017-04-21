@@ -3,8 +3,6 @@
 #include "ApplicationInfo.h"
 #include "InputInfo.h"
 
-#include <boost\interprocess\managed_shared_memory.hpp>
-
 
 namespace Maditor {
 	namespace Shared {
@@ -32,6 +30,7 @@ public:
 	~SharedMemory();
 
 	boost::interprocess::managed_shared_memory::segment_manager *mgr();
+	boost::interprocess::managed_shared_memory &memory();
 
 	Shared &data();
 

@@ -4,7 +4,7 @@
 #include "ModuleLoader.h"
 #include "Serialize\Container\serialized.h"
 #include "UtilModel.h"
-#include "OgreLogReader.h"
+#include "LogReceiver.h"
 #include "Model\Documents\Document.h"
 #include "Shared\errorcodes.h"
 
@@ -43,6 +43,9 @@ namespace Maditor {
 			bool isSetup();
 
 			bool isClient();
+			bool isLauncher();
+
+			void sendCommand(const QString &cmd);
 
 		protected:
 			virtual void timerEvent(QTimerEvent * te) override;
@@ -96,7 +99,7 @@ namespace Maditor {
 			HANDLE mHandle;
 			HANDLE mChildOutRead, mChildOutWrite, mChildInRead, mChildInWrite;
 
-			Engine::Serialize::Serialized<OgreLogReader> mLog;
+			Engine::Serialize::Serialized<LogReceiver> mLog;
 			Engine::Serialize::Serialized<ModuleLoader> mLoader;
 			Engine::Serialize::Serialized<UtilModel> mUtil;
 			

@@ -41,7 +41,13 @@
     </property>
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
+      <property name="documentMode">
+       <bool>false</bool>
+      </property>
       <property name="tabsClosable">
+       <bool>true</bool>
+      </property>
+      <property name="movable">
        <bool>true</bool>
       </property>
      </widget>
@@ -202,27 +208,10 @@
       <number>0</number>
      </property>
      <item row="0" column="0">
-      <widget class="Maditor::View::LogsTabWidget" name="logsWidget">
-       <property name="currentIndex">
-        <number>-1</number>
-       </property>
-      </widget>
+      <widget class="Maditor::View::LogWidget" name="logsWidget" native="true"/>
      </item>
     </layout>
    </widget>
-  </widget>
-  <widget class="QToolBar" name="toolBar">
-   <property name="windowTitle">
-    <string>toolBar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionNewProject"/>
-   <addaction name="actionLoadProject"/>
   </widget>
   <widget class="QDockWidget" name="appStatsDockWidget">
    <property name="windowTitle">
@@ -345,12 +334,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>Maditor::View::LogsTabWidget</class>
-   <extends>QTabWidget</extends>
-   <header>Logs/logstabwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>Maditor::View::TreeView</class>
    <extends>QTreeView</extends>
    <header>treeview.h</header>
@@ -364,6 +347,12 @@
    <class>Maditor::View::AppStatsWidget</class>
    <extends>QWidget</extends>
    <header>application/appstatswidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Maditor::View::LogWidget</class>
+   <extends>QWidget</extends>
+   <header>logs/logwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

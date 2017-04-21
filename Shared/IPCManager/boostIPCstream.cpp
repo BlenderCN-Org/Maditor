@@ -5,10 +5,10 @@
 namespace Maditor {
 	namespace Shared {
 
-		BoostIPCStream::BoostIPCStream(BoostIPCConnection *conn, const std::string &prefix, bool slave, Engine::Serialize::SerializeManager &mgr, Engine::Serialize::ParticipantId id) :
+		BoostIPCStream::BoostIPCStream(SharedConnectionPtr &&conn, bool slave, Engine::Serialize::SerializeManager &mgr, Engine::Serialize::ParticipantId id) :
 			Stream(mgr, id),
 			BufferedInOutStream(mBuffer, mgr, id),
-			mBuffer(conn, prefix, slave)			
+			mBuffer(std::forward<SharedConnectionPtr>(conn), slave)			
 		{
 			
 		}

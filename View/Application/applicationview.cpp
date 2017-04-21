@@ -37,7 +37,7 @@ namespace View {
 			{ ui->actionStop, &Model::ApplicationLauncher::stop },
 		});
 
-		createToolbar(window, "ApplicationToolbar", {
+		createToolbar(window, "Application", {
 			mCurrentConfigSelector.menuAction(),
 			ui->actionSetup,
 			ui->actionSetup_No_Debug,
@@ -94,7 +94,7 @@ namespace View {
 
 		mUi->actionSetup->setEnabled(!app->isLaunched());
 		mUi->actionSetup_No_Debug->setEnabled(!app->isLaunched());
-		mUi->actionShutdown->setEnabled(app->isSetup());
+		mUi->actionShutdown->setEnabled(app->isSetup() && app->isLauncher());
 		mUi->actionKill->setEnabled(app->isLaunched());
 		mUi->actionStart->setEnabled(!app->isRunning() && app->isSetup() && app->isClient());
 		mUi->actionStop->setEnabled(app->isRunning() && app->isClient());
@@ -189,7 +189,7 @@ namespace View {
 	void ApplicationView::onApplicationSetup()
 	{		
 		mUi->actionStart->setEnabled(model()->isClient());
-		mUi->actionShutdown->setEnabled(true);		
+		mUi->actionShutdown->setEnabled(model()->isLauncher());		
 	}
 
 	void ApplicationView::onApplicationStarted() {		

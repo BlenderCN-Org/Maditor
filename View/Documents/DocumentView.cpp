@@ -26,24 +26,39 @@ namespace Maditor {
 		{
 			mWidget->setWindowTitle(mDocument->getQualifiedName());
 		}
-		bool DocumentView::requestClose()
+		QMessageBox::StandardButton DocumentView::requestClose(bool multipleFiles)
 		{
+			QMessageBox::StandardButton answer = QMessageBox::NoButton;
 			if (mDocument->getDirtyFlag()) {
-				QMessageBox::StandardButton answer = 
+				answer = 
 					QMessageBox::question(NULL, "Unsaved Changes", QString("There are unsaved changes in <i>%1</i>! Save?").arg(mDocument->getName()), 
-						QMessageBox::Yes | QMessageBox::No | QMessageBox::Abort);
+						QMessageBox::Yes | QMessageBox::No | QMessageBox::Abort | (multipleFiles ? QMessageBox::YesToAll | QMessageBox::NoToAll : 0));
 				switch (answer) {
-				case QMessageBox::Abort:
-					return false;
+				case QMessageBox::YesToAll:
 				case QMessageBox::Yes:
 					mDocument->save();
 					break;
 				case QMessageBox::No:
+				case QMessageBox::NoToAll:
 					mDocument->discardChanges();
+					break;
+				default:
 					break;
 				}
 			}
-			return true;
+			return answer;
+		}
+		void DocumentView::save()
+		{
+			if (mDocument->getDirtyFlag()) {
+				mDocument->save();
+			}
+		}
+		void DocumentView::discardChanges()
+		{
+			if (mDocument->getDirtyFlag()) {
+				mDocument->discardChanges();
+			}
 		}
 	}
 }

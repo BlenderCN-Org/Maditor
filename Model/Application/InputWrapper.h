@@ -1,7 +1,5 @@
 #pragma once
 
-#define BOOST_DATE_TIME_NO_LIB
-#include <boost\interprocess\ipc\message_queue.hpp>
 
 
 namespace Maditor {

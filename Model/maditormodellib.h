@@ -1,5 +1,7 @@
 #pragma once
 
+/// @cond
+
 #if Maditor_Model_EXPORTS
 #define MADITOR_MODEL_EXPORT __declspec(dllexport)
 #else
@@ -41,3 +43,5 @@
 #include <QKeyEvent>
 #include <QTime>
 #include <QTimer>
+
+/// @endcond

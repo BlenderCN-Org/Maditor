@@ -24,11 +24,6 @@ namespace Maditor {
 			mConfig(config)
 		{
 			setContainer(mInstances);
-			/*const ModuleInstance *ptr = &*it;
-			it2->setCallback([&, ptr](int column) {
-				auto it = std::find_if(mInstances.begin(), mInstances.end(), [=](const ModuleInstance &module) {return &module == ptr; });
-				dataChanged(std::distance(mInstances.begin(), it), column);
-			})*/
 						
 			mInstances.setCreator(std::bind(&ModuleLoader::createModule, this, std::placeholders::_1));
 
@@ -64,7 +59,6 @@ namespace Maditor {
 		}
 
 		void ModuleLoader::onFileChanged(const QString &path) {
-			return;
 
 			QFileInfo f(path);
 			const Module *m = mModules.getModule(f.baseName());
@@ -85,7 +79,6 @@ namespace Maditor {
 
 		void ModuleLoader::onFolderChanged(const QString & path)
 		{
-			return;
 			
 			const QDir dir(path);
 

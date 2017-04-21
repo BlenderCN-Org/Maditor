@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SharedBase.h"
+#include "../SharedBase.h"
 
 namespace Maditor {
 	namespace Shared {
@@ -10,17 +10,24 @@ namespace Maditor {
 		class MADITOR_SHARED_EXPORT BoostIPCConnection
 		{
 		public:
-			BoostIPCConnection();
-			
-			void close();
-			int count();
+			BoostIPCConnection(const std::string &prefix, boost::interprocess::managed_shared_memory::segment_manager *mgr);
+			~BoostIPCConnection();
+
+			const SharedString &prefix();
+
+			static const constexpr size_t sMaxMessageSize = 256;
 
 		private:
-			int mCount;
-			boost::interprocess::interprocess_mutex mMutex;
+
+			SharedString mPrefix;
+
 		};
 
-		
+		typedef boost::interprocess::managed_shared_ptr<BoostIPCConnection, boost::interprocess::managed_shared_memory>::type SharedConnectionPtr;
+
+		typedef boost::interprocess::allocator<SharedConnectionPtr,
+			boost::interprocess::managed_shared_memory::segment_manager> ConnectionPtrAllocator;
+		typedef boost::interprocess::list<SharedConnectionPtr, ConnectionPtrAllocator> SharedConnectionQueue;
 
 	}
 }

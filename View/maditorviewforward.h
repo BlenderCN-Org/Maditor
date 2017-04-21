@@ -8,6 +8,7 @@ namespace Maditor {
 		class LogsView;
 		class ProjectView;
 		class ModulePropertiesWidget;
+		class MaditorView;
 		namespace Ui {
 			class MainWindow;
 		}

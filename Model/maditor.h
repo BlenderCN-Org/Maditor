@@ -2,7 +2,7 @@
 
 #include "Project/Project.h"
 #include "MaditorLog.h"
-#include "Logs\LogsModel.h"
+#include "Logs\LogTableModel.h"
 
 namespace Maditor {
 	namespace Model {
@@ -28,7 +28,7 @@ namespace Maditor {
 			void setReloadProjectProperty(bool b);
 			
 			Project *project();
-			LogsModel *logs();
+			LogTableModel *logs();
 
 			Addons::AddonCollector *addons();
 
@@ -57,7 +57,7 @@ namespace Maditor {
 
 			
 			MaditorLog mLog;
-			LogsModel mLogs;
+			LogTableModel mLogs;
 			
 			std::unique_ptr<Project> mProject;
 

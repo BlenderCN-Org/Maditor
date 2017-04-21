@@ -29,7 +29,7 @@ namespace View {
 
 	}
 
-	void LogsView::setModel(Model::LogsModel * logs)
+	void LogsView::setModel(Model::LogTableModel * logs)
 	{
 		ComponentView::setModel(logs);
 

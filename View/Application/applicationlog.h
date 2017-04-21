@@ -22,6 +22,11 @@ public:
 private slots:
 	void output(const QString &msg);
 	void clear();
+	void sendLine();
+
+	void enableInput();
+	void disableInput();
+	void setInputEnabled(bool b);
 
 private:
     Ui::ApplicationLog *ui;

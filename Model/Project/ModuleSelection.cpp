@@ -79,8 +79,32 @@ namespace Maditor {
 		{
 			mExcludedModules.clear();
 			for (QDomElement el = element().firstChildElement("exclude"); !el.isNull(); el = el.nextSiblingElement("exclude")) {
-				mExcludedModules.push_back(el.text());
+				mExcludedModules << el.text();
 			}
+		}
+
+		QStringList ModuleSelection::libraries()
+		{
+			QSet<QString> libraries;
+			for (const std::unique_ptr<Module> &mod : *mModules) {
+				if (!mExcludedModules.contains(mod->name())) {
+					libraries.unite(QSet<QString>::fromList(mod->libraryDependencies()));
+				}
+			}
+			return libraries.toList();
+		}
+
+		QStringList ModuleSelection::files()
+		{
+			QStringList files;
+			for (const std::unique_ptr<Module> &mod : *mModules) {
+				if (!mExcludedModules.contains(mod->name())) {
+					for (const QString &f : mod->files()) {
+						files << (mModules->path() + mod->name() + "/" + f);
+					}
+				}
+			}
+			return files;
 		}
 
 	}

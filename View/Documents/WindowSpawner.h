@@ -51,7 +51,7 @@ protected:
 	void tabCloseAction(int index) {
 		if (View *w = dynamic_cast<View*>(mTabWidget->widget(index))) {
 			if (std::find_if(mViews.begin(), mViews.end(), [=](const std::pair<Model * const, View *> &p) {return p.second == w; }) != mViews.end())
-				if (w->requestClose())
+				if (w->requestClose(false) != QMessageBox::Abort)
 					w->document()->destroy();
 		}
 	}

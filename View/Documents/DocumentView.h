@@ -14,7 +14,9 @@ public:
 
 	void updateTitle();
 
-	virtual bool requestClose();
+	virtual QMessageBox::StandardButton requestClose(bool multipleFiles);
+	void save();
+	void discardChanges();
 
 private:
 	Model::Document *mDocument;

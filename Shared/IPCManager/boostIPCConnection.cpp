@@ -4,21 +4,23 @@
 
 namespace Maditor {
 	namespace Shared {
-		
-		BoostIPCConnection::BoostIPCConnection() :
-			mCount(2)
+		BoostIPCConnection::BoostIPCConnection(const std::string & prefix, boost::interprocess::managed_shared_memory::segment_manager *mgr) :
+			mPrefix(prefix.c_str(), mgr)			
 		{
+			boost::interprocess::message_queue::remove((mPrefix + "master").c_str());
+			boost::interprocess::message_queue::remove((mPrefix + "slave").c_str());
+			boost::interprocess::message_queue(boost::interprocess::create_only, (prefix + "master").c_str(), 128, sMaxMessageSize);
+			boost::interprocess::message_queue(boost::interprocess::create_only, (prefix + "slave").c_str(), 128, sMaxMessageSize);
+		}
+		BoostIPCConnection::~BoostIPCConnection()
+		{
+			boost::interprocess::message_queue::remove((mPrefix + "master").c_str());
+			boost::interprocess::message_queue::remove((mPrefix + "slave").c_str());
 		}
 
-		void BoostIPCConnection::close()
+		const SharedString & BoostIPCConnection::prefix()
 		{
-			boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(mMutex);
-			--mCount;
-		}
-
-		int BoostIPCConnection::count()
-		{
-			return mCount;
+			return mPrefix;
 		}
 
 	}

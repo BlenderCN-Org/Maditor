@@ -20,8 +20,13 @@ namespace Maditor {
 
 			void setModel(Model::LogTableModel *log);
 
+		private slots:
+			void resize();
+			void sortIndicatorChanged(int index, Qt::SortOrder order);
+
 		private:
 			Ui::LogWidget *ui;
+			int mLastIndex;
 		};
 
 	}

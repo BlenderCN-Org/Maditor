@@ -17,6 +17,9 @@ namespace Maditor {
 			bool storeData() override;
 			void restoreData() override;
 
+			QStringList libraries();
+			QStringList files();
+
 		public slots:
 			void itemClicked(const QModelIndex &index);
 
@@ -25,7 +28,7 @@ namespace Maditor {
 
 			ApplicationConfig *mParent;
 			
-			std::list<QString> mExcludedModules;
+			QStringList mExcludedModules;
 
 		};
 	}

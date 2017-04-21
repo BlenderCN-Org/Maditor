@@ -1,18 +1,19 @@
 #include "maditormodellib.h"
 
 #include "CmakeGenerator.h"
-#include "CmakeSubProject.h"
+#include "CmakeProject.h"
 
 namespace Maditor {
 	namespace Model {
 		namespace Generators {
 
 
-			CmakeGenerator::CmakeGenerator(const QString & name, const QString & targetName) :
+			CmakeGenerator::CmakeGenerator(CmakeProject *parent, const QString & name) :
 				Generator(false),
 				mName(name),
-				mTargetName(targetName.isEmpty() ? name : targetName)
+				mParent(parent)
 			{
+				mParent->addSubProject(this);
 			}
 
 			void CmakeGenerator::addFile(const QString & file)
@@ -32,6 +33,11 @@ namespace Maditor {
 				}
 			}
 
+			const QStringList &CmakeGenerator::files() const
+			{
+				return mFileList;
+			}
+
 			const QString & CmakeGenerator::name()
 			{
 				return mName;
@@ -39,21 +45,11 @@ namespace Maditor {
 
 			QStringList CmakeGenerator::filePaths()
 			{
-				return{ root() + "CmakeLists.txt" };
+				return{ mParent->root() + mName + "/" + "CmakeLists.txt" };
 			}
 
-			void CmakeGenerator::addSubProject(CmakeSubProject * sub)
-			{
-				mSubProjects.push_back(sub);
-			}
 
-			void CmakeGenerator::generate()
-			{
-				Generator::generate();
-				for (CmakeSubProject *sub : mSubProjects) {
-					sub->generate();
-				}
-			}
+
 
 			void CmakeGenerator::addDependency(const QString & dependency)
 			{
@@ -75,38 +71,25 @@ namespace Maditor {
 				return mDependencies;
 			}
 
-			QStringList CmakeGenerator::subProjects()
+			const QStringList & CmakeGenerator::libraryDependencies() const
 			{
-				QStringList result;
-				for (CmakeSubProject *project : mSubProjects) {
-					result << project->name();
-				}
-				return result;
+				return mLibraryDependencies;
 			}
 
 			void CmakeGenerator::write(QTextStream & stream, int index)
 			{
-				QString files;
-				for (const QString &f : mFileList)
-					files += " " + f;
-
-				QString subProjects;
-				for (CmakeSubProject *sub : mSubProjects)
-					subProjects += "add_subdirectory(" + sub->name() + ")\n";
+				QString files = mFileList.join(" ");
 				
 				QString dependencies = mDependencies.join(" ");
 				for (const QString &libraryDep : mLibraryDependencies)
 					dependencies += QString(" ${%1_LIBRARIES}").arg(libraryDep);
 				
-				subProjects += QString("target_link_libraries(%1 %2)").arg(mTargetName, dependencies);
+				QString link = QString("target_link_libraries(%1 %2)").arg(mName, dependencies);
 
-				stream << templateFile("Cmake.txt").arg(mName, mTargetName, files, subProjects, preTargetCode());
+				stream << templateFile("Cmake.txt").arg(mName, files, link);
 
 			}
-			QString CmakeGenerator::preTargetCode()
-			{
-				return "";
-			}
+
 		}
 	}
 }

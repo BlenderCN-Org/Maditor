@@ -12,11 +12,11 @@ namespace Maditor {
 			Q_OBJECT
 
 		public:
-			Project(LogsModel *logs, const QString &path, const QString &name, QDomDocument doc = QDomDocument());
-			Project(LogsModel *logs, QDomDocument doc, const QString &path);
+			Project(LogTableModel *logs, const QString &path, const QString &name, QDomDocument doc = QDomDocument());
+			Project(LogTableModel *logs, QDomDocument doc, const QString &path);
 			~Project();
 
-			static Project *load(LogsModel *logs, const QString &path);
+			static Project *load(LogTableModel *logs, const QString &path);
 
 			bool isValid();
 
@@ -26,7 +26,7 @@ namespace Maditor {
 			virtual void save() override;
 			virtual void discardChanges() override;
 
-			LogsModel *logs();
+			LogTableModel *logs();
 			ModuleList *moduleList();
 			ConfigList *configList();
 			QFileSystemModel *getMedia();
@@ -69,7 +69,7 @@ namespace Maditor {
 
 			QFileSystemModel mMediaFolder;
 
-			LogsModel *mLogs;
+			LogTableModel *mLogs;
 
 			TreeModel mModel;
 

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "Generators\CmakeSubProject.h"
+#include "Generators\CmakeGenerator.h"
 #include "Generators\ClassGenerator.h"
 #include "ProjectElement.h"
 
@@ -22,10 +22,12 @@ namespace Maditor {
 
 			virtual QVariant icon() const override;
 			
+			const QStringList &files() const;
 
 			bool addDependency(const QString &dep);
 			void removeDependency(const QString &dep);
 			const QStringList &dependencies() const;
+			const QStringList &libraryDependencies() const;
 			const std::set<Module *> &dependencyModules();
 			void initDependencies();
 
@@ -74,7 +76,7 @@ namespace Maditor {
 		private:
 			ModuleList *mParent;
 
-			Generators::CmakeSubProject mCmake;
+			Generators::CmakeGenerator mCmake;
 
 			std::list<std::unique_ptr<Generators::ClassGenerator>> mClasses;
 			

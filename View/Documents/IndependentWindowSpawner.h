@@ -43,7 +43,7 @@ namespace Maditor {
 				if (View *w = dynamic_cast<View*>(mTabWidget->widget(index))) {
 					auto it = std::find_if(mViews.begin(), mViews.end(), [=](const std::pair<Model * const, View *> &p) {return p.second == w; });
 					if (it != mViews.end()) {
-						if (w->requestClose()) {
+						if (w->requestClose(false) != QMessageBox::Abort) {
 							w->deleteLater();
 							mViews.erase(it);
 						}

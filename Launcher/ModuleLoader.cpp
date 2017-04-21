@@ -110,9 +110,9 @@ namespace Maditor {
 
 		Engine::Server::ServerBase * ModuleLoader::createServer(const std::string & fullName, const std::string &instanceName, const std::string &mediaDir)
 		{
-			size_t delimPos = fullName.find(':');
+			size_t delimPos = fullName.find("::");
 			std::string moduleName(fullName.c_str(), delimPos);
-			std::string className(fullName.c_str() + (delimPos + 1));
+			std::string className(fullName.c_str() + (delimPos + 2));
 
 			auto it = std::find_if(mInstances.begin(), mInstances.end(), [&](const ModuleLauncherInstance &mod) {return mod.name() == moduleName; });
 			if (it != mInstances.end() && it->isLoaded()) {

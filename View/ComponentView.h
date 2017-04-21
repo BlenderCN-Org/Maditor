@@ -49,7 +49,7 @@ private:
 
 protected:
 	QToolBar *createToolbar(QMainWindow *window, const QString &name, const QList<QAction *> &actions) {
-		QToolBar *toolbar = new QToolBar;
+		QToolBar *toolbar = new QToolBar(name);
 		toolbar->setObjectName(name);
 
 		toolbar->addActions(actions);

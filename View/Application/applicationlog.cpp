@@ -15,8 +15,14 @@ namespace View {
 {
     ui->setupUi(this);
 
+	setInputEnabled(app->isRunning());
+
 	connect(app, &Model::ApplicationLauncher::outputReceived, this, &ApplicationLog::output);
+	connect(app, &Model::ApplicationLauncher::applicationSetup, this, &ApplicationLog::enableInput);
+	connect(app, &Model::ApplicationLauncher::applicationShutdown, this, &ApplicationLog::disableInput);
 	connect(ui->clearButton, &QPushButton::clicked, this, &ApplicationLog::clear);
+	connect(ui->sendButton, &QPushButton::clicked, this, &ApplicationLog::sendLine);
+	connect(ui->stdinEdit, &QLineEdit::returnPressed, this, &ApplicationLog::sendLine);
 }
 
 	ApplicationLog::~ApplicationLog()
@@ -32,6 +38,29 @@ namespace View {
 	void ApplicationLog::clear()
 	{
 		ui->log->clear();
+	}
+
+	void ApplicationLog::sendLine()
+	{
+		if (mApp->isLaunched())
+			mApp->sendCommand(ui->stdinEdit->text());
+		ui->stdinEdit->clear();
+	}
+
+	void ApplicationLog::enableInput()
+	{
+		setInputEnabled(true);
+	}
+
+	void ApplicationLog::disableInput()
+	{
+		setInputEnabled(false);
+	}
+
+	void ApplicationLog::setInputEnabled(bool b)
+	{
+		ui->stdinEdit->setEnabled(b);
+		ui->sendButton->setEnabled(b);
 	}
 
 	void ApplicationLog::output(const QString & msg)

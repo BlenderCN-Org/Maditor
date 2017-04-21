@@ -19,6 +19,7 @@ namespace Maditor {
 
 			size_t appId();
 
+			SharedMemory *mem();
 			Shared &sharedMemory();
 
 			BoostIPCManager *network();

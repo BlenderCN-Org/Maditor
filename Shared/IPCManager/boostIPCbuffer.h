@@ -2,7 +2,7 @@
 
 #include "Serialize\Streams\buffered_streambuf.h"
 
-#include "../SharedBase.h"
+#include "boostIPCConnection.h"
 
 namespace Maditor {
 	namespace Shared {
@@ -13,7 +13,7 @@ namespace Maditor {
 		{
 
 		public:
-			BoostIPCBuffer(BoostIPCConnection *conn, const std::string &prefix, bool slave);
+			BoostIPCBuffer(SharedConnectionPtr &&conn, bool slave);
 			BoostIPCBuffer(const BoostIPCBuffer &) = delete;
 			BoostIPCBuffer(BoostIPCBuffer &&other);
 			virtual ~BoostIPCBuffer();
@@ -31,6 +31,8 @@ namespace Maditor {
 			virtual void close() override;
 
 		private:
+			SharedConnectionPtr mConnection;
+
 			boost::interprocess::message_queue mReadQueue, mWriteQueue;
 
 			static const constexpr size_t sMaxMessageSize = 256;
@@ -41,9 +43,8 @@ namespace Maditor {
 			} mError;
 
 			bool mSlave;
-			std::string mPrefix;
 
-			BoostIPCConnection *mConnection;
+
 		};
 
 	}

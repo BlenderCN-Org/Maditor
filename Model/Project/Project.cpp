@@ -17,7 +17,7 @@ namespace Maditor {
 
 		const QString Project::sProjectFileName = "project.mad";
 
-		Project::Project(LogsModel *logs, const QString & path, const QString & name, QDomDocument doc) :
+		Project::Project(LogTableModel *logs, const QString & path, const QString & name, QDomDocument doc) :
 			ProjectElement(name, "MadProject", doc),
 			Document(name),
 			mModel(this, 1),
@@ -50,7 +50,7 @@ namespace Maditor {
 		}
 
 
-		Project::Project(LogsModel *logs, QDomDocument doc, const QString &path) :
+		Project::Project(LogTableModel *logs, QDomDocument doc, const QString &path) :
 			ProjectElement(doc.documentElement()),
 			Document(doc.documentElement().attribute("name")),
 			mModel(this, 1),
@@ -132,7 +132,7 @@ namespace Maditor {
 			return mPath;
 		}
 
-		Project * Project::load(LogsModel *logs, const QString & path)
+		Project * Project::load(LogTableModel *logs, const QString & path)
 		{
 			QFile file(path + sProjectFileName);
 			file.open(QIODevice::ReadOnly);
@@ -190,7 +190,7 @@ namespace Maditor {
 			return true;
 		}
 
-		LogsModel * Project::logs()
+		LogTableModel * Project::logs()
 		{
 			return mLogs;
 		}

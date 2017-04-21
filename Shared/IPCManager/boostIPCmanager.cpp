@@ -96,8 +96,8 @@ namespace Maditor {
 		{
 			if (mServer) {
 				if (mIsServer) {
-					while (BoostIPCConnection *conn = mServer->poll()) {
-						addMasterStream(BoostIPCStream(conn, mMemory->uniqueName(), false, *this, createStreamId()));
+					while (SharedConnectionPtr conn = mServer->poll()) {
+						addMasterStream(BoostIPCStream(std::move(conn), false, *this, createStreamId()));
 					}
 				}
 			}
@@ -106,8 +106,8 @@ namespace Maditor {
 		bool BoostIPCManager::acceptConnection(int timeout) {
 			if (mServer) {
 				if (mIsServer) {
-					if (BoostIPCConnection *conn = mServer->poll(timeout)) {
-						addMasterStream(BoostIPCStream(conn, mMemory->uniqueName(), false, *this, createStreamId()));
+					if (SharedConnectionPtr conn = mServer->poll(timeout)) {
+						addMasterStream(BoostIPCStream(std::move(conn), false, *this, createStreamId()));
 						return true;
 					}
 				}
@@ -177,10 +177,11 @@ namespace Maditor {
 				mServer = mMemory->mgr()->find<BoostIPCServer>("Server").first;
 			}
 
-			BoostIPCConnection *conn = mMemory->mgr()->construct<BoostIPCConnection>(boost::interprocess::anonymous_instance)();
+			SharedConnectionPtr conn = boost::interprocess::make_managed_shared_ptr(
+				mMemory->mgr()->construct<BoostIPCConnection>(boost::interprocess::anonymous_instance)(mMemory->uniqueName(), mMemory->mgr()), mMemory->memory());
 			mServer->enqueue(conn, timeout);
 
-			mSlaveStream = new BoostIPCStream(conn, mMemory->uniqueName(), true, *this);
+			mSlaveStream = new BoostIPCStream(std::move(conn), true, *this);
 			if (!setSlaveStream(mSlaveStream, true, timeout)) {
 				delete mSlaveStream;
 				mSlaveStream = 0;

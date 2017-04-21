@@ -25,7 +25,7 @@ public:
 
 protected:
 	void setContextMenuItems(std::list<std::pair<QString, std::function<void()>>> &&contextMenuItems);
-
+	const std::list<std::pair<QString, std::function<void()>>> &getContextMenuItems();
 
 private:
 	std::list<std::pair<QString, std::function<void()>>> mContextMenuItems;

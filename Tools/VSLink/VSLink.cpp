@@ -45,7 +45,7 @@ VSLink::~VSLink()
 }
 
 void VSLink::openSolution() {
-	send(VSCommands::OpenSolution, mEditor->project()->moduleList()->cmake()->solutionName("debug").toStdString() );
+	send(VSCommands::OpenSolution, mEditor->project()->moduleList()->cmake()->solutionPath().toStdString() );
 }
 
 
@@ -162,7 +162,7 @@ void VSLink::handle(VSCommands::VSCommand cmd, const std::string & arg1, int64_t
 		if (mMessageEnqueued) {
 			mMessageEnqueued = false;
 			if (mEnqueuedMsg.mCmd != VSCommands::OpenSolution)
-				sendMsg({ VSCommands::OpenSolution, mEditor->project()->moduleList()->cmake()->solutionName("debug").toStdString() }, "VSInstance");
+				sendMsg({ VSCommands::OpenSolution, mEditor->project()->moduleList()->cmake()->solutionPath().toStdString() }, "VSInstance");
 			sendMsg(mEnqueuedMsg, "VSInstance");
 		}
 		break;

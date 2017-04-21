@@ -2,7 +2,7 @@
 
 
 
-#include "SharedBase.h"
+#include "boostIPCConnection.h"
 
 namespace Maditor {
 	namespace Shared {
@@ -13,8 +13,8 @@ namespace Maditor {
 		public:
 			BoostIPCServer(boost::interprocess::managed_shared_memory::segment_manager *mgr);
 
-			void enqueue(BoostIPCConnection *conn, int timeout);
-			BoostIPCConnection *poll(int timeout = 0);
+			void enqueue(const SharedConnectionPtr &conn, int timeout);
+			SharedConnectionPtr poll(int timeout = 0);
 
 		private:
 			SharedConnectionQueue mQueue;

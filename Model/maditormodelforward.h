@@ -37,7 +37,8 @@ namespace Maditor {
 		class DialogManager;
 
 		namespace Generators {
-			class CmakeSubProject;
+			class CmakeProject;
+			class CmakeGenerator;
 			class ClassGenerator;
 			class ServerClassGenerator;
 		}

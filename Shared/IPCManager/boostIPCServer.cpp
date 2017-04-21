@@ -14,12 +14,12 @@ namespace Maditor {
 		{
 		}
 
-		void BoostIPCServer::enqueue(BoostIPCConnection * conn, int timeout)
+		void BoostIPCServer::enqueue(const SharedConnectionPtr &conn, int timeout)
 		{
-			mQueue.emplace_back(conn);
+			mQueue.emplace_back(std::move(conn));
 		}
 
-		BoostIPCConnection * BoostIPCServer::poll(int timeout)
+		SharedConnectionPtr BoostIPCServer::poll(int timeout)
 		{
 
 			std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::high_resolution_clock::now();
@@ -32,15 +32,15 @@ namespace Maditor {
 				while (mQueue.empty()) {
 					if (std::chrono::duration_cast<std::chrono::milliseconds>
 						(std::chrono::high_resolution_clock::now() - start).count() > timeout) {
-						return nullptr;
+						return SharedConnectionPtr();
 					}
 				}
-				BoostIPCConnection *conn = mQueue.front().get();
+				SharedConnectionPtr conn = std::move(mQueue.front());
 				mQueue.pop_front();
 				return conn;
 			}
 			else {
-				return nullptr;
+				return SharedConnectionPtr();
 			}
 		}
 

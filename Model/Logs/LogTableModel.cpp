@@ -9,11 +9,15 @@ namespace Maditor {
 
 			LogTableModel::LogTableModel()
 			{				
+				mSorted.setDynamicSortFilter(true);
+				mSorted.setSourceModel(this);
+
+				connect(&mSorted, &LogSorterFilter::doubleClicked, this, &LogTableModel::doubleClicked);
 			}
 
-			void LogTableModel::addMessage(const QString &msg, Engine::Util::MessageType level, const QString &traceback, const std::string &fileName, int lineNr) {
+			void LogTableModel::addMessage(const QString &msg, Engine::Util::MessageType level, const QString &logName, const QString &traceback, const std::string &fileName, int lineNr) {
 				beginInsertRows(QModelIndex(), 0, 0);
-				mItems.emplace_front(level, msg, traceback, fileName, lineNr);
+				mItems.emplace_front(level, msg, logName, traceback, fileName, lineNr);
 				endInsertRows();
 			}
 
@@ -22,7 +26,7 @@ namespace Maditor {
 				auto it = mItems.begin();
 				std::advance(it, index.row());
 
-				const std::string &fileName = std::get<3>(*it);
+				const std::string &fileName = std::get<4>(*it);
 			
 				if (fileName == "<unknown>")
 					return;
@@ -37,6 +41,32 @@ namespace Maditor {
 				endResetModel();
 			}
 
+			LogSorterFilter * LogTableModel::sorted()
+			{
+				return &mSorted;
+			}
+
+			QVariant LogTableModel::headerData(int section, Qt::Orientation orientation, int role) const
+			{
+				if (orientation != Qt::Horizontal)
+					return QVariant();
+
+				if (role != Qt::DisplayRole)
+					return QVariant();
+
+				switch (section) {
+				case 0:
+					return QVariant();
+				case 1:
+					return "Message";
+				case 2:
+					return "Source";
+				case 3:
+					return "Traceback";
+				}
+				return QVariant();
+			}
+
 			Q_INVOKABLE int LogTableModel::rowCount(const QModelIndex & parent) const
 			{
 				return mItems.size();
@@ -44,7 +74,7 @@ namespace Maditor {
 
 			Q_INVOKABLE int LogTableModel::columnCount(const QModelIndex & parent) const
 			{
-				return 3;
+				return 4;
 			}
 
 			Q_INVOKABLE QVariant LogTableModel::data(const QModelIndex & index, int role) const
@@ -55,7 +85,7 @@ namespace Maditor {
 				if (index.row() >= mItems.size())
 					return QVariant();
 
-				if (index.column() >= 3)
+				if (index.column() >= 4)
 					return QVariant();
 
 
@@ -80,12 +110,17 @@ namespace Maditor {
 					}
 					return icon;
 				}
-				else if (index.column() == 2) {
+				else if (index.column() == 1) {
 					if (role != Qt::DisplayRole)
 						return QVariant();
 					return QVariant(std::get<1>(*it));
 				}
-				else if (index.column() == 1) {
+				else if (index.column() == 3) {
+					if (role != Qt::DisplayRole)
+						return QVariant();
+					return QVariant(std::get<3>(*it));
+				}
+				else if (index.column() == 2) {
 					if (role != Qt::DisplayRole)
 						return QVariant();
 					return QVariant(std::get<2>(*it));

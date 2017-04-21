@@ -96,13 +96,7 @@ namespace Maditor {
 		void ModuleList::generate()
 		{
 			mCmake.generate();
-			mCmake.build("debug");
-		}
-
-		void ModuleList::release()
-		{
-			mCmake.generate();
-			mCmake.build("release");
+			mCmake.build();
 		}
 
 		void ModuleList::createModule(const QString & name)
@@ -147,15 +141,6 @@ namespace Maditor {
 			if (it == mModules.end())
 				throw 0;
 			return it->get();
-		}
-
-		std::list<Module*> ModuleList::initDependencies()
-		{
-			std::list<Module*> result;
-			for (const QString &dependency : mCmake.dependencies())
-				result.push_back(getModule(dependency));
-
-			return result;
 		}
 
 		std::list<std::unique_ptr<Module>>::const_iterator ModuleList::begin() const

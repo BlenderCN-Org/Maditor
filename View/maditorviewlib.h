@@ -1,5 +1,7 @@
 #pragma once
 
+/// @cond
+
 #if Maditor_View_EXPORTS
 #define MADITOR_VIEW_EXPORT __declspec(dllexport)
 #else
@@ -29,3 +31,5 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QShortcut>
+
+/// @endcond

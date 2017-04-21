@@ -39,10 +39,13 @@ namespace Maditor {
 			LauncherType launcherType();
 			Generators::ServerClassGenerator *server();
 
+			virtual QString path() const override;
 			virtual void save() override;
 			virtual void discardChanges() override;
 
 			ModuleSelection *modules();
+
+			void release();
 
 		public slots:
 			void setLauncher(Launcher launcher);

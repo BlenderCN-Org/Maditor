@@ -39,6 +39,8 @@ namespace Maditor {
 				mConnectionResult.connect(slot, Engine::SignalSlot::queuedConnection);
 			}
 
+			using SerializeManager::getSlaveStream;
+
 		protected:
 			virtual void removeSlaveStream() override;
 			virtual void removeMasterStream(Engine::Serialize::BufferedInOutStream *stream) override;

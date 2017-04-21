@@ -18,10 +18,8 @@ namespace Maditor {
 			if (mSortByParentNodes) {
 				bool leftHasChildren = sourceModel()->rowCount(left) > 0;
 				bool rightHasChildren = sourceModel()->rowCount(right) > 0;
-				if (leftHasChildren && !rightHasChildren)
-					return true;
-				if (!leftHasChildren && rightHasChildren)
-					return false;
+				if (leftHasChildren != rightHasChildren)
+					return leftHasChildren;
 			}
 
 			QVariant leftData = sourceModel()->data(left);

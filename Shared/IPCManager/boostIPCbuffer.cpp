@@ -7,32 +7,26 @@
 namespace Maditor {
 	namespace Shared {
 
-		BoostIPCBuffer::BoostIPCBuffer(BoostIPCConnection *conn, const std::string &prefix, bool slave) :
-			mReadQueue(boost::interprocess::open_or_create, (prefix + (slave ? "master" : "slave")).c_str(), 128, sMaxMessageSize),
-			mWriteQueue(boost::interprocess::open_or_create, (prefix + (slave ? "slave" : "master")).c_str(), 128, sMaxMessageSize),
-			mPrefix(prefix),
-			mSlave(slave),
-			mConnection(conn)
+		BoostIPCBuffer::BoostIPCBuffer(SharedConnectionPtr && conn, bool slave) :
+			mConnection(std::forward<SharedConnectionPtr>(conn)),
+			mReadQueue(boost::interprocess::open_only, (mConnection->prefix() + (slave ? "master" : "slave")).c_str()),
+			mWriteQueue(boost::interprocess::open_only, (mConnection->prefix() + (slave ? "slave" : "master")).c_str()),
+			mSlave(slave)			
 		{
 		}
 
-
 		BoostIPCBuffer::BoostIPCBuffer(BoostIPCBuffer && other) :
 			buffered_streambuf(std::forward<BoostIPCBuffer>(other)),
-			mReadQueue(boost::interprocess::open_only, (other.mPrefix + (other.mSlave ? "master" : "slave")).c_str()),
-			mWriteQueue(boost::interprocess::open_only, (other.mPrefix + (other.mSlave ? "slave" : "master")).c_str()),
-			mPrefix(other.mPrefix),
-			mSlave(other.mSlave),
-			mConnection(other.mConnection)
+			mConnection(std::move(other.mConnection)),
+			mReadQueue(boost::interprocess::open_only, (mConnection->prefix() + (other.mSlave ? "master" : "slave")).c_str()),
+			mWriteQueue(boost::interprocess::open_only, (mConnection->prefix() + (other.mSlave ? "slave" : "master")).c_str()),
+			mSlave(other.mSlave)
 		{
-			other.mConnection = nullptr;
 			other.close();
 		}
 
 		BoostIPCBuffer::~BoostIPCBuffer()
 		{
-			if (mConnection)
-				mConnection->close();
 		}
 
 		bool BoostIPCBuffer::isClosed()
@@ -64,7 +58,7 @@ namespace Maditor {
 				return receivedSize;
 			}
 			else {
-				if (mConnection->count() == 1)
+				if (mConnection.use_count() == 1)
 					return 0;
 				mError = WOULD_BLOCK;
 				return -1;
@@ -77,7 +71,7 @@ namespace Maditor {
 			if (mWriteQueue.try_send(buf, len, 0))
 				return len;
 			else {
-				if (mConnection->count() == 1)
+				if (mConnection.use_count() == 1)
 					return 0;
 				mError = WOULD_BLOCK;
 				return -1;
@@ -87,12 +81,7 @@ namespace Maditor {
 		void BoostIPCBuffer::close()
 		{
 			buffered_streambuf::close();
-			if (mConnection) {
-				mConnection->close();
-				mConnection = nullptr;
-			}
-			boost::interprocess::message_queue::remove((mPrefix + "master").c_str());
-			boost::interprocess::message_queue::remove((mPrefix + "slave").c_str());
+			mConnection.reset();
 		}
 
 	}

@@ -35,6 +35,11 @@ size_t AppControl::appId()
 	return mMemory->id();
 }
 
+SharedMemory * AppControl::mem()
+{
+	return mMemory;
+}
+
 Shared & AppControl::sharedMemory()
 {
 	return mMemory->data();

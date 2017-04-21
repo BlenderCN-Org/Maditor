@@ -21,7 +21,6 @@ namespace Maditor {
 			virtual QString path() const override;
 
 			void generate();
-			void release();
 
 			Generators::CmakeProject *cmake();
 
@@ -31,8 +30,6 @@ namespace Maditor {
 
 			Module *getModule(const QString &name);
 			const Module *getModule(const QString &name) const;
-
-			std::list<Module *> initDependencies();
 
 			std::list<std::unique_ptr<Module>>::const_iterator begin() const;
 			std::list<std::unique_ptr<Module>>::const_iterator end() const;

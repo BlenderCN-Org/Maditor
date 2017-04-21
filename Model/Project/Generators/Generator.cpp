@@ -16,7 +16,6 @@ namespace Maditor {
 			{
 				QMessageBox::StandardButton answer = QMessageBox::Default;
 
-
 				int i = 0;
 				for (QString path : filePaths()) {
 					try {
@@ -27,6 +26,9 @@ namespace Maditor {
 									return;
 								continue;
 							}
+						}
+						else {
+							QDir().mkpath(QFileInfo(path).absolutePath());
 						}
 						if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
 						{

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Util\UtilMethods.h"
-
+#include "LogSorterFilter.h"
 
 namespace Maditor {
 	namespace Model {
@@ -15,11 +15,15 @@ namespace Maditor {
 				LogTableModel();
 
 			public slots:
-				void addMessage(const QString &msg, Engine::Util::MessageType level, const QString &traceback, const std::string &fileName, int lineNr);
+				void addMessage(const QString &msg, Engine::Util::MessageType level, const QString &logName, const QString &traceback, const std::string &fileName, int lineNr);
 				void doubleClicked(const QModelIndex &index);
 				void clear();
 
+				LogSorterFilter *sorted();
+
 			public:
+
+				virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
 				// Inherited via QAbstractTableModel
 				virtual Q_INVOKABLE int rowCount(const QModelIndex & parent = QModelIndex()) const override;
@@ -30,8 +34,9 @@ namespace Maditor {
 
 
 			private:
-				std::list<std::tuple<Engine::Util::MessageType, QString, QString, std::string, int>> mItems;
+				std::list<std::tuple<Engine::Util::MessageType, QString, QString, QString, std::string, int>> mItems;
 				
+				LogSorterFilter mSorted;
 			};
 
 	}

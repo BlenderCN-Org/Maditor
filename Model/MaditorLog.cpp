@@ -1,17 +1,18 @@
 #include "maditormodellib.h"
 
 #include "MaditorLog.h"
+#include "Logs\LogTableModel.h"
 
 namespace Maditor {
 	namespace Model {
-		MaditorLog::MaditorLog() :
-			Model::Log("Maditor.log", Model::Log::GuiLog)
+		MaditorLog::MaditorLog(LogTableModel *model) :
+			mModel(model)
 		{
 		}
 
 		void MaditorLog::log(const std::string & msg, Engine::Util::MessageType lvl, const std::list<Engine::Util::TraceBack>& traceBack)
 		{			
-			Model::Log::log(msg.c_str(), lvl);
+			mModel->addMessage(msg.c_str(), lvl, getName().c_str(), "", "", -1);
 		}
 
 		std::string MaditorLog::getName()

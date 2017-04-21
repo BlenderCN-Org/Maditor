@@ -94,7 +94,8 @@ namespace Maditor {
 			{
 				ProjectElement::extendContextMenu(menu);
 				if (!fileNames().empty()){
-					menu.addSeparator();
+					if (getContextMenuItems().empty() && !menu.isEmpty())
+						menu.addSeparator();
 					QMenu *subMenu = menu.addMenu("Open");
 					QObject::connect(subMenu, &QMenu::triggered, [this](QAction *action) {
 						//Editors::EditorManager::getSingleton().openByExtension((path() + action->text()).toStdString());
@@ -124,7 +125,12 @@ namespace Maditor {
 
 			QString ClassGenerator::fullName() const
 			{
-				return mModule->name() + ":" + mName;
+				return mModule->name() + "::" + mName;
+			}
+
+			QString ClassGenerator::header() const
+			{
+				return mModule->name() + "/" + mName + ".h";
 			}
 
 		}

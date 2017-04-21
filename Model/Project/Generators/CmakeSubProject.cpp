@@ -11,7 +11,7 @@ namespace Maditor {
 				CmakeGenerator(name),
 				mParent(parent)
 			{
-				mParent->addSubProject(this);
+				
 			}
 
 			QString CmakeSubProject::root()

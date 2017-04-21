@@ -16,7 +16,7 @@ void VSLinkView::setupUi(Maditor::View::Ui::MainWindow *ui, Maditor::View::MainW
 {
 	QAction *openAction = new QAction("OpenSolution");
 
-	createToolbar(window, "VSLink_Toolbar", {
+	createToolbar(window, "VSLink", {
 		openAction
 	});
 

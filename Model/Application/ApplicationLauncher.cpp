@@ -7,6 +7,7 @@
 #include "Shared\SharedMemory.h"
 
 #include "Shared\IPCManager\boostIPCmanager.h"
+#include "Shared\IPCManager\boostIPCServer.h"
 
 #include "InputWrapper.h"
 
@@ -59,10 +60,16 @@ namespace Maditor {
 				Document::destroy();
 			}
 			else {
-				mAboutToBeDestroyed = true;
-				connect(&mPingTimer, &QTimer::timeout, this, &ApplicationLauncher::destroy);
-				shutdown();
-				mPingTimer.start(3000);
+				if (isLauncher()) {
+					mAboutToBeDestroyed = true;
+					connect(&mPingTimer, &QTimer::timeout, this, &ApplicationLauncher::destroy);
+					shutdown();
+					mPingTimer.start(3000);
+				}
+				else {
+					kill(Shared::KILL_USER_REQUEST);
+					Document::destroy();
+				}
 			}
 		}
 
@@ -80,8 +87,8 @@ namespace Maditor {
 
 			std::string cmd;
 
+			emit applicationSettingup();
 			if (mConfig->launcher() == ApplicationConfig::MADITOR_LAUNCHER) {
-				emit applicationSettingup();
 
 				mConfig->generateInfo(appInfo, mWindow);
 
@@ -238,7 +245,21 @@ namespace Maditor {
 
 		bool ApplicationLauncher::isClient()
 		{
-			return mConfig->launcher() == Model::ApplicationConfig::MADITOR_LAUNCHER && mConfig->launcherType() == Model::ApplicationConfig::CLIENT_LAUNCHER;
+			return isLauncher() && mConfig->launcherType() == Model::ApplicationConfig::CLIENT_LAUNCHER;
+		}
+
+		bool ApplicationLauncher::isLauncher()
+		{
+			return mConfig->launcher() == Model::ApplicationConfig::MADITOR_LAUNCHER;
+		}
+
+		void ApplicationLauncher::sendCommand(const QString & cmd)
+		{
+			DWORD dwWritten;
+			std::string stdCmd = cmd.toStdString();
+			stdCmd += '\n';
+			bool result = WriteFile(mChildInWrite, stdCmd.c_str(), stdCmd.size(), &dwWritten, NULL);
+			assert(result && dwWritten == stdCmd.size());
 		}
 
 		void ApplicationLauncher::timerEvent(QTimerEvent * te)
@@ -302,7 +323,7 @@ namespace Maditor {
 				mHandle = NULL;
 
 				//receive pending messages
-				while (network()->isConnected())
+				while (network()->getSlaveStream() && network()->getSlaveStream()->isMessageAvailable())
 					network()->receiveMessages();
 
 				mLoader->reset();
@@ -310,6 +331,8 @@ namespace Maditor {
 				mUtil->reset();		
 
 				mPingTimer.stop();
+
+				mem()->mgr()->destroy<Shared::BoostIPCServer>("Server");
 
 				mSetup = false;
 				emit applicationShutdown();
