@@ -29,5 +29,5 @@ add_library(Maditor_Shared SHARED ${sources})
 
 add_precompiled_header(Maditor_Shared maditorsharedlib.h FORCEINCLUDE SOURCE_CXX maditorsharedlib.cpp)
 
-target_link_libraries(Maditor_Shared ${INTERFACES_LIBRARIES})
+target_link_libraries(Maditor_Shared Interfaces)
 

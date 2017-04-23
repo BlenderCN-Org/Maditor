@@ -46,7 +46,7 @@ namespace Maditor {
 
 		size_t BoostIPCBuffer::rec(char *buf, size_t len)
 		{
-			size_t receivedSize = 0;
+			unsigned receivedSize = 0;
 			unsigned int priority;
 			char buffer[sMaxMessageSize];
 			if (mReadQueue.try_receive(buffer, sMaxMessageSize, receivedSize, priority)) {

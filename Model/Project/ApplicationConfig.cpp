@@ -51,8 +51,8 @@ namespace Maditor {
 
 		void ApplicationConfig::generateInfo(Shared::ApplicationInfo &appInfo, QWindow * w)
 		{
-			appInfo.mMediaDir = (path() + "Data/").toStdString().c_str();
-			appInfo.mProjectDir = path().toStdString().c_str();
+			appInfo.mMediaDir = (mParent->path() + "Data/").toStdString().c_str();
+			appInfo.mProjectDir = mParent->path().toStdString().c_str();
 
 			if (mLauncherType == CLIENT_LAUNCHER) {
 				assert(w);

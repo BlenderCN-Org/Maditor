@@ -35,7 +35,7 @@ namespace Maditor {
 			connect(log, &Model::LogTableModel::rowsInserted, this, &LogWidget::resize);
 			
 			ui->tableView->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
-			ui->tableView->setColumnWidth(0, 20);
+			ui->tableView->setColumnWidth(0, 24);
 			ui->tableView->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
 			ui->tableView->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
 			ui->tableView->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);

@@ -92,7 +92,7 @@ namespace Maditor {
 		void Project::copyTemplate(QMessageBox::StandardButton *answer)
 		{
 			QStringList templateFiles;
-			QString templatePath("C:/Users/schue/Desktop/GitHub/Maditor/templateproject/");
+			QString templatePath("templateproject/");
 			QDir dir(templatePath);
 
 			QDirIterator it(templatePath, QDir::NoDotAndDotDot | QDir::Files | QDir::Dirs, QDirIterator::Subdirectories);

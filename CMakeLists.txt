@@ -15,7 +15,7 @@ set(QT_PATH "" CACHE PATH "Path to Qt-find script")
 set(CMAKE_PREFIX_PATH
   ${CMAKE_PREFIX_PATH}
 	"${QT_PATH}"
-	"${CMAKE_CURRENT_LIST_DIR}/CMake"
+	"${CMAKE_CURRENT_LIST_DIR}"
 )
 
 set(CMAKE_MODULE_PATH
@@ -64,3 +64,25 @@ endif(BUILD_TESTS)
 add_executable(Maditor main.cpp)
 add_dependencies(Maditor Maditor_Launcher Maditor_Server_Launcher ${TOOLS_LIBS})
 target_link_libraries(Maditor Maditor_Model Maditor_View)
+
+
+
+
+file(REMOVE_RECURSE ${CMAKE_CURRENT_BINARY_DIR}/templates)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/templates)
+
+FILE(GLOB_RECURSE files "templates/*")
+MESSAGE(STATUS ${files})
+FOREACH(item ${files})
+	if (item MATCHES "(.*)\\.in")
+		FILE(RELATIVE_PATH rel ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_MATCH_1})
+		configure_file(${item} ${CMAKE_CURRENT_BINARY_DIR}/${rel}) 
+	else()
+		FILE(COPY ${item} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/templates)
+	endif()
+ENDFOREACH(item)
+
+FILE(COPY templateProject DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+
+

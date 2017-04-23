@@ -24,21 +24,26 @@ namespace Maditor {
 
 			void CmakeProject::write(QTextStream & stream, int index)
 			{
-				QString libraries;
-				for (const QString &lib : mLibraries) {
-					libraries += QString(R"(find_package(%1 REQUIRED)
+				if (index == 0) {
+					QString libraries;
+					for (const QString &lib : mLibraries) {
+						libraries += QString(R"(find_package(%1 REQUIRED)
 if (%1_FOUND)
 	include_directories(${%1_INCLUDE_DIRS})
 endif (%1_FOUND)
 )").arg(lib);
+					}
+
+
+					QString subProjects;
+					for (CmakeGenerator *sub : mSubProjects)
+						subProjects += "add_subdirectory(" + sub->name() + ")\n";
+
+					stream << templateFile("CmakeMain.txt").arg(mName, libraries, subProjects);
 				}
-
-				
-				QString subProjects;
-				for (CmakeGenerator *sub : mSubProjects)
-					subProjects += "add_subdirectory(" + sub->name() + ")\n";
-
-				stream << templateFile("CmakeMain.txt").arg(mName, libraries, subProjects);
+				else {
+					stream << templateFile("Dependencies.cmake");
+				}
 			}
 
 
@@ -57,7 +62,10 @@ endif (%1_FOUND)
 
 			QStringList CmakeProject::filePaths()
 			{
-				return{ mRoot + "CmakeLists.txt" };
+				return{ 
+					mRoot + "CmakeLists.txt",
+					mRoot + "Dependencies.cmake"
+				};
 			}
 
 			const QStringList & CmakeProject::libraries()
@@ -83,7 +91,7 @@ endif (%1_FOUND)
 
 			QString CmakeProject::buildDir()
 			{
-				return mBuildDir +  "/debug/build/";
+				return mBuildDir +  "debug/build/";
 			}
 
 		}
