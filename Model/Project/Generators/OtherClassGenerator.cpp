@@ -8,8 +8,8 @@ namespace Maditor {
 
 			const QString OtherClassGenerator::sType = "Other";
 
-			OtherClassGenerator::OtherClassGenerator(Module * module, const QString & name) :
-				ClassGenerator(module, name, sType)
+			OtherClassGenerator::OtherClassGenerator(Module * module, const QString & name, bool headerOnly) :
+				ClassGenerator(module, name, sType, headerOnly)
 			{
 				generate();
 			}
@@ -19,6 +19,9 @@ namespace Maditor {
 			}
 			QString OtherClassGenerator::templateFileName(int index)
 			{
+				if (headerOnly()) {
+					return "OtherClassHeaderOnly.h";
+				}
 				switch (index) {
 				case 0:
 					return "OtherClass.cpp";

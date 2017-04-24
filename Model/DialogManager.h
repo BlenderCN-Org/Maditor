@@ -47,7 +47,7 @@ namespace Maditor {
 				virtual bool showNewEntityComponentDialog(Model::Module *module, const QString &name, QString &componentName) = 0;
 				virtual bool showNewSceneComponentDialog(Model::Module *module, const QString &name) = 0;
 				virtual bool showNewGameHandlerDialog(Model::Module *module, const QString &name) = 0;
-				virtual bool showNewOtherClassDialog(Model::Module *module, const QString &name) = 0;
+				virtual bool showNewOtherClassDialog(Model::Module *module, const QString &name, bool &headerOnly) = 0;
 				virtual bool showNewServerClassDialog(Model::Module *module, const QString &name) = 0;
 				static bool showNewGuiHandlerDialogStatic(Model::Module *module, const QString &name, QString &window, int &type, bool &hasLayout) {
 					return sSingleton->showNewGuiHandlerDialog(module, name, window, type, hasLayout);
@@ -64,8 +64,8 @@ namespace Maditor {
 				static bool showNewGameHandlerDialogStatic(Model::Module *module, const QString &name) {
 					return sSingleton->showNewGameHandlerDialog(module, name);
 				}
-				static bool showNewOtherClassDialogStatic(Model::Module *module, const QString &name) {
-					return sSingleton->showNewOtherClassDialog(module, name);
+				static bool showNewOtherClassDialogStatic(Model::Module *module, const QString &name, bool &headerOnly) {
+					return sSingleton->showNewOtherClassDialog(module, name, headerOnly);
 				}
 				static bool showNewServerClassDialogStatic(Model::Module *module, const QString &name) {
 					return sSingleton->showNewServerClassDialog(module, name);

@@ -9,8 +9,8 @@ namespace Maditor {
 		{
 			boost::interprocess::message_queue::remove((mPrefix + "master").c_str());
 			boost::interprocess::message_queue::remove((mPrefix + "slave").c_str());
-			boost::interprocess::message_queue(boost::interprocess::create_only, (prefix + "master").c_str(), 128, sMaxMessageSize);
-			boost::interprocess::message_queue(boost::interprocess::create_only, (prefix + "slave").c_str(), 128, sMaxMessageSize);
+			boost::interprocess::message_queue(boost::interprocess::create_only, (prefix + "master").c_str(), 256, sMaxMessageSize);
+			boost::interprocess::message_queue(boost::interprocess::create_only, (prefix + "slave").c_str(), 256, sMaxMessageSize);
 		}
 		BoostIPCConnection::~BoostIPCConnection()
 		{

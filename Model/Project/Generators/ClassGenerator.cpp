@@ -9,19 +9,18 @@
 namespace Maditor {
 	namespace Model {
 		namespace Generators {
-			ClassGenerator::ClassGenerator(Module * module, const QString & name, const QString &type) :
+			ClassGenerator::ClassGenerator(Module * module, const QString & name, const QString &type, bool headerOnly) :
 				ProjectElement(name, "Class", module),
-				mModule(module),
-				mHeaderOnly(false)
+				mModule(module)
 			{
 				element().setAttribute("type", type);
+				element().setAttribute("headerOnly", headerOnly);
 
 				init();
 			}
 			ClassGenerator::ClassGenerator(Module * module, QDomElement data) :
 				ProjectElement(data, module),
-				mModule(module),
-				mHeaderOnly(false)
+				mModule(module)
 			{
 				init();
 			}
@@ -51,7 +50,7 @@ namespace Maditor {
 			QStringList ClassGenerator::fileNames()
 			{
 				QStringList result;
-				if (!mHeaderOnly)
+				if (!headerOnly())
 					result << (mName + ".cpp");
 				result << (mName + ".h");				
 				return result;
@@ -81,6 +80,11 @@ namespace Maditor {
 				setContextMenuItems({
 					{ "Delete", [this]() {mModule->deleteClass(this); } }
 				});
+			}
+
+			bool ClassGenerator::headerOnly()
+			{
+				return element().hasAttribute("headerOnly") && boolAttribute("headerOnly");
 			}
 
 			QVariant ClassGenerator::icon() const

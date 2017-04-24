@@ -12,7 +12,7 @@ namespace Maditor {
 				Q_OBJECT
 
 			public:
-				ClassGenerator(Module *module, const QString &name, const QString &type);
+				ClassGenerator(Module *module, const QString &name, const QString &type, bool headerOnly = false);
 				ClassGenerator(Module *module, QDomElement data);
 
 				// Geerbt über Generator
@@ -46,10 +46,10 @@ namespace Maditor {
 
 				void init();
 
+				bool headerOnly();
+
 			private:
 				Module *mModule;
-
-				bool mHeaderOnly;
 
 				std::list<std::pair<QString, QString>> mModuleKeys;
 				std::list<std::pair<QString, QString>> mKeys;

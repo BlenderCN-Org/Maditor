@@ -9,6 +9,7 @@
 #include "newprojectdialog.h"
 
 #include "newguihandlerdialog.h"
+#include "newotherclassdialog.h"
 
 #include "settingsdialog.h"
 
@@ -151,9 +152,19 @@ namespace Maditor {
 				return true;
 			}
 
-			bool DialogManager::showNewOtherClassDialog(Model::Module * module, const QString & name)
+			bool DialogManager::showNewOtherClassDialog(Model::Module * module, const QString & name, bool &headerOnly)
 			{
-				return true;
+				NewOtherClassDialog dialog;
+
+				int result = dialog.exec();
+				if (result == QDialog::Accepted) {
+					headerOnly = dialog.headerOnly();
+					return true;
+				}
+				else {
+					return false;
+				}
+
 			}
 
 			bool DialogManager::showNewServerClassDialog(Model::Module * module, const QString & name)

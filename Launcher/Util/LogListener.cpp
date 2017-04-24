@@ -29,7 +29,7 @@ namespace Maditor {
 				level = Engine::Util::ERROR_TYPE;
 				break;
 			case Ogre::LML_NORMAL:
-				level = Engine::Util::WARNING_TYPE;
+				level = Engine::Util::LOG_TYPE;
 				break;
 			case Ogre::LML_TRIVIAL:
 				level = Engine::Util::LOG_TYPE;

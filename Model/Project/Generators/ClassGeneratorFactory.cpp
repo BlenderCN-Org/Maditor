@@ -87,10 +87,13 @@ namespace Maditor {
 						}
 						break;
 					case Generators::ClassGeneratorFactory::OTHER_CLASS:
-						if (DialogManager::showNewOtherClassDialogStatic(module, name)) {
-							return new Generators::OtherClassGenerator(module, name);
+					{
+						bool headerOnly;
+						if (DialogManager::showNewOtherClassDialogStatic(module, name, headerOnly)) {
+							return new Generators::OtherClassGenerator(module, name, headerOnly);
 						}
-						break;
+					}
+					break;
 					case Generators::ClassGeneratorFactory::SERVER_CLASS:
 						if (DialogManager::showNewServerClassDialogStatic(module, name)) {
 							return new Generators::ServerClassGenerator(module, name);

@@ -8,7 +8,7 @@ namespace Maditor {
 
 			class OtherClassGenerator : public ClassGenerator {
 			public:
-				OtherClassGenerator(Module *module, const QString &name);
+				OtherClassGenerator(Module *module, const QString &name, bool headerOnly);
 				OtherClassGenerator(Module * module, QDomElement data);
 
 				static const QString sType;
