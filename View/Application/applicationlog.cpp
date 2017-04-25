@@ -23,6 +23,8 @@ namespace View {
 	connect(ui->clearButton, &QPushButton::clicked, this, &ApplicationLog::clear);
 	connect(ui->sendButton, &QPushButton::clicked, this, &ApplicationLog::sendLine);
 	connect(ui->stdinEdit, &QLineEdit::returnPressed, this, &ApplicationLog::sendLine);
+
+	mCursor = ui->log->textCursor();
 }
 
 	ApplicationLog::~ApplicationLog()
@@ -63,11 +65,28 @@ namespace View {
 		ui->sendButton->setEnabled(b);
 	}
 
+
+
 	void ApplicationLog::output(const QString & msg)
 	{
-		ui->log->moveCursor(QTextCursor::End);
-		ui->log->insertPlainText(msg);
-		ui->log->moveCursor(QTextCursor::End);
+		ui->log->setTextCursor(mCursor);
+		for (QChar c : msg) {
+			switch (c.toLatin1()) {
+			case '\r':
+				ui->log->moveCursor(QTextCursor::StartOfLine);
+				break;
+			case '\n':
+				ui->log->moveCursor(QTextCursor::End);
+				ui->log->insertPlainText(QChar('\n'));
+				break;
+			default:
+				ui->log->moveCursor(QTextCursor::Right, QTextCursor::KeepAnchor);
+				ui->log->insertPlainText(c);
+				break;
+			}
+		}
+		mCursor = ui->log->textCursor();
+		ui->log->ensureCursorVisible();
 	}
 
 

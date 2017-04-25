@@ -33,6 +33,8 @@ private:
 
 	Model::ApplicationLauncher *mApp;
 
+	QTextCursor mCursor;
+
 };
 
 
