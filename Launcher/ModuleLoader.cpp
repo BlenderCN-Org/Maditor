@@ -119,7 +119,7 @@ namespace Maditor {
 				void *symbol = it->getSymbol(std::string("create") + className);
 				if (symbol) {
 					typedef Engine::Server::ServerBase *(*Factory)(const std::string &, const std::string &);
-					return (*static_cast<Factory>(symbol))(instanceName, mediaDir);
+					return (*static_cast<Factory>(symbol))(instanceName, mediaDir + "scripts/");
 				}
 			}
 

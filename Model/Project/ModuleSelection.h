@@ -20,6 +20,8 @@ namespace Maditor {
 			QStringList libraries();
 			QStringList files();
 
+			bool isEnabled(const QString &name);
+
 		public slots:
 			void itemClicked(const QModelIndex &index);
 

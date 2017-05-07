@@ -4,6 +4,8 @@
 
 #include "boostIPCConnection.h"
 
+#include "Serialize\serializemanager.h"
+
 namespace Maditor {
 	namespace Shared {
 
@@ -46,7 +48,7 @@ namespace Maditor {
 
 		size_t BoostIPCBuffer::rec(char *buf, size_t len)
 		{
-			boost::ulong_long_type receivedSize = 0;
+			size_t receivedSize = 0;
 			unsigned int priority;
 			char buffer[sMaxMessageSize];
 			if (mReadQueue.try_receive(buffer, sMaxMessageSize, receivedSize, priority)) {
@@ -58,8 +60,13 @@ namespace Maditor {
 				return receivedSize;
 			}
 			else {
-				if (mConnection.use_count() == 1)
-					return 0;
+				if (mConnection.use_count() == 1) {
+					Engine::Serialize::MessageHeader header;
+					header.mObject = Engine::Serialize::SERIALIZE_MANAGER;
+					header.mCmd = Engine::Serialize::STREAM_EOF;
+					send(reinterpret_cast<char*>(&header), sizeof(header));
+				}
+					
 				mError = WOULD_BLOCK;
 				return -1;
 			}

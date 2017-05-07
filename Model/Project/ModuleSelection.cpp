@@ -107,5 +107,10 @@ namespace Maditor {
 			return files;
 		}
 
+		bool ModuleSelection::isEnabled(const QString & name)
+		{
+			return !mExcludedModules.contains(name);
+		}
+
 	}
 }

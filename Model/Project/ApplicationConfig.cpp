@@ -51,7 +51,7 @@ namespace Maditor {
 
 		void ApplicationConfig::generateInfo(Shared::ApplicationInfo &appInfo, QWindow * w)
 		{
-			appInfo.mMediaDir = (mParent->path() + "Data/").toStdString().c_str();
+			appInfo.mMediaDir = (mParent->path() + "Data/Media/").toStdString().c_str();
 			appInfo.mProjectDir = mParent->path().toStdString().c_str();
 
 			if (mLauncherType == CLIENT_LAUNCHER) {
@@ -69,7 +69,7 @@ namespace Maditor {
 
 		bool ApplicationConfig::hasModuleEnabled(Module * module)
 		{
-			return true;
+			return mModules.isEnabled(module->name());
 		}
 
 		ApplicationLauncher * ApplicationConfig::createInstace()

@@ -1,7 +1,6 @@
 #pragma once
 
 
-
 namespace Maditor {
 
 	
@@ -24,7 +23,7 @@ namespace Maditor {
 			private:
 				void resetAccumulativeMouseMove();
 
-				Engine::GUI::MouseButton::MouseButton convertMouseButton(Qt::MouseButton button);
+				Shared::MouseButton convertMouseButton(Qt::MouseButton button);
 
 			private:
 				Shared::InputShared &mShared;

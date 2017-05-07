@@ -9,7 +9,7 @@
 #endif
 
 
-#include "Model\maditormodellib.h"
+#include "Model/maditormodellib.h"
 
 #include "maditorviewforward.h"
 

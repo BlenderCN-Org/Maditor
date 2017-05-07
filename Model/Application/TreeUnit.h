@@ -26,9 +26,11 @@ namespace Maditor {
 			void setContainer(C &container) {
 				container.connectCallback([&container = (const C&)container, this](const typename C::const_iterator &it, int op) {
 					int row = std::distance(container.begin(), it);
-					mTree->handleOperation(getIndex(), row, op);
+					handleOperation(row, op);
 				});
 			}
+
+			void handleOperation(int row, int op);
 
 		private:
 			TreeUnitItemBase *mParent;

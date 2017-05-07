@@ -33,7 +33,7 @@ namespace Maditor {
 			mMemory(other.mMemory)
 		{
 			for (std::pair<const Engine::Serialize::ParticipantId, BoostIPCStream> &stream : other.mStreams)
-				if (stream.second.isValid())
+				if (!stream.second.isClosed())
 					other.moveConnection(stream.first, this);
 			other.mServer = nullptr;
 			other.mIsServer = false;

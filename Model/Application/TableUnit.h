@@ -19,7 +19,7 @@ namespace Maditor {
 		protected:
 			template <class C>
 			void setContainer(C &container) {
-				container.connectCallback([&container = (const C&)container, this](const typename C::const_iterator &it, int op) {
+				container.connectCallback([&container, this](const typename C::iterator &it, int op) {
 					int row = std::distance(container.begin(), it);
 					handleOperation(row, op);
 				});

@@ -11,9 +11,6 @@ set(CMAKE_AUTOMOC ON)
 
 set (CMAKE_AUTOMOC_MOC_OPTIONS "-bmaditorviewlib.h")
 
-include_directories(${CMAKE_SOURCE_DIR})
-include_directories(${MADGINE_INCLUDE_DIRS})
-
 
 set (sources "")
 FolderSources(sources "" "" componentview.h editorsettingswidget.cpp editorsettingswidget.h editorsettingswidget.ui maditorview.cpp maditorview.h maditorviewforward.h maditorviewlib.cpp maditorviewlib.h mainwindow.cpp mainwindow.h mainwindow.ui resources.qrc TreeView.cpp TreeView.h)
@@ -25,10 +22,10 @@ FolderSources(sources "" "" componentview.h editorsettingswidget.cpp editorsetti
 
 add_library(Maditor_View SHARED ${sources})
 
-add_precompiled_header(Maditor_View maditorviewlib.h FORCEINCLUDE SOURCE_CXX maditorviewlib.cpp)
+include_directories(${CMAKE_SOURCE_DIR})
+add_precompiled_header(Maditor_View ${CMAKE_CURRENT_SOURCE_DIR}/maditorviewlib.h FORCEINCLUDE SOURCE_CXX maditorviewlib.cpp)
 
-target_link_libraries(Maditor_View Maditor_Model)
+include_targets(Maditor_View Maditor_Model)
 
-target_link_libraries(Maditor_View Qt5::Widgets)
 
 

@@ -16,13 +16,13 @@ namespace Maditor {
 			void InputWrapper::keyPressEvent(QKeyEvent * ev)
 			{
 				char text = ev->text().isEmpty() ? 0 : ev->text().at(0).toLatin1();
-				mShared.mKeyQueue.emplace(Shared::PRESS, Engine::GUI::KeyEventArgs{ (Engine::GUI::Key)ev->nativeScanCode(), text });
+				mShared.mKeyQueue.emplace(Shared::PRESS, Shared::KeyEventArgs{ ev->nativeScanCode(), text });
 			}
 
 			void InputWrapper::keyReleaseEvent(QKeyEvent * ev)
 			{
 				char text = ev->text().isEmpty() ? 0 : ev->text().at(0).toLatin1();			
-				mShared.mKeyQueue.emplace(Shared::RELEASE, Engine::GUI::KeyEventArgs{ (Engine::GUI::Key)ev->nativeScanCode(), text });
+				mShared.mKeyQueue.emplace(Shared::RELEASE, Shared::KeyEventArgs{ ev->nativeScanCode(), text });
 			}
 
 			void InputWrapper::mouseMoveEvent(QMouseEvent * ev)
@@ -48,12 +48,12 @@ namespace Maditor {
 
 			void InputWrapper::mousePressEvent(QMouseEvent * ev)
 			{
-				mShared.mMouseQueue.emplace(Shared::PRESS, Engine::GUI::MouseEventArgs{ { (float)ev->x(), (float)ev->y() }, convertMouseButton(ev->button()) });
+				mShared.mMouseQueue.emplace(Shared::PRESS, Shared::MouseEventArgs{ { (float)ev->x(), (float)ev->y() }, convertMouseButton(ev->button()) });
 			}
 
 			void InputWrapper::mouseReleaseEvent(QMouseEvent * ev)
 			{
-				mShared.mMouseQueue.emplace(Shared::RELEASE, Engine::GUI::MouseEventArgs{ { (float)ev->x(), (float)ev->y() }, convertMouseButton(ev->button()) });
+				mShared.mMouseQueue.emplace(Shared::RELEASE, Shared::MouseEventArgs{ { (float)ev->x(), (float)ev->y() }, convertMouseButton(ev->button()) });
 			}
 
 			void InputWrapper::resetAccumulativeMouseMove()
@@ -66,17 +66,17 @@ namespace Maditor {
 				}
 			}
 
-			Engine::GUI::MouseButton::MouseButton InputWrapper::convertMouseButton(Qt::MouseButton id)
+			Shared::MouseButton InputWrapper::convertMouseButton(Qt::MouseButton id)
 			{
 				switch (id) {
 				case Qt::LeftButton:
-					return Engine::GUI::MouseButton::LEFT_BUTTON;
+					return Shared::MouseButton::LEFT_BUTTON;
 					break;
 				case Qt::RightButton:
-					return Engine::GUI::MouseButton::RIGHT_BUTTON;
+					return Shared::MouseButton::RIGHT_BUTTON;
 					break;
 				case Qt::MiddleButton:
-					return Engine::GUI::MouseButton::MIDDLE_BUTTON;
+					return Shared::MouseButton::MIDDLE_BUTTON;
 					break;
 				default:
 					throw 0;

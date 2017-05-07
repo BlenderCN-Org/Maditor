@@ -9,6 +9,8 @@ namespace Maditor {
 		class ModuleInstance;
 		struct ApplicationInfo;
 
+		enum class MouseButton;
+
 		class BoostIPCStream;
 		class BoostIPCServer;
 		class BoostIPCConnection;

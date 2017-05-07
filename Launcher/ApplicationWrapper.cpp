@@ -151,15 +151,8 @@ namespace Maditor {
 				mServer = mLoader->createServer(appInfo.mServerClass.c_str(), appInfo.mAppName.c_str(), appInfo.mMediaDir.c_str());
 				if (!mServer)
 					return Shared::FAILED_CREATE_SERVER_CLASS;
+				mServer->addFrameListener(this);
 				applicationSetup({});
-				std::thread([this]() {
-					while (mRunning) {
-						network()->receiveMessages();
-						if (network()->clientCount() != 1) {
-							shutdownImpl();
-						}
-					}
-				}).detach();
 				result = mServer->run();
 				delete mServer;
 				mServer = nullptr;

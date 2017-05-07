@@ -11,7 +11,7 @@
 #include "maditormodelforward.h"
 #include "Shared/maditorsharedlib.h"
 
-#include "madginelib.h"
+#include "baselib.h"
 
 //before any qt because of emit
 #include "SignalSlot\signal.h"

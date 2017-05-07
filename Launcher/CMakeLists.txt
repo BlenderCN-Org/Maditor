@@ -11,17 +11,13 @@ set (sources "")
 FolderSources(sources "" "" ApplicationWrapper.cpp ApplicationWrapper.h InputWrapper.cpp InputWrapper.h maditorlauncherlib.cpp maditorlauncherlib.h maditorlauncherforward.h main.cpp ModuleLoader.cpp ModuleLoader.h)
 	FolderSources(sources "" Util AppStats.cpp AppStats.h LogListener.cpp LogListener.h Util.cpp Util.h)
 
-include_directories(${BOOST_PATH})
-include_directories(${CMAKE_SOURCE_DIR})
-include_directories(${MADGINE_INCLUDE_DIRS})
-include_directories(${Maditor_Launcher_SOURCE_DIR})
 
-if (OGRE_FOUND)
-  include_directories(${OGRE_INCLUDE_DIRS} ${OGRE_Terrain_INCLUDE_DIRS} ${OGRE_RTShaderSystem_INCLUDE_DIRS})
-endif (OGRE_FOUND)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
 
 add_executable(Maditor_Launcher ${sources})
 
-add_precompiled_header(Maditor_Launcher maditorlauncherlib.h FORCEINCLUDE SOURCE_CXX maditorlauncherlib.cpp)
+add_precompiled_header(Maditor_Launcher ${CMAKE_CURRENT_SOURCE_DIR}/maditorlauncherlib.h FORCEINCLUDE SOURCE_CXX maditorlauncherlib.cpp)
 
-target_link_libraries(Maditor_Launcher OgreMadgine MadgineServer Maditor_Shared)
+include_targets(Maditor_Launcher Maditor_Shared)
+include_library(Maditor_Launcher Madgine OgreMadgine MadgineServer)

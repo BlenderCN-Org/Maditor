@@ -14,12 +14,6 @@ add_definitions(-DCMAKE_PATH="${CMAKE_COMMAND}")
 add_definitions(-DCMAKE_GENERATOR="${CMAKE_GENERATOR}")
 add_definitions(-DQSCINTILLA_DLL)
 
-include_directories(${BOOST_PATH})
-include_directories(${CMAKE_SOURCE_DIR})
-include_directories(${MADGINE_INCLUDE_DIRS})
-
-
-
 
 set (sources "")
 FolderSources(sources "" "" DialogManager.h maditormodelforward.h maditormodellib.cpp maditormodellib.h maditor.cpp maditor.h MaditorLog.cpp MaditorLog.h TableModel.cpp TableModel.h TreeItem.cpp TreeItem.h TreeModel.cpp TreeModel.h TreeSorter.cpp TreeSorter.h)
@@ -33,8 +27,11 @@ FolderSources(sources "" "" DialogManager.h maditormodelforward.h maditormodelli
 
 add_library(Maditor_Model SHARED ${sources})
 
-add_precompiled_header(Maditor_Model maditormodellib.h FORCEINCLUDE SOURCE_CXX maditormodellib.cpp)
+add_precompiled_header(Maditor_Model ${CMAKE_CURRENT_SOURCE_DIR}/maditormodellib.h FORCEINCLUDE SOURCE_CXX maditormodellib.cpp)
 
-target_link_libraries(Maditor_Model Maditor_Shared)
+target_link_libraries(Maditor_Model PUBLIC Qt5::Xml Qt5::Gui Qt5::Widgets ${QSCINTILLA2_LIBRARY})
 
-target_link_libraries(Maditor_Model Qt5::Xml Qt5::Gui Qt5::Widgets ${QSCINTILLA2_LIBRARY})
+include_targets(Maditor_Model Maditor_Shared)
+include_library(Maditor_Model Madgine Base)
+
+

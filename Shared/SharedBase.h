@@ -1,6 +1,6 @@
 #pragma once
 
-
+#define BOOST_USE_WINDOWS_H
 #define BOOST_DATE_TIME_NO_LIB
 #include <boost/interprocess/managed_shared_memory.hpp>
 #include <boost\interprocess\smart_ptr\shared_ptr.hpp>

@@ -30,6 +30,11 @@ namespace Maditor {
 			mTree->onDataChanged(getIndex(), parentIndex(), fromCol, toCol);
 		}
 
+		void TreeUnitItemBase::handleOperation(int row, int op)
+		{
+			mTree->handleOperation(getIndex(), row, op);
+		}
+
 		TreeUnitItemBase::TreeUnitItemBase(TreeUnitItemBase * parent) :
 			mParent(parent),
 			mTree(parent->mTree)

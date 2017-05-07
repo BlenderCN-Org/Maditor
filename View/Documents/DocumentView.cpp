@@ -32,7 +32,7 @@ namespace Maditor {
 			if (mDocument->getDirtyFlag()) {
 				answer = 
 					QMessageBox::question(NULL, "Unsaved Changes", QString("There are unsaved changes in <i>%1</i>! Save?").arg(mDocument->getName()), 
-						QMessageBox::Yes | QMessageBox::No | QMessageBox::Abort | (multipleFiles ? QMessageBox::YesToAll | QMessageBox::NoToAll : 0));
+						QMessageBox::Yes | QMessageBox::No | QMessageBox::Abort | (multipleFiles ? QMessageBox::YesToAll | QMessageBox::NoToAll : QMessageBox::NoButton));
 				switch (answer) {
 				case QMessageBox::YesToAll:
 				case QMessageBox::Yes:
