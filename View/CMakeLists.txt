@@ -23,7 +23,7 @@ FolderSources(sources "" "" componentview.h editorsettingswidget.cpp editorsetti
 add_library(Maditor_View SHARED ${sources})
 
 include_directories(${CMAKE_SOURCE_DIR})
-add_precompiled_header(Maditor_View ${CMAKE_CURRENT_SOURCE_DIR}/maditorviewlib.h FORCEINCLUDE SOURCE_CXX maditorviewlib.cpp)
+add_precompiled_header(Maditor_View maditorviewlib.h FORCEINCLUDE SOURCE_CXX maditorviewlib.cpp)
 
 include_targets(Maditor_View Maditor_Model)
 

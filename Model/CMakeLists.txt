@@ -27,7 +27,7 @@ FolderSources(sources "" "" DialogManager.h maditormodelforward.h maditormodelli
 
 add_library(Maditor_Model SHARED ${sources})
 
-add_precompiled_header(Maditor_Model ${CMAKE_CURRENT_SOURCE_DIR}/maditormodellib.h FORCEINCLUDE SOURCE_CXX maditormodellib.cpp)
+add_precompiled_header(Maditor_Model maditormodellib.h FORCEINCLUDE SOURCE_CXX maditormodellib.cpp)
 
 target_link_libraries(Maditor_Model PUBLIC Qt5::Xml Qt5::Gui Qt5::Widgets ${QSCINTILLA2_LIBRARY})
 

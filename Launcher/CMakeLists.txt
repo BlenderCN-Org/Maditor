@@ -17,7 +17,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(Maditor_Launcher ${sources})
 
-add_precompiled_header(Maditor_Launcher ${CMAKE_CURRENT_SOURCE_DIR}/maditorlauncherlib.h FORCEINCLUDE SOURCE_CXX maditorlauncherlib.cpp)
+add_precompiled_header(Maditor_Launcher maditorlauncherlib.h FORCEINCLUDE SOURCE_CXX maditorlauncherlib.cpp)
 
 include_targets(Maditor_Launcher Maditor_Shared)
 include_library(Maditor_Launcher Madgine OgreMadgine MadgineServer)
