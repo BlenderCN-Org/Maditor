@@ -7,6 +7,8 @@ cmake_policy(SET CMP0022 NEW)
 
 set (CMAKE_CXX_STANDARD 14)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin)
+
 Project(Maditor)
 
 set(QT_PATH "" CACHE PATH "Path to Qt-find script")
