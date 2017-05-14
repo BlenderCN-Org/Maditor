@@ -8,10 +8,24 @@ PROJECT(%1)
 
 include(Dependencies.cmake)
 
-find_package(Interfaces REQUIRED)
-include_directories(${INTERFACES_INCLUDE_DIRS})
-find_package(Madgine REQUIRED)
-include_directories(${MADGINE_INCLUDE_DIRS})
+function(include_library lib)
+
+    find_package(${lib})
+                        
+    foreach (target ${ARGN})
+
+        get_target_property(dirs ${target} INTERFACE_INCLUDE_DIRECTORIES)
+        include_directories(${dirs})
+
+    endforeach()
+
+endfunction(include_library)
+
+include_library(Interfaces Interfaces)
+include_library(Madgine OgreMadgine MadgineServer)
+
+set(INTERFACES_LIBRARIES Interfaces)
+set(MADGINE_LIBRARIES OgreMadgine MadgineServer)
 
 %2
 

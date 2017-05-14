@@ -37,6 +37,8 @@ protected:
 	virtual void currentTabSet(ApplicationLog *win) override;
 	virtual void currentTabCleared(QWidget *w) override;
 
+	void setCurrentTab(QWidget *tab);
+
 	void selectConfig(QAction *action);
 	void selectConfigName(const QString &name);
 
@@ -61,6 +63,8 @@ private:
 	QMenu mCurrentConfigSelector;
 
 	QWidget *mCurrentWidget;
+
+	int mApplicationInitialActionCount;
 
 	std::list<QMetaObject::Connection> mAppConnections;
 };

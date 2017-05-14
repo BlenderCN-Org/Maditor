@@ -7,6 +7,8 @@
 
 #include "Model\Application\OgreWindow.h"
 
+#include "applicationlog.h"
+
 
 namespace Maditor {
 namespace View {
@@ -44,6 +46,8 @@ namespace View {
 
 		addWidget(QWidget::createWindowContainer(app->window()));
 
+		addWidget(new ApplicationLog(mApp));
+
 		setCurrentIndex(0);
 
 		connect(app, &Model::ApplicationLauncher::applicationSettingup, this, &ApplicationWindow::onApplicationSettingup);
@@ -51,12 +55,18 @@ namespace View {
 		connect(app, &Model::ApplicationLauncher::applicationStarted, this, &ApplicationWindow::onApplicationStarted);
 		connect(app, &Model::ApplicationLauncher::applicationStopped, this, &ApplicationWindow::onApplicationStopped);
 		connect(app, &Model::ApplicationLauncher::applicationShutdown, this, &ApplicationWindow::onApplicationShutdown);
+
+		setContextMenuPolicy(Qt::ActionsContextMenu);
+		QAction *toggleAction = new QAction("Toggle Log");
+		addAction(toggleAction);
+		connect(toggleAction, &QAction::triggered, this, &ApplicationWindow::toggleLog);
 	}
 
 
 	void ApplicationWindow::onApplicationSettingup()
 	{
-		setCurrentIndex(1);
+		if (currentIndex() != 2)
+			setCurrentIndex(1);
 	}
 
 	Model::ApplicationLauncher * ApplicationWindow::app()
@@ -66,22 +76,36 @@ namespace View {
 
 	void ApplicationWindow::onApplicationSetup()
 	{
-		setCurrentIndex(0);
+		if (currentIndex() != 2)
+			setCurrentIndex(0);
 	}
 
 	void ApplicationWindow::onApplicationStarted()
 	{
-		setCurrentIndex(1);
+		if (currentIndex() != 2)
+			setCurrentIndex(1);
 	}
 
 	void ApplicationWindow::onApplicationStopped()
 	{
-		setCurrentIndex(0);
+		if (currentIndex() != 2)
+			setCurrentIndex(0);
 	}
 
 	void ApplicationWindow::onApplicationShutdown() 
 	{
-		setCurrentIndex(0);
+		if (currentIndex() != 2)
+			setCurrentIndex(0);
+	}
+
+	void ApplicationWindow::toggleLog()
+	{
+		if (currentIndex() == 2) {
+			setCurrentIndex(mApp->isRunning() ? 1 : 0);
+		}
+		else {
+			setCurrentIndex(2);
+		}	
 	}
 
 } // namespace View

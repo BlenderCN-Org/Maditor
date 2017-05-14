@@ -31,6 +31,7 @@ namespace Maditor {
 			virtual void pauseImpl() = 0;
 			virtual void resizeWindowImpl();
 			virtual void pingImpl();
+			virtual void execLuaImpl(const std::string &);
 
 			void shutdownImpl2() {
 				shutdownImpl();
@@ -54,6 +55,10 @@ namespace Maditor {
 				onApplicationSetup();
 			}
 
+			void execLuaImpl2(const std::string &s) {
+				execLuaImpl(s);
+			}
+
 			Engine::Serialize::Action<decltype(&AppControl::shutdownImpl2), &AppControl::shutdownImpl2, Engine::Serialize::ActionPolicy::broadcast> shutdown;
 			Engine::Serialize::Action<decltype(&AppControl::onApplicationSetup2), &AppControl::onApplicationSetup2, Engine::Serialize::ActionPolicy::broadcast> applicationSetup;
 			Engine::Serialize::Action<decltype(&AppControl::startImpl2), &AppControl::startImpl2, Engine::Serialize::ActionPolicy::broadcast> start;
@@ -61,6 +66,7 @@ namespace Maditor {
 			Engine::Serialize::Action<decltype(&AppControl::pauseImpl2), &AppControl::pauseImpl2, Engine::Serialize::ActionPolicy::broadcast> pause;
 			Engine::Serialize::Action<decltype(&AppControl::resizeWindowImpl2), &AppControl::resizeWindowImpl2, Engine::Serialize::ActionPolicy::broadcast> resizeWindow;
 			Engine::Serialize::Action<decltype(&AppControl::pingImpl2), &AppControl::pingImpl2, Engine::Serialize::ActionPolicy::broadcast> ping;
+			Engine::Serialize::Action<decltype(&AppControl::execLuaImpl2), &AppControl::execLuaImpl2, Engine::Serialize::ActionPolicy::request> execLua;
 			
 		private:
 			SharedMemory *mMemory;

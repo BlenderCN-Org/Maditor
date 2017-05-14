@@ -46,6 +46,8 @@ namespace Maditor {
 
 			virtual void resizeWindowImpl() override;
 
+			virtual void execLuaImpl(const std::string &cmd) override;
+
 		private:
 			virtual size_t getSize() const override;
 

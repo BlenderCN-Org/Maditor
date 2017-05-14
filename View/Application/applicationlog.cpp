@@ -21,8 +21,16 @@ namespace View {
 	connect(app, &Model::ApplicationLauncher::applicationSetup, this, &ApplicationLog::enableInput);
 	connect(app, &Model::ApplicationLauncher::applicationShutdown, this, &ApplicationLog::disableInput);
 	connect(ui->clearButton, &QPushButton::clicked, this, &ApplicationLog::clear);
-	connect(ui->sendButton, &QPushButton::clicked, this, &ApplicationLog::sendLine);
-	connect(ui->stdinEdit, &QLineEdit::returnPressed, this, &ApplicationLog::sendLine);
+	if (app->isClient()) {
+		ui->sendStdinButton->deleteLater();
+		ui->stdinEdit->deleteLater();
+	}
+	else {
+		connect(ui->sendStdinButton, &QPushButton::clicked, this, &ApplicationLog::sendLine);
+		connect(ui->stdinEdit, &QLineEdit::returnPressed, this, &ApplicationLog::sendLine);
+	}
+	connect(ui->sendLuaButton, &QPushButton::clicked, this, &ApplicationLog::sendLua);
+	connect(ui->luaEdit, &QLineEdit::returnPressed, this, &ApplicationLog::sendLua);
 
 	mCursor = ui->log->textCursor();
 }
@@ -61,10 +69,20 @@ namespace View {
 
 	void ApplicationLog::setInputEnabled(bool b)
 	{
-		ui->stdinEdit->setEnabled(b);
-		ui->sendButton->setEnabled(b);
+		if (!mApp->isClient()) {
+			ui->stdinEdit->setEnabled(b);
+			ui->sendStdinButton->setEnabled(b);
+		}
+		ui->luaEdit->setEnabled(b);
+		ui->sendLuaButton->setEnabled(b);
 	}
 
+	void ApplicationLog::sendLua()
+	{
+		if (mApp->isLaunched())
+			mApp->sendLua(ui->luaEdit->text());
+		ui->luaEdit->clear();
+	}
 
 
 	void ApplicationLog::output(const QString & msg)

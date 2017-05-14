@@ -23,6 +23,7 @@ namespace Maditor {
 
 		void LogListener::messageLogged(const Ogre::String & message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String & logName, bool & skipThisMessage)
 		{
+			if (lml != Ogre::LML_CRITICAL) return;
 			Engine::Util::MessageType level;
 			switch (lml) {
 			case Ogre::LML_CRITICAL:

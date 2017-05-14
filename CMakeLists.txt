@@ -69,13 +69,13 @@ MESSAGE(STATUS ${files})
 FOREACH(item ${files})
 	if (item MATCHES "(.*)\\.in")
 		FILE(RELATIVE_PATH rel ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_MATCH_1})
-		configure_file(${item} ${CMAKE_CURRENT_BINARY_DIR}/${rel}) 
+		configure_file(${item} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/${rel}) 
 	else()
-		FILE(COPY ${item} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/templates)
+		FILE(COPY ${item} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/templates)
 	endif()
 ENDFOREACH(item)
 
 FILE(COPY templateProject DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-
+file(GENERATE OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/addons.txt INPUT ${CMAKE_CURRENT_SOURCE_DIR}/addons.txt.in)
 

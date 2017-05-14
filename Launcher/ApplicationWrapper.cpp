@@ -14,6 +14,8 @@
 
 #include "Shared\errorcodes.h"
 
+#include <iostream>
+
 namespace Maditor {
 	namespace Launcher {
 
@@ -36,9 +38,10 @@ namespace Maditor {
 
 		int ApplicationWrapper::start()
 		{
+
 			Shared::ApplicationInfo &appInfo = sharedMemory().mAppInfo;
-			appInfo.setAppId(masterId());
-			
+			appInfo.setAppId(masterId());	
+
 			Shared::BoostIPCManager *net = network();
 
 			if (!net->startServer()) {
@@ -144,6 +147,7 @@ namespace Maditor {
 						stop({});
 					}
 				}
+				mApplication->finalize();
 				delete mApplication;
 				mApplication = nullptr;
 			}
@@ -228,6 +232,13 @@ namespace Maditor {
 		void ApplicationWrapper::resizeWindowImpl()
 		{
 			mApplication->resizeWindow();
+		}
+
+		void ApplicationWrapper::execLuaImpl(const std::string & cmd)
+		{
+			std::cout << cmd << std::endl;
+			Engine::Scripting::Parsing::ScriptParser::getSingleton().executeString(cmd);
+			std::cout.flush();
 		}
 
 		size_t ApplicationWrapper::getSize() const

@@ -46,6 +46,7 @@ namespace Maditor {
 			bool isLauncher();
 
 			void sendCommand(const QString &cmd);
+			void sendLua(const QString &cmd);
 
 		protected:
 			virtual void timerEvent(QTimerEvent * te) override;

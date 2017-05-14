@@ -23,6 +23,8 @@ private slots:
 	void onApplicationStopped();
 	void onApplicationShutdown();
 
+	void toggleLog();
+
 private:
 	Model::ApplicationLauncher *mApp;
 

@@ -46,12 +46,47 @@ namespace Maditor {
 
 			connect(&mPingTimer, &QTimer::timeout, this, &ApplicationLauncher::timeout);
 
+			SECURITY_ATTRIBUTES sa;
+
+			sa.nLength = sizeof(sa);
+			sa.bInheritHandle = true;
+			sa.lpSecurityDescriptor = NULL;
+
+			if (!CreatePipe(&mChildOutRead, &mChildOutWrite, &sa, 0))
+				return;
+
+			if (!SetHandleInformation(mChildOutRead, HANDLE_FLAG_INHERIT, 0))
+				return;
+
+			if (!CreatePipe(&mChildInRead, &mChildInWrite, &sa, 0))
+				return;
+
+			if (!SetHandleInformation(mChildInWrite, HANDLE_FLAG_INHERIT, 0))
+				return;
+
 			postConstruct();
 		}
 
 		ApplicationLauncher::~ApplicationLauncher()
 		{
 			kill(Shared::KILL_CLEANUP);
+
+			if (mChildInRead) {
+				CloseHandle(mChildInRead);
+				mChildInRead = NULL;
+			}
+			if (mChildInWrite) {
+				CloseHandle(mChildInWrite);
+				mChildInWrite = NULL;
+			}
+			if (mChildOutRead) {
+				CloseHandle(mChildOutRead);
+				mChildOutRead = NULL;
+			}
+			if (mChildOutWrite) {
+				CloseHandle(mChildOutWrite);
+				mChildOutWrite = NULL;
+			}
 		}
 
 		void ApplicationLauncher::destroy()
@@ -98,23 +133,7 @@ namespace Maditor {
 				cmd = mConfig->customExecutableCmd().toStdString();
 			}
 
-			SECURITY_ATTRIBUTES sa;
 
-			sa.nLength = sizeof(sa);
-			sa.bInheritHandle = true;
-			sa.lpSecurityDescriptor = NULL;
-
-			if (!CreatePipe(&mChildOutRead, &mChildOutWrite, &sa, 0))
-				return;
-
-			if (!SetHandleInformation(mChildOutRead, HANDLE_FLAG_INHERIT, 0))
-				return;
-
-			if (!CreatePipe(&mChildInRead, &mChildInWrite, &sa, 0))
-				return;
-
-			if (!SetHandleInformation(mChildInWrite, HANDLE_FLAG_INHERIT, 0))
-				return;
 
 
 			STARTUPINFO si;
@@ -153,7 +172,7 @@ namespace Maditor {
 			emit processStarted(mPID, appInfo);
 			mUtil->stats()->setProcess(mHandle);
 
-			if (mConfig->launcher() == ApplicationConfig::MADITOR_LAUNCHER) {				
+			if (isLauncher()) {				
 				Shared::BoostIPCManager *net = network();
 				size_t id = appInfo.waitForAppId();
 				if (!id) {
@@ -161,7 +180,7 @@ namespace Maditor {
 					return;
 				}
 				setStaticSlaveId(id);
-				if (!net->connect(1000)) {
+				if (!net->connect(10000)) {
 					kill(Shared::KILL_FAILED_CONNECTION);
 					return;
 				}
@@ -170,8 +189,6 @@ namespace Maditor {
 
 				mWaitingForLoader = true;
 
-				if (!debug)
-					pingImpl();
 			}
 			else {
 				onApplicationSetup();
@@ -206,6 +223,11 @@ namespace Maditor {
 		}
 		void ApplicationLauncher::pauseImpl()
 		{
+		}
+
+		void ApplicationLauncher::sendLua(const QString & cmd)
+		{
+			execLua(cmd.toStdString(), {});
 		}
 
 		OgreWindow * ApplicationLauncher::window()
@@ -271,21 +293,30 @@ namespace Maditor {
 					mWaitingForLoader = false;
 				}		
 
-				DWORD dwRead;
-				CHAR buffer[256];
-
-				bool result = PeekNamedPipe(mChildOutRead, NULL, 0, NULL, &dwRead, NULL);
-				assert(result);
-
-				if (dwRead > 0){
-					result = ReadFile(mChildOutRead, buffer, std::min(sizeof(buffer)-1, size_t(dwRead)), &dwRead, NULL);
-					assert(result && dwRead > 0);
-					buffer[dwRead] = '\0';
-					emit outputReceived(buffer);
-				}
-
 				checkProcess();
 			}
+
+			DWORD dwRead;
+			CHAR buffer[256];
+
+			QStringList msg;
+
+			
+			bool result = PeekNamedPipe(mChildOutRead, NULL, 0, NULL, &dwRead, NULL);
+			assert(result);
+
+			while(dwRead > 0) {
+				DWORD bytesRead;
+				result = ReadFile(mChildOutRead, buffer, std::min(sizeof(buffer) - 1, size_t(dwRead)), &bytesRead, NULL);
+				assert(result && bytesRead > 0);
+				buffer[bytesRead] = '\0';
+				msg << QString(buffer);
+				dwRead -= bytesRead;
+			}
+
+			if (!msg.empty())
+				emit outputReceived(msg.join(""));
+
 		}
 
 		void ApplicationLauncher::kill()
@@ -338,22 +369,7 @@ namespace Maditor {
 				emit applicationShutdown();
 			}
 			network()->close();
-			if (mChildInRead) {
-				CloseHandle(mChildInRead);
-				mChildInRead = NULL;
-			}
-			if (mChildInWrite) {
-				CloseHandle(mChildInWrite);
-				mChildInWrite = NULL;
-			}
-			if (mChildOutRead) {
-				CloseHandle(mChildOutRead);
-				mChildOutRead = NULL;
-			}
-			if (mChildOutWrite) {
-				CloseHandle(mChildOutWrite);
-				mChildOutWrite = NULL;
-			}
+
 			if (mAboutToBeDestroyed)
 				destroy();
 		}
@@ -379,6 +395,8 @@ namespace Maditor {
 
 		void ApplicationLauncher::onApplicationSetup()
 		{
+			if (isLauncher() && !sharedMemory().mAppInfo.mDebugged)
+				pingImpl();
 			mSetup = true;
 			emit applicationSetup();
 		}

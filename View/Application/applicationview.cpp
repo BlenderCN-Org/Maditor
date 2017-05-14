@@ -48,6 +48,8 @@ namespace View {
 			ui->actionStop
 		});
 
+		mApplicationInitialActionCount = ui->menuApplication->actions().count();
+
 		connect(&mCurrentConfigSelector, &QMenu::triggered, this, &ApplicationView::selectConfig);
 		connect(mCurrentConfigSelector.menuAction(), &QAction::triggered, this, &ApplicationView::createCurrentConfig);
 
@@ -123,20 +125,35 @@ namespace View {
 	void ApplicationView::currentTabSet(ApplicationWindow * win)
 	{
 		setModel(win->app());
-		mCurrentWidget = win;
+		setCurrentTab(win);
 	}
 
 	void ApplicationView::currentTabSet(ApplicationLog * win)
 	{
 		setModel(win->app());
-		mCurrentWidget = win;
+		setCurrentTab(win);
 	}
-
+	
 	void ApplicationView::currentTabCleared(QWidget * w)
 	{
 		if (mCurrentWidget != w) {
 			clearModel();
 		}
+	}
+
+	void ApplicationView::setCurrentTab(QWidget * tab)
+	{
+		mCurrentWidget = tab;
+
+		QMenu *menu = mUi->menuApplication;
+		for (QAction *action : menu->actions().mid(mApplicationInitialActionCount)) {
+			menu->removeAction(action);
+		}
+
+		for (QAction *a : tab->actions()) {
+			menu->addAction(a);
+		}
+
 	}
 
 	void ApplicationView::selectConfig(QAction *action)

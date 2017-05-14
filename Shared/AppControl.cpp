@@ -58,5 +58,9 @@ void AppControl::pingImpl()
 {
 }
 
+void AppControl::execLuaImpl(const std::string &)
+{
+}
+
 	}
 }

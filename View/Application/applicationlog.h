@@ -28,6 +28,8 @@ private slots:
 	void disableInput();
 	void setInputEnabled(bool b);
 
+	void sendLua();
+
 private:
     Ui::ApplicationLog *ui;
 
