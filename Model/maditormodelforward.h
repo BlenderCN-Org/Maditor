@@ -36,6 +36,9 @@ namespace Maditor {
 
 		class DialogManager;
 
+		class Inspector;
+		class ScopeWrapper;
+
 		namespace Generators {
 			class CmakeProject;
 			class CmakeGenerator;

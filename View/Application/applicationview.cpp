@@ -87,6 +87,7 @@ namespace View {
 		mUi->modulesWidget->setModel(app->moduleLoader());
 		mUi->performanceWidget->setModel(app->util()->profiler());
 		mUi->appStatsWidget->setModel(app->util()->stats());
+		mUi->inspectorWidget->setModel(app->inspector());
 
 		mAppConnections.emplace_back(connect(app, &Model::ApplicationLauncher::applicationSettingup, this, &ApplicationView::onApplicationSettingup));
 		mAppConnections.emplace_back(connect(app, &Model::ApplicationLauncher::applicationSetup, this, &ApplicationView::onApplicationSetup));

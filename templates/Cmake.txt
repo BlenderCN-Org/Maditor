@@ -10,7 +10,7 @@ set (sources %2)
 if (NOT sources STREQUAL "")  
     add_library(%1 SHARED ${sources})
 
-    target_link_libraries (%1 ${MADGINE_LIBRARIES} ${INTERFACES_LIBRARIES})
+    target_link_libraries (%1 ${MADGINE_LIBRARIES})
 
     set_target_properties(%1 PROPERTIES LINKER_LANGUAGE CXX)
     

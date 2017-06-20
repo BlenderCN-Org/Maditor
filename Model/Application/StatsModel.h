@@ -4,6 +4,10 @@
 #include "Serialize\Container\observed.h"
 #include "Serialize\Container\action.h"
 
+#include <Windows.h>
+#undef min
+#undef NO_ERROR
+
 namespace Maditor {
 	namespace Model {
 

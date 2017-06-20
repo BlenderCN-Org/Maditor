@@ -10,6 +10,7 @@
 #include <boost\interprocess\ipc\message_queue.hpp>
 #include <boost\interprocess\sync\interprocess_mutex.hpp>
 #include <boost\interprocess\containers\deque.hpp>
+#undef NO_ERROR
 
 namespace Maditor {
 	namespace Shared {

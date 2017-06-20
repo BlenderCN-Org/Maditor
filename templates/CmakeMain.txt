@@ -21,11 +21,9 @@ function(include_library lib)
 
 endfunction(include_library)
 
-include_library(Interfaces Interfaces)
-include_library(Madgine OgreMadgine MadgineServer)
+include_library(Madgine Interfaces OgreMadgine MadgineServer)
 
-set(INTERFACES_LIBRARIES Interfaces)
-set(MADGINE_LIBRARIES OgreMadgine MadgineServer)
+set(MADGINE_LIBRARIES OgreMadgine MadgineServer Interfaces)
 
 %2
 

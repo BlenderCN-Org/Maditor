@@ -118,7 +118,7 @@ namespace Maditor {
 
 			mLoader->setup(project + "debug/bin/", project + "debug/runtime/");
 			while (mLoader->receiving() && mRunning && net->clientCount() == 1) {
-				net->receiveMessages();
+				net->sendAndReceiveMessages();
 			}
 			if (net->clientCount() != 1 || !mRunning) {
 				//net->close();
@@ -136,7 +136,7 @@ namespace Maditor {
 				applicationSetup({});
 
 				while (mRunning) {
-					net->receiveMessages();
+					net->sendAndReceiveMessages();
 					if (net->clientCount() != 1) {
 						//net->close();
 						return Shared::MADITOR_DISCONNECTED;
@@ -184,7 +184,7 @@ namespace Maditor {
 
 			mUtil->profiler()->startProfiling("Rendering");
 
-			network()->receiveMessages();
+			network()->sendAndReceiveMessages();
 			if (network()->clientCount() != 1) {
 				shutdownImpl();
 			}

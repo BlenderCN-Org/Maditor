@@ -36,13 +36,13 @@ namespace Maditor {
 			return buffered_streambuf::isClosed();
 		}
 
-		bool BoostIPCBuffer::handleError()
+		Engine::Serialize::StreamError BoostIPCBuffer::getError()
 		{
 			switch (mError) {
 			case WOULD_BLOCK:
-				return true;
+				return Engine::Serialize::WOULD_BLOCK;
 			default:
-				return false;
+				return Engine::Serialize::UNKNOWN_ERROR;
 			}
 		}
 
@@ -85,9 +85,9 @@ namespace Maditor {
 			}
 		}
 
-		void BoostIPCBuffer::close()
+		void BoostIPCBuffer::close(Engine::Serialize::StreamError error)
 		{
-			buffered_streambuf::close();
+			buffered_streambuf::close(error);
 			mConnection.reset();
 		}
 

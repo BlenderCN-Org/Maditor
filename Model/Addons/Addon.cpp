@@ -3,6 +3,7 @@
 #include "Addon.h"
 
 #include <Windows.h>
+#undef NO_ERROR
 
 namespace Maditor {
 	namespace Addons {

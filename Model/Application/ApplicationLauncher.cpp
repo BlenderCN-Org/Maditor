@@ -245,6 +245,11 @@ namespace Maditor {
 			return mUtil.ptr();
 		}
 
+		Inspector * ApplicationLauncher::inspector()
+		{
+			return mInspector.ptr();
+		}
+
 		DWORD ApplicationLauncher::pid()
 		{
 			return mPID;
@@ -287,7 +292,7 @@ namespace Maditor {
 		void ApplicationLauncher::timerEvent(QTimerEvent * te)
 		{
 			if (mPID) {
-				network()->receiveMessages();
+				network()->sendAndReceiveMessages();
 				if (mWaitingForLoader && mLoader->done()) {
 					mLoader->setup2();
 					mWaitingForLoader = false;

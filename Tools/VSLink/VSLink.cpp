@@ -3,6 +3,7 @@
 #include "VSLink.h"
 
 #include <Windows.h>
+#undef NO_ERROR
 
 #include <qdebug.h>
 

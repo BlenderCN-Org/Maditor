@@ -13,6 +13,8 @@
 
 #include "App\framelistener.h"
 
+#include "Inspector.h"
+
 namespace Maditor {
 
 	
@@ -54,6 +56,7 @@ namespace Maditor {
 			Engine::Serialize::Serialized<LogListener> mLog;
 			Engine::Serialize::Serialized<ModuleLoader> mLoader;
 			Engine::Serialize::Serialized<Util> mUtil;
+			Engine::Serialize::Serialized<Inspector> mInspector;
 
 			Engine::App::OgreAppSettings mSettings;
 			Engine::App::OgreApplication *mApplication;

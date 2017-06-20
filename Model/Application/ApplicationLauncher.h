@@ -7,6 +7,7 @@
 #include "LogReceiver.h"
 #include "Model\Documents\Document.h"
 #include "Shared\errorcodes.h"
+#include "Inspector\Inspector.h"
 
 namespace Maditor {
 
@@ -35,6 +36,7 @@ namespace Maditor {
 			OgreWindow *window();
 			ModuleLoader *moduleLoader();
 			UtilModel *util();
+			Inspector *inspector();
 
 			DWORD pid();
 
@@ -103,6 +105,7 @@ namespace Maditor {
 			Engine::Serialize::Serialized<LogReceiver> mLog;
 			Engine::Serialize::Serialized<ModuleLoader> mLoader;
 			Engine::Serialize::Serialized<UtilModel> mUtil;
+			Engine::Serialize::Serialized<Inspector> mInspector;
 			
 			bool mWaitingForLoader;
 
