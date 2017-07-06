@@ -21,4 +21,7 @@ Simplifies Madgine-Game Development:
     <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
     <Asset Type="NativeVisualizer" Path="Madgine.natvis"/>
   </Assets>
+  <Prerequisites>
+    <Prerequisite Id="Microsoft.VisualStudio.Component.VC.CMake.Project" Version="[15.0.26208.0,16.0)" DisplayName="Visual C++-Tools für CMake" />
+  </Prerequisites>
 </PackageManifest>
