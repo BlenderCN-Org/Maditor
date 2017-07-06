@@ -97,7 +97,7 @@ namespace Maditor {
 			if (mServer) {
 				if (mIsServer) {
 					while (SharedConnectionPtr conn = mServer->poll()) {
-						addMasterStream(BoostIPCStream(std::move(conn), false, *this, createStreamId()));
+						BoostIPCStream &stream = addMasterStream(BoostIPCStream(std::move(conn), false, *this, createStreamId()));
 					}
 				}
 			}
@@ -107,8 +107,14 @@ namespace Maditor {
 			if (mServer) {
 				if (mIsServer) {
 					if (SharedConnectionPtr conn = mServer->poll(timeout)) {
-						addMasterStream(BoostIPCStream(std::move(conn), false, *this, createStreamId()));
-						return true;
+						BoostIPCStream &stream = addMasterStream(BoostIPCStream(std::move(conn), false, *this, createStreamId()));
+						if (!sendAllMessages(&stream, timeout)) {
+							removeMasterStream(&stream);
+							return false;
+						}
+						else {
+							return true;
+						}
 					}
 				}
 			}
@@ -149,7 +155,7 @@ namespace Maditor {
 		void BoostIPCManager::removeMasterStream(Engine::Serialize::BufferedInOutStream * stream)
 		{
 			SerializeManager::removeMasterStream(stream);
-			mStreams.erase(stream->id());
+			assert(mStreams.erase(stream->id()) == 1);
 		}
 
 		BoostIPCStream &BoostIPCManager::addMasterStream(BoostIPCStream && stream, bool sendState)
@@ -182,7 +188,7 @@ namespace Maditor {
 			mServer->enqueue(conn, timeout);
 
 			mSlaveStream = new BoostIPCStream(std::move(conn), true, *this);
-			if (!setSlaveStream(mSlaveStream, true, timeout)) {
+			if (setSlaveStream(mSlaveStream, true, timeout) != Engine::Serialize::NO_ERROR) {
 				delete mSlaveStream;
 				mSlaveStream = 0;
 				mServer = nullptr;

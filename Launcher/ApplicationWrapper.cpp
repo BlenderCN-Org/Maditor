@@ -14,6 +14,8 @@
 
 #include "Shared\errorcodes.h"
 
+#include "Scripting/Types/globalscope.h"
+
 #include <iostream>
 
 namespace Maditor {
@@ -175,7 +177,7 @@ namespace Maditor {
 
 		void ApplicationWrapper::onApplicationSetup()
 		{
-
+			mInspector->init();
 		}
 
 		bool ApplicationWrapper::frameRenderingQueued(float timeSinceLastFrame)
@@ -237,7 +239,8 @@ namespace Maditor {
 		void ApplicationWrapper::execLuaImpl(const std::string & cmd)
 		{
 			std::cout << cmd << std::endl;
-			Engine::Scripting::Parsing::ScriptParser::getSingleton().executeString(cmd);
+			Engine::Scripting::GlobalScopeBase *scope = mApplication ? mApplication->globalScope() : mServer->globalScope();
+			scope->executeString(cmd);
 			std::cout.flush();
 		}
 

@@ -38,6 +38,7 @@ namespace Maditor {
 
 		class Inspector;
 		class ScopeWrapper;
+		class ScopeWrapperItem;
 
 		namespace Generators {
 			class CmakeProject;

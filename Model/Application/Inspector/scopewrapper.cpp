@@ -6,38 +6,75 @@
 namespace Maditor {
 	namespace Model {
 
-		ValueItem::ValueItem(ScopeWrapper * parent, const std::string & name, const Engine::ValueType & value) :
-			TreeUnitItem(parent),
+		ValueWrapper::ValueWrapper(const std::string & name, const Engine::ValueType & value) :
 			mName(name),
 			mValue(value)
 		{
+		}
+
+		std::string ValueWrapper::toString() const
+		{
+			return mValue.toString();
+		}
+
+		const std::string &ValueWrapper::name() const
+		{
+			return mName;
+		}
+
+		ValueItem::ValueItem(ScopeWrapperItem * parent, ValueWrapper *val) :
+			TreeUnitItem(parent),
+			mValue(val)
+		{
+
 		}
 
 		QVariant ValueItem::data(int col) const
 		{
 			switch (col) {
 			case 0:
-				return QString::fromStdString(mName);
+				return QString::fromStdString(mValue->name());
 			case 1:
-				return QString::fromStdString(mValue.toString());
+				return QString::fromStdString(mValue->toString());
 			}
 			return QVariant();
 		}
 
-		ScopeWrapper::ScopeWrapper(Inspector * parent) :
-			TreeUnitItem(static_cast<TreeUnitItemBase*>(parent)),
-			mName("Global"),
-			mInspector(parent),
-			mPtr(nullptr)
+		ScopeWrapperItem::ScopeWrapperItem(Inspector * parent, const std::shared_ptr<ScopeWrapper> &scope) :
+			TreeUnitItem(static_cast<TreeUnitItemBase*>(parent)),			
+			mScope(scope)
 		{
+			scope->addItem(this);
 		}
 
-		ScopeWrapper::ScopeWrapper(ScopeWrapper * parent, Engine::InvScopePtr ptr, const std::string & name) :
+		ScopeWrapperItem::ScopeWrapperItem(ScopeWrapperItem * parent, const std::shared_ptr<ScopeWrapper> &scope) :
 			TreeUnitItem(parent),
-			mPtr(ptr),
-			mName(name),
-			mInspector(parent->mInspector)
+			mScope(scope)
 		{
+			scope->addItem(this);
+		}
+
+		ScopeWrapperItem::~ScopeWrapperItem()
+		{
+			mScope->removeItem(this);
+		}
+
+		int ScopeWrapper::childCount() const
+		{
+			return mChildren.size();
+		}
+
+		int ScopeWrapper::valueCount() const
+		{
+			return mValues.size();
+		}
+
+		void ScopeWrapper::clear()
+		{
+			mValues.clear();
+			mChildren.clear();
+			for (ScopeWrapperItem *item : mItems)
+				item->clear();
 		}
 
 		Engine::InvScopePtr ScopeWrapper::ptr() const
@@ -45,18 +82,27 @@ namespace Maditor {
 			return mPtr;
 		}
 
-		int ScopeWrapper::childCount() const
+		int ScopeWrapperItem::childCount() const
 		{
-			mInspector->requestUpdate(const_cast<ScopeWrapper*>(this));
-			return mChildren.size() + mValues.size();
+			return mScope->childCount() + mScope->valueCount();
 		}
 
-		TreeItem * ScopeWrapper::child(int i)
+		void ScopeWrapper::addItem(ScopeWrapperItem * item)
+		{
+			mItems.push_back(item);
+		}
+
+		void ScopeWrapper::removeItem(ScopeWrapperItem * item)
+		{
+			mItems.remove(item);
+		}
+
+		TreeItem * ScopeWrapperItem::child(int i)
 		{
 			if (i < mChildren.size()) {
 				auto it = mChildren.begin();
 				std::advance(it, i);
-				return &it->second;
+				return &*it;
 			}
 			else {
 				auto it = mValues.begin();
@@ -65,34 +111,82 @@ namespace Maditor {
 			}
 		}
 
-		QVariant ScopeWrapper::data(int col) const
+		QVariant ScopeWrapperItem::data(int col) const
 		{
 			switch (col) {
 			case 0:
-				return QString::fromStdString(mName);
+				return QString::fromStdString(mScope->name());
 			}
 			return QVariant();
+		}
+
+		const std::string &ScopeWrapper::name() const
+		{
+			return mName;
+		}
+
+		void ScopeWrapperItem::clearValues()
+		{
+			mValues.clear();
+		}
+
+		void ScopeWrapperItem::clear()
+		{
+			mValues.clear();
+			mChildren.clear();
+		}
+
+		ScopeWrapper::ScopeWrapper(Inspector * inspector, Engine::InvScopePtr ptr, const std::string & name) :
+			mInspector(inspector),
+			mPtr(ptr),
+			mName(name)
+		{
 		}
 
 		void ScopeWrapper::update(const std::map<std::string, Engine::ValueType>& data)
 		{
 			mValues.clear();
+			for (ScopeWrapperItem *item : mItems)
+				item->clearValues();
 			std::set<Engine::InvScopePtr> ptrs;
 			for (const std::pair<const std::string, Engine::ValueType> &p : data) {
 				if (p.second.isInvPtr()) {
-					mChildren.try_emplace(p.second.asInvPtr(), this, p.second.asInvPtr(), p.first);
+					std::shared_ptr<ScopeWrapper> scope = mInspector->getScope(p.second.asInvPtr(), p.first);
+					if (mChildren.try_emplace(p.second.asInvPtr(), scope).second) {
+						for (ScopeWrapperItem *item : mItems) {
+							item->addChild(scope);
+						}
+					}
 					ptrs.insert(p.second.asInvPtr());
 				}
 				else {
-					mValues.emplace_back(this, p.first, p.second);
+					mValues.emplace_back(p.first, p.second);
 				}
 			}
+			int i = 0;
 			for (auto it = mChildren.begin(); it != mChildren.end(); ){
-				if (ptrs.find(it->first) == ptrs.end())
+				if (ptrs.find(it->first) == ptrs.end()) {					
+					//mInspector->beginRemoveRows(getIndex(), i, i);
 					it = mChildren.erase(it);
-				else
+					//mInspector->endRemoveRows();
+				}
+				else {
 					++it;
+					++i;
+				}
 			}
+		}
+
+		Inspector * ScopeWrapper::inspector()
+		{
+			return mInspector;
+		}
+
+		void ScopeWrapperItem::addChild(const std::shared_ptr<ScopeWrapper>& scope)
+		{
+			mScope->inspector()->beginInsertRows(getIndex(), mChildren.size(), mChildren.size());
+			mChildren.emplace_back(this, scope);
+			mScope->inspector()->endInsertRows();
 		}
 
 	}

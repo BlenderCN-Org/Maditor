@@ -2,7 +2,6 @@
 
 #include "AppStats.h"
 
-#include <iostream>
 #include "App\application.h"
 
 namespace Maditor {

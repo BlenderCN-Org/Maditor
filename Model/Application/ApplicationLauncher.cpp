@@ -15,8 +15,6 @@
 
 #include "Project\Project.h"
 
-#include <iostream>
-
 namespace Maditor {
 	namespace Model {
 		ApplicationLauncher::ApplicationLauncher(ApplicationConfig *config, const QString &uniqueName) :
@@ -362,6 +360,7 @@ namespace Maditor {
 				while (network()->getSlaveStream() && network()->getSlaveStream()->isMessageAvailable())
 					network()->receiveMessages();
 
+				mInspector->reset();
 				mLoader->reset();
 				mWaitingForLoader = false;
 				mUtil->reset();		
@@ -402,6 +401,7 @@ namespace Maditor {
 		{
 			if (isLauncher() && !sharedMemory().mAppInfo.mDebugged)
 				pingImpl();
+			mInspector->start();
 			mSetup = true;
 			emit applicationSetup();
 		}

@@ -7,12 +7,16 @@ cmake_policy(SET CMP0049 OLD)
 PROJECT(Maditor_Launcher)
 
 
+set(lua_include "" CACHE PATH "")
+set(lua_lib "" CACHE FILEPATH "")
+
+
+
 set (sources "")
 FolderSources(sources "" "" ApplicationWrapper.cpp ApplicationWrapper.h InputWrapper.cpp InputWrapper.h Inspector.cpp Inspector.h maditorlauncherlib.cpp maditorlauncherlib.h maditorlauncherforward.h main.cpp ModuleLoader.cpp ModuleLoader.h)
-	FolderSources(sources "" Util AppStats.cpp AppStats.h LogListener.cpp LogListener.h Util.cpp Util.h)
+	FolderSources(sources "" Util AppStats.cpp AppStats.h LogListener.cpp LogListener.h Util.cpp Util.h)	
 
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${lua_include})
 
 
 add_executable(Maditor_Launcher ${sources})
@@ -21,3 +25,5 @@ add_precompiled_header(Maditor_Launcher maditorlauncherlib.h FORCEINCLUDE SOURCE
 
 include_targets(Maditor_Launcher Maditor_Shared)
 include_library(Maditor_Launcher Madgine OgreMadgine MadgineServer)
+
+target_link_libraries (Maditor_Launcher PRIVATE ${lua_lib})

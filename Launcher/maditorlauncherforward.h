@@ -7,6 +7,7 @@ namespace Maditor {
 
 		class InputWrapper;
 		class ModuleLoader;
+		class Inspector;
 
 	}
 }
