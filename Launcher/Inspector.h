@@ -19,6 +19,9 @@ namespace Maditor {
 			virtual bool init() override;
 			virtual void finalize() override;
 
+			static InspectorThreadInstance *getInstance(lua_State *thread);
+			using Engine::Scripting::GlobalAPIComponent<InspectorThreadInstance>::globalScope;
+
 		protected:
 			void update(Engine::InvScopePtr ptr, Inspector *inspector);
 
@@ -26,14 +29,14 @@ namespace Maditor {
 			Engine::SignalSlot::Slot<decltype(&InspectorThreadInstance::update), &InspectorThreadInstance::update> mUpdate;
 
 			static std::mutex sMappingsMutex;
-			static std::map<Engine::App::Application*, InspectorThreadInstance*> sMappings;
+			static std::map<lua_State *, InspectorThreadInstance*> sMappings;
 
 			lua_State *mState;
 		};
 
 		class Inspector : public Engine::Serialize::SerializableUnit<Inspector> {
 		public:
-			Inspector();
+			Inspector(Engine::Serialize::TopLevelSerializableUnitBase *topLevel);
 
 			void init();
 			void getUpdate(Engine::InvScopePtr ptr, InspectorThreadInstance *thread);

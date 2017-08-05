@@ -8,6 +8,8 @@
 #define MADITOR_SHARED_EXPORT __declspec(dllimport)
 #endif
 
+#define _HAS_AUTO_PTR_ETC 1
+
 #include "maditorsharedforward.h"
 
 

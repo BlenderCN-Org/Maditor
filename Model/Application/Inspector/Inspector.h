@@ -11,7 +11,7 @@ namespace Maditor {
 		class Inspector : public TreeUnit<Inspector> {
 			Q_OBJECT
 		public:
-			Inspector();
+			Inspector(Engine::Serialize::TopLevelSerializableUnitBase *topLevel);
 
 			void start();
 			void reset();

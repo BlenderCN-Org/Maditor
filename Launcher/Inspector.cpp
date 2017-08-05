@@ -18,7 +18,7 @@ namespace Maditor {
 	namespace Launcher {
 
 		std::mutex InspectorThreadInstance::sMappingsMutex;
-		std::map<Engine::App::Application*, InspectorThreadInstance *> InspectorThreadInstance::sMappings;
+		std::map<lua_State*, InspectorThreadInstance *> InspectorThreadInstance::sMappings;
 
 		const luaL_Reg Inspector::sMarkMetafunctions[] =
 		{
@@ -47,12 +47,24 @@ namespace Maditor {
 			return mState;
 		}
 
+		InspectorThreadInstance * InspectorThreadInstance::getInstance(lua_State * thread)
+		{
+			InspectorThreadInstance *result = nullptr;
+			sMappingsMutex.lock();
+			auto it = sMappings.find(thread);
+			if (it != sMappings.end()) {
+				result = it->second;
+			}
+			sMappingsMutex.unlock();
+			return result;
+		}
+
 		bool InspectorThreadInstance::init()
 		{
 			if (Engine::Scripting::GlobalAPIComponent<InspectorThreadInstance>::init()) {
 				mState = Engine::App::Application::getSingleton().lua_state();
 				sMappingsMutex.lock();
-				sMappings[&Engine::App::Application::getSingleton()] = this;
+				sMappings[mState] = this;
 				sMappingsMutex.unlock();
 				return true;
 			}
@@ -64,7 +76,7 @@ namespace Maditor {
 		void InspectorThreadInstance::finalize()
 		{
 			sMappingsMutex.lock();
-			sMappings.erase(&Engine::App::Application::getSingleton());
+			sMappings.erase(mState);
 			sMappingsMutex.unlock();
 			Engine::Scripting::GlobalAPIComponent<InspectorThreadInstance>::finalize();
 		}
@@ -79,7 +91,8 @@ namespace Maditor {
 			inspector->getUpdate(ptr, this);
 		}
 
-		Inspector::Inspector()
+		Inspector::Inspector(Engine::Serialize::TopLevelSerializableUnitBase *topLevel) :
+			SerializableUnit(topLevel)
 		{
 			 
 		}
@@ -97,19 +110,36 @@ namespace Maditor {
 
 			Engine::Serialize::SerializableMap<std::string, Engine::ValueType> attributes;
 			for (std::unique_ptr<Engine::Scripting::KeyValueIterator> it = scope->iterator(); !it->ended(); ++(*it)) {
-				std::pair<bool, Engine::ValueType> value = it->value();
-				if (value.first) {
-					if (value.second.isScope()) {
-						attributes.try_emplace(it->key(), Engine::ValueType(Engine::InvScopePtr(value.second.asScope())));
+
+				Engine::ValueType value = it->value();
+				if (value.is<Engine::Scripting::ScopeBase*>()) {
+					attributes.try_emplace(it->key(), Engine::ValueType(Engine::InvScopePtr(value.as<Engine::Scripting::ScopeBase*>())));
+					mItemsMutex.lock();
+					auto it = mItems.find(value.as<Engine::Scripting::ScopeBase*>());
+					if (it == mItems.end()) {
+						markItem(value.as<Engine::Scripting::ScopeBase*>(), thread);
+					}
+					mItemsMutex.unlock();
+				}
+				else if (value.is<Engine::Scripting::LuaThread>()) {
+					lua_State *luaThread = value.as<Engine::Scripting::LuaThread>();
+					InspectorThreadInstance *otherThread = InspectorThreadInstance::getInstance(luaThread);
+					if (otherThread) {
+						Engine::Scripting::ScopeBase *global = otherThread->globalScope();
+						attributes.try_emplace(it->key(), Engine::ValueType(Engine::InvScopePtr(global)));
 						mItemsMutex.lock();
-						auto it = mItems.find(value.second.asScope());
+						auto it = mItems.find(global);
 						if (it == mItems.end()) {
-							markItem(value.second.asScope(), thread);
+							markItem(global, otherThread);
 						}
 						mItemsMutex.unlock();
 					}
-					else
-						attributes.try_emplace(it->key(), value.second);
+				}
+				else if (value.is<Engine::Scripting::ApiMethod>()) {
+
+				}
+				else {
+					attributes.try_emplace(it->key(), value);
 				}
 			}
 			mItemUpdate->queue(ptr, attributes);

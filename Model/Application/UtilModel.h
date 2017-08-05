@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Serialize\toplevelserializableunit.h"
+#include "Serialize\serializableunit.h"
 
 #include "Serialize\Container\serialized.h"
 
@@ -10,10 +10,10 @@
 namespace Maditor {
 	namespace Model {
 
-		class MADITOR_MODEL_EXPORT UtilModel : public Engine::Serialize::TopLevelSerializableUnit<UtilModel> {
+		class MADITOR_MODEL_EXPORT UtilModel : public Engine::Serialize::SerializableUnit<UtilModel> {
 		public:
 
-			UtilModel();
+			UtilModel(Engine::Serialize::TopLevelSerializableUnitBase *topLevel);
 			UtilModel(const UtilModel &) = delete;
 
 			ProfilerModel *profiler();

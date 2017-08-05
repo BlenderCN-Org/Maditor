@@ -15,11 +15,16 @@
 
 #include "Project\Project.h"
 
+#include "Serialize/toplevelids.h"
+
+
 namespace Maditor {
 	namespace Model {
 		ApplicationLauncher::ApplicationLauncher(ApplicationConfig *config, const QString &uniqueName) :
 			Document(uniqueName),
-			mInput(new InputWrapper(sharedMemory().mInput)),
+			AppControl(),
+			mNetwork(&mMemory),
+			mInput(new InputWrapper(mMemory.data().mInput)),
 			mWindow(config->launcher() == ApplicationConfig::MADITOR_LAUNCHER ? new OgreWindow(mInput.get()) : nullptr),
 			mLoader(config),
 			mPID(0),
@@ -33,8 +38,11 @@ namespace Maditor {
 			mChildInRead(NULL),
 			mChildInWrite(NULL),
 			mChildOutRead(NULL),
-			mChildOutWrite(NULL)
+			mChildOutWrite(NULL),
+			mPong(false)
 		{
+			mNetwork.addTopLevelItem(this);
+
 			if (mWindow)
 				connect(mWindow, &OgreWindow::resized, this, &ApplicationLauncher::resizeWindow);
 
@@ -63,6 +71,8 @@ namespace Maditor {
 				return;
 
 			postConstruct();
+
+			std::experimental::filesystem::create_directory(runtimeDir());
 		}
 
 		ApplicationLauncher::~ApplicationLauncher()
@@ -114,25 +124,22 @@ namespace Maditor {
 		void ApplicationLauncher::setupImpl(bool debug)
 		{
 			
-			Shared::ApplicationInfo &appInfo = sharedMemory().mAppInfo;
+			Shared::ApplicationInfo &appInfo = mMemory.data().mAppInfo;
 			appInfo.mDebugged = debug;
 			appInfo.mAppName = mName.toStdString().c_str();
 
 			std::string cmd;
 
 			emit applicationSettingup();
-			if (mConfig->launcher() == ApplicationConfig::MADITOR_LAUNCHER) {
+			if (isLauncher()) {
 
 				mConfig->generateInfo(appInfo, mWindow);
 
-				cmd = std::string("Maditor_Launcher.exe ") + std::to_string(appId());
+				cmd = std::string("Maditor_Launcher.exe ") + std::to_string(mMemory.id());
 			}
 			else {
 				cmd = mConfig->customExecutableCmd().toStdString();
 			}
-
-
-
 
 			STARTUPINFO si;
 			PROCESS_INFORMATION pi;
@@ -152,10 +159,10 @@ namespace Maditor {
 				const_cast<char*>(cmd.c_str()),
 				NULL,           // Process handle not inheritable
 				NULL,           // Thread handle not inheritable
-				TRUE,          // Set handle inheritance to FALSE
+				TRUE,          // Set handle inheritance to TRUE
 				0,              // No creation flags
 				NULL,           // Use parent's environment block
-				NULL,           // Use parent's starting directory 
+				appInfo.mProjectDir.empty() ? NULL : runtimeDir().c_str(),
 				&si,            // Pointer to STARTUPINFO structure
 				&pi           // Pointer to PROCESS_INFORMATION structure
 			);
@@ -171,13 +178,8 @@ namespace Maditor {
 			mUtil->stats()->setProcess(mHandle);
 
 			if (isLauncher()) {				
-				Shared::BoostIPCManager *net = network();
-				size_t id = appInfo.waitForAppId();
-				if (!id) {
-					kill(Shared::KILL_NO_APPLICATION_NOTIFICATION);
-					return;
-				}
-				setStaticSlaveId(id);
+				Shared::BoostIPCManager *net = &mNetwork;
+				setStaticSlaveId(Engine::Serialize::MADITOR);
 				if (!net->connect(10000)) {
 					kill(Shared::KILL_FAILED_CONNECTION);
 					return;
@@ -191,6 +193,9 @@ namespace Maditor {
 			else {
 				onApplicationSetup();
 			}
+		}
+		std::string ApplicationLauncher::runtimeDir() {
+			return (mConfig->project()->path() + "debug/runtime/" + mName.replace(':', '_') + "/").toStdString();
 		}
 		void ApplicationLauncher::setupNoDebug()
 		{
@@ -290,7 +295,7 @@ namespace Maditor {
 		void ApplicationLauncher::timerEvent(QTimerEvent * te)
 		{
 			if (mPID) {
-				network()->sendAndReceiveMessages();
+				mNetwork.sendAndReceiveMessages();
 				if (mWaitingForLoader && mLoader->done()) {
 					mLoader->setup2();
 					mWaitingForLoader = false;
@@ -357,8 +362,8 @@ namespace Maditor {
 				mHandle = NULL;
 
 				//receive pending messages
-				while (network()->getSlaveStream() && network()->getSlaveStream()->isMessageAvailable())
-					network()->receiveMessages();
+				//while (network()->getSlaveStream() && network()->getSlaveStream()->isMessageAvailable())
+					mNetwork.receiveMessages();
 
 				mInspector->reset();
 				mLoader->reset();
@@ -367,12 +372,12 @@ namespace Maditor {
 
 				mPingTimer.stop();
 
-				mem()->mgr()->destroy<Shared::BoostIPCServer>("Server");
+				mMemory.mgr()->destroy<Shared::BoostIPCServer>("Server");
 
 				mSetup = false;
 				emit applicationShutdown();
 			}
-			network()->close();
+			static_cast<Shared::BoostIPCManager&>(mNetwork).close();
 
 			if (mAboutToBeDestroyed)
 				destroy();
@@ -399,8 +404,10 @@ namespace Maditor {
 
 		void ApplicationLauncher::onApplicationSetup()
 		{
-			if (isLauncher() && !sharedMemory().mAppInfo.mDebugged)
-				pingImpl();
+			if (isLauncher() && !mMemory.data().mAppInfo.mDebugged) {
+				ping({});
+				mPingTimer.start(3000);
+			}
 			mInspector->start();
 			mSetup = true;
 			emit applicationSetup();
@@ -408,13 +415,19 @@ namespace Maditor {
 
 		void ApplicationLauncher::pingImpl()
 		{
-			mPingTimer.start(3000);
-			ping({});
+			mPong = true;
 		}
 
 		void ApplicationLauncher::timeout()
 		{
-			kill(Shared::KILL_PING_TIMEOUT);
+			if (mPong) {
+				mPong = false;
+				ping({});
+				mPingTimer.start(3000);
+			}
+			else {
+				kill(Shared::KILL_PING_TIMEOUT);
+			}
 		}
 
 		void ApplicationLauncher::resizeWindow() {

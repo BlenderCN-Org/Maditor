@@ -12,7 +12,7 @@ namespace Maditor {
 
 		class ProfilerItem : public TreeUnitItem<ProfilerItem> {
 		public:
-			ProfilerItem(TreeUnitItemBase *parent, const std::string &name);
+			ProfilerItem(ProfilerModel *parent, const std::string &name);
 			ProfilerItem(ProfilerItem *parent, const std::string &name);
 
 			// Geerbt über TreeUnitItem
@@ -41,7 +41,7 @@ namespace Maditor {
 			Q_OBJECT
 
 		public:
-			ProfilerModel();
+			ProfilerModel(Engine::Serialize::TopLevelSerializableUnitBase *topLevel);
 
 
 			// Geerbt über TreeUnit
@@ -55,7 +55,7 @@ namespace Maditor {
 			virtual QVariant header(int col) const override;
 
 		private:
-			std::tuple<std::string, TreeUnitItemBase*, std::string> createNode(const std::string &name);
+			std::tuple<std::string, ProfilerModel*, std::string> createNode(const std::string &name);
 
 		private:
 			Engine::Serialize::ObservableMap<std::string, ProfilerItem, Engine::Serialize::ContainerPolicy::masterOnly, Engine::Serialize::ParentCreator<decltype(&ProfilerModel::createNode), &ProfilerModel::createNode>> mTopLevelItems;

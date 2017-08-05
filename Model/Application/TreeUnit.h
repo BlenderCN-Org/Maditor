@@ -37,11 +37,7 @@ namespace Maditor {
 			TreeUnitBase *mTree;
 		};
 
-		template <class T>
-		class TreeUnitItem : public Engine::Serialize::SerializableUnit<T>, public TreeUnitItemBase {
-		public:
-			using TreeUnitItemBase::TreeUnitItemBase;
-		};
+
 
 		class TreeUnitBase : public TreeModel, public TreeUnitItemBase {
 			Q_OBJECT
@@ -60,7 +56,24 @@ namespace Maditor {
 		template <class T>
 		class TreeUnit : public TreeUnitBase, public Engine::Serialize::SerializableUnit<T> {
 		public:
-			using TreeUnitBase::TreeUnitBase;
+			TreeUnit(Engine::Serialize::TopLevelSerializableUnitBase *topLevel, int columnCount) :
+				TreeUnitBase(columnCount),
+				SerializableUnit(topLevel) {}
+		};
+
+		template <class T>
+		class TreeUnitItem : public Engine::Serialize::SerializableUnit<T>, public TreeUnitItemBase {
+		public:
+			template <class U>
+			TreeUnitItem(TreeUnitItem<U> *parent) :
+				SerializableUnit(parent->topLevel()),
+				TreeUnitItemBase(parent) {}
+
+		protected:
+			template <class U>
+			TreeUnitItem(TreeUnit<U> *tree) :
+				SerializableUnit(tree->topLevel()),
+				TreeUnitItemBase(static_cast<TreeUnitItemBase*>(tree)) {}
 		};
 
 	}

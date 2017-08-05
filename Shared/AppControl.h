@@ -11,18 +11,13 @@ namespace Maditor {
 		class MADITOR_SHARED_EXPORT AppControl : public Engine::Serialize::TopLevelSerializableUnit<AppControl> {
 
 		public:
+			static const constexpr struct masterLauncher_t {} masterLauncher{};
+
 			AppControl();
-			AppControl(size_t id);
-			virtual ~AppControl();
+			AppControl(masterLauncher_t);			
+			virtual ~AppControl() = default;
 
 		protected:
-
-			size_t appId();
-
-			SharedMemory *mem();
-			Shared &sharedMemory();
-
-			BoostIPCManager *network();
 
 			virtual void onApplicationSetup() = 0;
 			virtual void shutdownImpl() = 0;
@@ -68,9 +63,6 @@ namespace Maditor {
 			Engine::Serialize::Action<decltype(&AppControl::pingImpl2), &AppControl::pingImpl2, Engine::Serialize::ActionPolicy::broadcast> ping;
 			Engine::Serialize::Action<decltype(&AppControl::execLuaImpl2), &AppControl::execLuaImpl2, Engine::Serialize::ActionPolicy::request> execLua;
 			
-		private:
-			SharedMemory *mMemory;
-			BoostIPCManager *mNetwork;
 
 			
 		};

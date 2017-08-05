@@ -14,7 +14,7 @@ namespace Maditor {
 		class MADITOR_MODEL_EXPORT StatsModel : public QObject, public Engine::Serialize::SerializableUnit<StatsModel> {
 			Q_OBJECT
 		public:
-			StatsModel();
+			StatsModel(Engine::Serialize::TopLevelSerializableUnitBase *topLevel);
 
 			void reset();
 

@@ -11,25 +11,8 @@ namespace Maditor {
 				mMediaDir(SharedCharAllocator(mgr)),
 				mProjectDir(SharedCharAllocator(mgr)),
 				mServerClass(SharedCharAllocator(mgr)),
-				mAppName(SharedCharAllocator(mgr)),
-				mAppId(0) {}
-
-			//App-Id
-			size_t mAppId;
-			boost::interprocess::interprocess_mutex mAppIdMutex;
-			boost::interprocess::interprocess_condition mAppIdCondition;
-			void setAppId(size_t id) {
-				mAppId = id;
-				mAppIdCondition.notify_one();
-			}
-			size_t waitForAppId() {
-				boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(mAppIdMutex);
-				if (!mAppId) {
-					if (!mAppIdCondition.timed_wait(lock, boost::get_system_time() + boost::posix_time::milliseconds(1000)))
-						return 0;
-				}
-				return mAppId;
-			}
+				mAppName(SharedCharAllocator(mgr))
+			{}
 
 			//General Info
 			bool mDebugged;

@@ -7,11 +7,10 @@
 namespace Maditor {
 	namespace Model {
 
-		StatsModel::StatsModel() :
+		StatsModel::StatsModel(Engine::Serialize::TopLevelSerializableUnitBase *topLevel) :
+			SerializableUnit(topLevel),
 			mTimerId(0),
-			mCurrentUsage(0)/*,
-			startTrack(this),
-			stopTrack(this)*/
+			mCurrentUsage(0)
 		{
 			mAverageFPS.setCallback([this](const float &f) {emit averageFPSChanged(f); });
 			//mOgreMemoryUsage.setCallback([this](const size_t &mem) {emit ogreMemoryUsageChanged(mem); });

@@ -15,6 +15,9 @@
 
 #include "Inspector.h"
 
+#include "Shared/SharedMemory.h"
+#include "Shared/IPCManager/boostIPCmanager.h"
+
 namespace Maditor {
 
 	
@@ -69,6 +72,9 @@ namespace Maditor {
 			bool mRunning;			
 			bool mStartRequested;
 			
+			Shared::SharedMemory mMemory;
+			Shared::BoostIPCManager mNetwork;
+
 		};
 
 	}

@@ -9,7 +9,7 @@ namespace Maditor {
 
 		void LogSorterFilter::itemDoubleClicked(const QModelIndex & index)
 		{
-			emit itemDoubleClicked(mapToSource(index));
+			emit doubleClicked(mapToSource(index));
 		}
 		bool LogSorterFilter::lessThan(const QModelIndex & left, const QModelIndex & right) const
 		{

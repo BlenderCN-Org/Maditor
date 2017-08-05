@@ -17,6 +17,11 @@ namespace Maditor {
 			return mValue.toString();
 		}
 
+		void ValueWrapper::operator=(const Engine::ValueType & value)
+		{
+			mValue = value;
+		}
+
 		const std::string &ValueWrapper::name() const
 		{
 			return mName;
@@ -41,7 +46,7 @@ namespace Maditor {
 		}
 
 		ScopeWrapperItem::ScopeWrapperItem(Inspector * parent, const std::shared_ptr<ScopeWrapper> &scope) :
-			TreeUnitItem(static_cast<TreeUnitItemBase*>(parent)),			
+			TreeUnitItem(parent),			
 			mScope(scope)
 		{
 			scope->addItem(this);
@@ -144,25 +149,32 @@ namespace Maditor {
 		}
 
 		void ScopeWrapper::update(const std::map<std::string, Engine::ValueType>& data)
-		{
-			mValues.clear();
-			for (ScopeWrapperItem *item : mItems)
-				item->clearValues();
+		{			
 			std::set<Engine::InvScopePtr> ptrs;
+			std::set<std::string> attributes;
 			for (const std::pair<const std::string, Engine::ValueType> &p : data) {
-				if (p.second.isInvPtr()) {
-					std::shared_ptr<ScopeWrapper> scope = mInspector->getScope(p.second.asInvPtr(), p.first);
-					if (mChildren.try_emplace(p.second.asInvPtr(), scope).second) {
+				if (p.second.is<Engine::InvScopePtr>()) {
+					std::shared_ptr<ScopeWrapper> scope = mInspector->getScope(p.second.as<Engine::InvScopePtr>(), p.first);
+					if (mChildren.try_emplace(p.second.as<Engine::InvScopePtr>(), scope).second) {
 						for (ScopeWrapperItem *item : mItems) {
 							item->addChild(scope);
 						}
 					}
-					ptrs.insert(p.second.asInvPtr());
+					ptrs.insert(p.second.as<Engine::InvScopePtr>());
 				}
-				else {
-					mValues.emplace_back(p.first, p.second);
+				else {					
+					std::pair<std::map<std::string, ValueWrapper>::iterator, bool> result = mValues.try_emplace(p.first, p.first, p.second);
+					if (!result.second) {
+						result.first->second = p.second;
+					}else{
+						for (ScopeWrapperItem *item : mItems) {
+							item->addValue(&result.first->second);
+						}
+					}
+					attributes.insert(p.first);
 				}
 			}
+			//TODO proper cleanup
 			int i = 0;
 			for (auto it = mChildren.begin(); it != mChildren.end(); ){
 				if (ptrs.find(it->first) == ptrs.end()) {					
@@ -186,6 +198,13 @@ namespace Maditor {
 		{
 			mScope->inspector()->beginInsertRows(getIndex(), mChildren.size(), mChildren.size());
 			mChildren.emplace_back(this, scope);
+			mScope->inspector()->endInsertRows();
+		}
+
+		void ScopeWrapperItem::addValue(ValueWrapper * value)
+		{
+			mScope->inspector()->beginInsertRows(getIndex(), mChildren.size() + mValues.size(), mChildren.size() + mValues.size());
+			mValues.emplace_back(this, value);
 			mScope->inspector()->endInsertRows();
 		}
 

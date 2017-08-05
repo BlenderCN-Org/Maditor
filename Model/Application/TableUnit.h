@@ -32,7 +32,10 @@ namespace Maditor {
 		template <class T>
 		class TableUnit : public TableUnitBase, public Engine::Serialize::SerializableUnit<T> {
 		public:
-			using TableUnitBase::TableUnitBase;
+			TableUnit(Engine::Serialize::TopLevelSerializableUnitBase *topLevel, int columnCount) :
+				TableUnitBase(columnCount),
+				SerializableUnit(topLevel) {}
+			
 		};
 
 	}

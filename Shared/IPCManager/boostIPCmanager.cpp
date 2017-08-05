@@ -21,7 +21,8 @@ namespace Maditor {
 			mServer(nullptr),
 			mIsServer(false),
 			mSlaveStream(nullptr),
-			mMemory(mem)
+			mMemory(mem),
+			SerializeManager("Maditor-Link")
 		{
 		}
 

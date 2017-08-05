@@ -12,6 +12,8 @@ namespace Maditor {
 			std::string toString() const;
 			const std::string &name() const;
 
+			void operator=(const Engine::ValueType &value);
+
 		private:
 			std::string mName;
 			Engine::ValueType mValue;
@@ -55,7 +57,7 @@ namespace Maditor {
 			std::string mName;
 
 			std::map<Engine::InvScopePtr, std::shared_ptr<ScopeWrapper>> mChildren;
-			std::list<ValueWrapper> mValues;
+			std::map<std::string, ValueWrapper> mValues;
 
 			std::list<ScopeWrapperItem*> mItems;
 
@@ -77,6 +79,7 @@ namespace Maditor {
 			virtual QVariant data(int col) const override;		
 
 			void addChild(const std::shared_ptr<ScopeWrapper> &scope);
+			void addValue(ValueWrapper *value);
 
 		private:
 			std::shared_ptr<ScopeWrapper> mScope;

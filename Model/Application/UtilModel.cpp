@@ -7,7 +7,8 @@ namespace Maditor {
 
 
 
-		UtilModel::UtilModel()
+		UtilModel::UtilModel(Engine::Serialize::TopLevelSerializableUnitBase *topLevel) :
+			SerializableUnit(topLevel)
 		{
 		}
 

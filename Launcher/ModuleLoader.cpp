@@ -13,9 +13,9 @@ namespace Maditor {
 	namespace Launcher {
 
 
-		ModuleLoader::ModuleLoader() :
-			mInit(false)/*,
-			setupDone(this)*/
+		ModuleLoader::ModuleLoader(Engine::Serialize::TopLevelSerializableUnitBase *topLevel) :
+			SerializableUnit(topLevel),
+			mInit(false)
 		{
 			mInstances.setCreator(std::bind(&ModuleLoader::createModule, this, std::placeholders::_1));
 		}
@@ -24,13 +24,12 @@ namespace Maditor {
 		{
 		}
 
-		void ModuleLoader::setup(const std::string &binaryDir, const std::string & runtimeDir)
+		void ModuleLoader::setup(const std::string &binaryDir)
 		{
 
 			assert(!mInit);
 			mInit = true;
-
-			mRuntimeDir = runtimeDir;
+			
 			mBinaryDir = binaryDir;
 
 			mReceivingModules = true;
@@ -55,11 +54,6 @@ namespace Maditor {
 			return mBinaryDir;
 		}
 
-		const std::string & ModuleLoader::runtimeDir()
-		{
-			return mRuntimeDir;
-		}
-
 		void ModuleLoader::setupDoneImpl()
 		{
 			for (ModuleLauncherInstance &instance : mInstances) {
@@ -76,7 +70,7 @@ namespace Maditor {
 
 
 		ModuleLoader::ModuleLauncherInstance::ModuleLauncherInstance(ModuleLoader * parent, const std::string & name) :
-			ModuleInstance(name),
+			ModuleInstance(parent->topLevel(), name),
 			mHandle(0),
 			mParent(parent)
 		{
@@ -141,10 +135,8 @@ namespace Maditor {
 
 			std::cout << "Loading " << name() << "..." << std::endl;
 
-			CreateDirectory(mParent->runtimeDir().c_str(), NULL);
-
-			std::string runtimePath = mParent->runtimeDir() + name() + ".dll";
-			std::string runtimePdbPath = mParent->runtimeDir() + name() + ".pdb";
+			std::string runtimePath = name() + ".dll";
+			std::string runtimePdbPath = name() + ".pdb";
 			std::string binaryPath = mParent->binaryDir() + name() + ".dll";
 			std::string binaryPdbPath = mParent->binaryDir() + name() + ".pdb";
 
@@ -215,7 +207,6 @@ namespace Maditor {
 			if (sceneComponentCollector) {
 				for (void *h : mSceneComponentHashes) {
 					auto it = sceneComponentCollector->postCreate(h);
-					Engine::Serialize::UnitHelper<Engine::Scene::SceneComponentBase>::setItemTopLevel(**it, &Engine::Scene::SceneManagerBase::getSingleton());
 					if (callInit)
 						(*it)->init();
 					mSceneComponents.push_back(it->get());
@@ -249,9 +240,9 @@ namespace Maditor {
 				}
 			}
 
-			for (const std::pair<const std::string, std::list<std::pair<Engine::Scene::Entity::Entity*, Engine::Scripting::ArgumentList>>> &ents : mStoredComponentEntities) {
-				for (const std::pair<Engine::Scene::Entity::Entity*, Engine::Scripting::ArgumentList> &p : ents.second) {
-					p.first->addComponent(p.second, ents.first);
+			for (const std::pair<const std::string, std::list<Engine::Scene::Entity::Entity*>> &ents : mStoredComponentEntities) {
+				for (Engine::Scene::Entity::Entity*p : ents.second) {
+					p->addComponent(ents.first);
 				}
 			}
 			mStoredComponentEntities.clear();
@@ -280,10 +271,10 @@ namespace Maditor {
 
 
 			for (const std::string &comp : mEntityComponentNames) {
-				std::list<std::pair<Engine::Scene::Entity::Entity*, Engine::Scripting::ArgumentList>> &componentEntities = mStoredComponentEntities[comp];
+				std::list<Engine::Scene::Entity::Entity*> &componentEntities = mStoredComponentEntities[comp];
 				for (Engine::Scene::Entity::Entity* e : entities) {
 					if (e->hasComponent(comp)) {
-						componentEntities.push_back(std::make_pair(e, e->getComponent(comp)->creationArguments()));
+						componentEntities.push_back(e);
 						e->removeComponent(comp);
 					}
 				}

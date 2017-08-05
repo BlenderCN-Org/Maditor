@@ -16,10 +16,10 @@ namespace Maditor {
 	namespace Model {
 
 
-		ModuleLoader::ModuleLoader(ApplicationConfig *config) :			
+		ModuleLoader::ModuleLoader(Engine::Serialize::TopLevelSerializableUnitBase *topLevel, ApplicationConfig *config) :			
 			mBinaryDir(config->path() + "debug/bin/"),
 			mModules(*config->project()->moduleList()),
-			TableUnit(2),
+			TableUnit(topLevel, 2),
 			mModulesCount(-1),
 			mConfig(config)
 		{
@@ -193,7 +193,7 @@ namespace Maditor {
 		}
 
 		ModuleImpl::ModuleImpl(ModuleLoader * loader, const std::string & name) :
-			ModuleInstance(name),
+			ModuleInstance(loader->topLevel(), name),
 			mLoader(loader),
 			mNotify(this)
 		{

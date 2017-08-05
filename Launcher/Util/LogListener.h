@@ -10,7 +10,7 @@ namespace Maditor {
 class LogListener : public Engine::Serialize::SerializableUnit<LogListener>, public Engine::Util::LogListener, public Ogre::LogListener {
 
 public:
-	LogListener();
+	LogListener(Engine::Serialize::TopLevelSerializableUnitBase *topLevel);
 	~LogListener();
 
 protected:

@@ -22,13 +22,18 @@ namespace Maditor {
 	namespace Launcher {
 
 		ApplicationWrapper::ApplicationWrapper(size_t id) :
-			AppControl(id),
+			AppControl(Shared::AppControl::masterLauncher),
+			mMemory(id),
+			mNetwork(&mMemory),
 			mInput(nullptr),
 			mRunning(false),
 			mStartRequested(false),
 			mApplication(nullptr),
 			mServer(nullptr)
 		{
+			Engine::Serialize::Debugging::StreamDebugging::setLoggingEnabled(true);
+
+			mNetwork.addTopLevelItem(this);
 		}
 
 		ApplicationWrapper::~ApplicationWrapper()
@@ -41,10 +46,9 @@ namespace Maditor {
 		int ApplicationWrapper::start()
 		{
 
-			Shared::ApplicationInfo &appInfo = sharedMemory().mAppInfo;
-			appInfo.setAppId(masterId());	
+			Shared::ApplicationInfo &appInfo = mMemory.data().mAppInfo;			
 
-			Shared::BoostIPCManager *net = network();
+			Shared::BoostIPCManager *net = &mNetwork;
 
 			if (!net->startServer()) {
 				return Shared::FAILED_START_SERVER;
@@ -59,7 +63,7 @@ namespace Maditor {
 				!IsDebuggerPresent() &&
 				!GetAsyncKeyState(VK_F10))
 			{
-				::Sleep(1);
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 				if (++j > 5000) {
 					return Shared::DEBUGGER_CONNECTION_TIMEOUT;
 				}
@@ -70,7 +74,7 @@ namespace Maditor {
 
 			if (appInfo.mServerClass.empty()) {
 
-				mInput = new InputWrapper(sharedMemory().mInput);
+				mInput = new InputWrapper(mMemory.data().mInput);
 				mSettings.mInput = mInput;
 				mSettings.mUseExternalSettings = true;
 				mSettings.mWindowName = "QtOgre";
@@ -118,7 +122,7 @@ namespace Maditor {
 
 			std::string project = appInfo.mProjectDir.c_str();
 
-			mLoader->setup(project + "debug/bin/", project + "debug/runtime/");
+			mLoader->setup(project + "debug/bin/");
 			while (mLoader->receiving() && mRunning && net->clientCount() == 1) {
 				net->sendAndReceiveMessages();
 			}
@@ -186,8 +190,8 @@ namespace Maditor {
 
 			mUtil->profiler()->startProfiling("Rendering");
 
-			network()->sendAndReceiveMessages();
-			if (network()->clientCount() != 1) {
+			mNetwork.sendAndReceiveMessages();
+			if (!mNetwork.isMaster()) {
 				shutdownImpl();
 			}
 			return mRunning;

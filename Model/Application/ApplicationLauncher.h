@@ -8,10 +8,11 @@
 #include "Model\Documents\Document.h"
 #include "Shared\errorcodes.h"
 #include "Inspector\Inspector.h"
+#include "Shared/SharedMemory.h"
+#include "Shared/IPCManager/boostIPCmanager.h"
 
 namespace Maditor {
 
-	//
 
 	namespace Model {
 
@@ -49,6 +50,8 @@ namespace Maditor {
 
 			void sendCommand(const QString &cmd);
 			void sendLua(const QString &cmd);
+
+			std::string runtimeDir();
 
 		protected:
 			virtual void timerEvent(QTimerEvent * te) override;
@@ -93,9 +96,6 @@ namespace Maditor {
 
 			virtual size_t getSize() const override;
 
-			std::unique_ptr<InputWrapper> mInput;
-			OgreWindow *mWindow;
-
 			ApplicationConfig *mConfig;
 
 			DWORD mPID;
@@ -110,6 +110,7 @@ namespace Maditor {
 			bool mWaitingForLoader;
 
 			QTimer mPingTimer;
+			bool mPong;
 
 			bool mAboutToBeDestroyed;
 
@@ -120,6 +121,10 @@ namespace Maditor {
 
 			QString mOutput;
 
+			Shared::SharedMemory mMemory;
+			Shared::BoostIPCManager mNetwork;
+			std::unique_ptr<InputWrapper> mInput;
+			OgreWindow *mWindow;
 		};
 
 	}

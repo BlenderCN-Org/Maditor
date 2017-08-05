@@ -5,13 +5,13 @@
 namespace Maditor {
 	namespace Model {
 
-		ProfilerModel::ProfilerModel() :
-			TreeUnit(4)
+		ProfilerModel::ProfilerModel(Engine::Serialize::TopLevelSerializableUnitBase *topLevel) :
+			TreeUnit(topLevel, 4)
 		{
 			setContainer(mTopLevelItems);
 		}
 
-		ProfilerItem::ProfilerItem(TreeUnitItemBase * parent, const std::string & name) :
+		ProfilerItem::ProfilerItem(ProfilerModel * parent, const std::string & name) :
 			TreeUnitItem(parent),
 			mName(name),
 			mParent(nullptr),
@@ -116,7 +116,7 @@ namespace Maditor {
 			}
 		}
 
-		std::tuple<std::string, TreeUnitItemBase*, std::string> ProfilerModel::createNode(const std::string & name)
+		std::tuple<std::string, ProfilerModel*, std::string> ProfilerModel::createNode(const std::string & name)
 		{
 			return{ name, this, name };
 		}

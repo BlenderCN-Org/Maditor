@@ -12,16 +12,15 @@ namespace Maditor {
 class ModuleLoader : public Engine::Serialize::SerializableUnit<ModuleLoader> {
 
 public:
-	ModuleLoader();
+	ModuleLoader(Engine::Serialize::TopLevelSerializableUnitBase *topLevel);
 	~ModuleLoader();
 
-	void setup(const std::string &binaryDir, const std::string &runtimeDir);
+	void setup(const std::string &binaryDir);
 	void cleanup();
 			
 	bool receiving();
 
 	const std::string &binaryDir();
-	const std::string &runtimeDir();
 
 	Engine::Server::ServerBase * createServer(const std::string & fullName, const std::string &instanceName, const std::string &mediaDir);
 
@@ -55,7 +54,7 @@ private:
 		std::list<void*> mGlobalAPIComponentHashes;
 		std::list<void*> mGameHandlerHashes;
 		std::list<void*> mGuiHandlerHashes;
-		std::map<std::string, std::list<std::pair<Engine::Scene::Entity::Entity*, Engine::Scripting::ArgumentList>>> mStoredComponentEntities;
+		std::map<std::string, std::list<Engine::Scene::Entity::Entity*>> mStoredComponentEntities;
 
 		ModuleLoader *mParent;
 	};
@@ -66,7 +65,7 @@ private:
 	std::tuple<ModuleLoader *, std::string> createModule(const std::string &name);
 
 private:
-	std::string mBinaryDir, mRuntimeDir;
+	std::string mBinaryDir;
 
 	bool mInit;
 

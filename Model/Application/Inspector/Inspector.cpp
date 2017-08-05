@@ -4,8 +4,8 @@
 namespace Maditor {
 	namespace Model {
 
-		Inspector::Inspector() :
-			TreeUnit(1),
+		Inspector::Inspector(Engine::Serialize::TopLevelSerializableUnitBase *topLevel) :
+			TreeUnit(topLevel, 2),
 			mGlobalWrapper(std::make_shared<ScopeWrapper>(this, nullptr, "Global")),
 			mGlobalWrapperItem(this, mGlobalWrapper),
 			mPending(false),

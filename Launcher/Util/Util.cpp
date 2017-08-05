@@ -6,7 +6,8 @@
 namespace Maditor {
 	namespace Launcher {
 
-		Util::Util()
+		Util::Util(Engine::Serialize::TopLevelSerializableUnitBase *topLevel) :
+			SerializableUnit(topLevel)
 		{
 		}
 
