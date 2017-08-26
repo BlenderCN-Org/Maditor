@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Serialize\Container\map.h"
+#include "Serialize\Container\set.h"
 #include "Serialize\Container\observed.h"
 
 #include "TreeUnit.h"
@@ -20,15 +20,17 @@ namespace Maditor {
 			virtual ProfilerItem * child(int i) override;
 			virtual QVariant data(int col) const override;
 
+			const std::string &key() const;
+
 		protected:
-			std::tuple<std::string, ProfilerItem*, std::string> createNode(const std::string &name);
+			std::tuple<ProfilerItem*, std::string> createNode(const std::string &name);
 
 			void update(size_t fullDuration);
 			void notify();
 
 		private:
 			Engine::Serialize::Observed<size_t> mDuration;
-			Engine::Serialize::ObservableMap<std::string, ProfilerItem, Engine::Serialize::ContainerPolicy::masterOnly, Engine::Serialize::ParentCreator<decltype(&ProfilerItem::createNode), &ProfilerItem::createNode>> mChildren;
+			Engine::Serialize::ObservableSet<ProfilerItem, Engine::Serialize::ContainerPolicy::masterOnly, Engine::Serialize::ParentCreator<decltype(&ProfilerItem::createNode), &ProfilerItem::createNode>> mChildren;
 
 			Engine::SignalSlot::Slot<decltype(&ProfilerItem::update), &ProfilerItem::update> mUpdateSlot;
 
@@ -55,10 +57,10 @@ namespace Maditor {
 			virtual QVariant header(int col) const override;
 
 		private:
-			std::tuple<std::string, ProfilerModel*, std::string> createNode(const std::string &name);
+			std::tuple<ProfilerModel*, std::string> createNode(const std::string &name);
 
 		private:
-			Engine::Serialize::ObservableMap<std::string, ProfilerItem, Engine::Serialize::ContainerPolicy::masterOnly, Engine::Serialize::ParentCreator<decltype(&ProfilerModel::createNode), &ProfilerModel::createNode>> mTopLevelItems;
+			Engine::Serialize::ObservableSet<ProfilerItem, Engine::Serialize::ContainerPolicy::masterOnly, Engine::Serialize::ParentCreator<decltype(&ProfilerModel::createNode), &ProfilerModel::createNode>> mTopLevelItems;
 
 			
 

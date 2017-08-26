@@ -74,7 +74,7 @@ namespace Maditor {
 
 		ApplicationLauncher * ApplicationConfig::createInstace()
 		{
-			return mDocuments.createDocument<ApplicationLauncher>(this, name() + ":" + QString::number(++mInstanceCounter));
+			return mDocuments.createDocument<ApplicationLauncher>(this, name() + "-" + QString::number(++mInstanceCounter));
 		}
 
 		ApplicationConfig::Launcher ApplicationConfig::launcher()

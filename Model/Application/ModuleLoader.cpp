@@ -108,17 +108,21 @@ namespace Maditor {
 		void ModuleLoader::addModule(Module *module)
 		{
 			
-			mInstances.emplace_back_safe([=](const decltype(mInstances)::iterator &it) {
+			auto it = mInstances.emplace_back(this, module->name().toStdString());
+
+
+
+			/*[=](ModuleImpl &item) {
 				QString path = mBinaryDir + module->name() + ".dll";
 				QFile file(path);
-				
-				mMap[module] = &*it;
-				it->setExists(file.exists());
+
+				mMap[module] = &item;
+				item.setExists(file.exists());
 
 				if (file.exists())
 					mWatcher.addPath(path);
 
-			}, this, module->name().toStdString());
+			}*/
 		}
 
 
@@ -136,9 +140,12 @@ namespace Maditor {
 
 		void ModuleLoader::setup2()
 		{
-			for (const std::pair<const Model::Module *, Shared::ModuleInstance *> &module : mMap) {
-				for (const QString &dep : module.first->dependencies()) {
-					module.second->addDependency(mMap.at(mModules.getModule(dep)));
+			for (Shared::ModuleInstance &module : mInstances) {
+				const Module *mod = mModules.getModule(QString::fromStdString(module.name()));
+				mMap[mod] = &module;
+				for (const QString &dep : mod->dependencies()) {
+					std::string dependency = dep.toStdString();
+					module.addDependency(&*std::find_if(mInstances.begin(), mInstances.end(), [&](const Shared::ModuleInstance &m) {return m.name() == dependency; }));
 				}
 			}
 			setupDone({});

@@ -17,6 +17,10 @@ namespace Maditor {
 
 		}
 
+		void LogListener::init() {
+			mSlot = std::make_unique<SlotType>(&receiveMessage);
+		}
+
 		void LogListener::receiveImpl(const std::string & msg, Engine::Util::MessageType level, const std::string & logName, const std::string & fullTraceback, const std::string & fileName, int lineNr)
 		{
 		}
@@ -38,7 +42,7 @@ namespace Maditor {
 			default:
 				throw 0;
 			}
-			receiveMessage(message.c_str(), level, logName.c_str(), "", "", -1, {});
+			mSlot->queue(message.c_str(), level, logName.c_str(), "", "", -1, {});
 		}
 
 		void LogListener::messageLogged(const std::string & message, Engine::Util::MessageType lml, const std::list<Engine::Util::TraceBack> &traceback, const std::string & logName)
@@ -62,7 +66,7 @@ namespace Maditor {
 				lineNr = -1;
 			}
 
-			receiveMessage(message, lml, logName, fullTraceback.str(), fileName, lineNr, {});
+			mSlot->queue(message, lml, logName, fullTraceback.str(), fileName, lineNr, {});
 		}
 
 	}

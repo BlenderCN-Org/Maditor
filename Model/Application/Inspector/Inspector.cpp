@@ -76,17 +76,24 @@ namespace Maditor {
 			return scope;
 		}
 
-		void Inspector::sendUpdateImpl(Engine::InvScopePtr ptr, const Engine::Serialize::SerializableMap<std::string, Engine::ValueType> &attributes) {
+		void Inspector::sendUpdateImpl(Engine::InvScopePtr ptr, bool exists, const Engine::Serialize::SerializableMap<std::string, Engine::ValueType> &attributes) {
 			mPending = false;
 			auto it = mWrappers.find(ptr);
 			assert(it != mWrappers.end());
-			if (std::shared_ptr<ScopeWrapper> p = it->second.lock()) {
-				p->update(attributes.data());
+			if (exists) {
+				if (std::shared_ptr<ScopeWrapper> p = it->second.lock()) {
+					p->update(attributes.data());
+				}
+				else {
+					mWrappers.erase(it);
+				}
 			}
 			else {
 				mWrappers.erase(it);
 			}
 		}
+
+
 
 	}
 }

@@ -140,11 +140,9 @@ namespace Maditor {
 			std::string binaryPath = mParent->binaryDir() + name() + ".dll";
 			std::string binaryPdbPath = mParent->binaryDir() + name() + ".pdb";
 
-			{
-				std::ifstream src(binaryPath, std::ios::binary);
-				std::ofstream dst(runtimePath, std::ios::binary);
-
-				dst << src.rdbuf();
+			std::error_code err;
+			if (!std::experimental::filesystem::copy_file(binaryPath, runtimePath, std::experimental::filesystem::copy_options::overwrite_existing, err)) {
+				throw 0;
 			}
 
 			mEntityComponentNames.clear();
@@ -157,7 +155,7 @@ namespace Maditor {
 			mGuiHandlers.clear();
 			mGlobalAPIComponents.clear();
 
-			Engine::BaseUniqueComponentCollector<Engine::Scene::SceneComponentBase> *sceneComponentCollector = Engine::BaseUniqueComponentCollector<Engine::Scene::SceneComponentBase>::getSingletonPtr();
+			Engine::BaseUniqueComponentCollector<Engine::Scene::SceneComponentBase, Engine::Serialize::SerializableUnitHeapCreator, Engine::Scene::SceneManagerBase*> *sceneComponentCollector = Engine::BaseUniqueComponentCollector<Engine::Scene::SceneComponentBase, Engine::Serialize::SerializableUnitHeapCreator, Engine::Scene::SceneManagerBase*>::getSingletonPtr();
 			Engine::BaseUniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase> *globalAPIComponentCollector = Engine::BaseUniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase>::getSingletonPtr();
 			Engine::OgreUniqueComponentCollector<Engine::UI::GameHandlerBase> *gameHandlerCollector = Engine::OgreUniqueComponentCollector<Engine::UI::GameHandlerBase>::getSingletonPtr();
 			Engine::OgreUniqueComponentCollector<Engine::UI::GuiHandlerBase> *guiHandlerCollector = Engine::OgreUniqueComponentCollector<Engine::UI::GuiHandlerBase>::getSingletonPtr();
@@ -206,7 +204,7 @@ namespace Maditor {
 
 			if (sceneComponentCollector) {
 				for (void *h : mSceneComponentHashes) {
-					auto it = sceneComponentCollector->postCreate(h);
+					auto it = sceneComponentCollector->postCreate(h, Engine::Scene::SceneManagerBase::getSingletonPtr());
 					if (callInit)
 						(*it)->init();
 					mSceneComponents.push_back(it->get());
@@ -287,7 +285,7 @@ namespace Maditor {
 				}
 			}
 
-			if (Engine::BaseUniqueComponentCollector<Engine::Scene::SceneComponentBase>::getSingletonPtr()){
+			if (Engine::BaseUniqueComponentCollector<Engine::Scene::SceneComponentBase, Engine::Serialize::SerializableUnitHeapCreator, Engine::Scene::SceneManagerBase*>::getSingletonPtr()){
 				for (Engine::Scene::SceneComponentBase *c : mSceneComponents) {
 					if (c->getState() == Engine::ObjectState::INITIALIZED)
 						c->finalize();

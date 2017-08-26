@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Serialize\Container\action.h"
+#include "serialize/container/map.h"
 #include "Scripting/Types/globalapicomponent.h"
 
 #include "signalslot/slot.h"
@@ -20,7 +21,7 @@ namespace Maditor {
 			virtual void finalize() override;
 
 			static InspectorThreadInstance *getInstance(lua_State *thread);
-			using Engine::Scripting::GlobalAPIComponent<InspectorThreadInstance>::globalScope;
+			Engine::Scripting::GlobalScopeBase *globalScope();
 
 		protected:
 			void update(Engine::InvScopePtr ptr, Inspector *inspector);
@@ -32,6 +33,8 @@ namespace Maditor {
 			static std::map<lua_State *, InspectorThreadInstance*> sMappings;
 
 			lua_State *mState;
+
+			Engine::Scripting::GlobalScopeBase *mGlobalScope;
 		};
 
 		class Inspector : public Engine::Serialize::SerializableUnit<Inspector> {
@@ -43,8 +46,7 @@ namespace Maditor {
 		
 		protected:
 			void requestUpdateImpl(Engine::InvScopePtr ptr);
-			void sendItemRemovedImpl(Engine::InvScopePtr ptr) {}
-			void sendUpdateImpl(Engine::InvScopePtr ptr, const Engine::Serialize::SerializableMap<std::string, Engine::ValueType> &attributes) {}
+			void sendUpdateImpl(Engine::InvScopePtr ptr, bool exists, const Engine::Serialize::SerializableMap<std::string, Engine::ValueType> &attributes) {}
 
 			void itemRemoved(Engine::InvScopePtr ptr);
 			void itemUpdate(Engine::InvScopePtr ptr, const Engine::Serialize::SerializableMap<std::string, Engine::ValueType> &attributes);
@@ -60,12 +62,11 @@ namespace Maditor {
 
 			Engine::Serialize::Action<decltype(&Inspector::requestUpdateImpl), &Inspector::requestUpdateImpl, Engine::Serialize::ActionPolicy::request> mRequestUpdate;
 			Engine::Serialize::Action<decltype(&Inspector::sendUpdateImpl), &Inspector::sendUpdateImpl, Engine::Serialize::ActionPolicy::notification> mSendUpdate;
-			Engine::Serialize::Action<decltype(&Inspector::sendItemRemovedImpl), &Inspector::sendItemRemovedImpl, Engine::Serialize::ActionPolicy::notification> mSendItemRemoved;
 			std::unique_ptr<Engine::SignalSlot::Slot<decltype(&Inspector::itemRemoved), &Inspector::itemRemoved>> mItemRemoved;
 			std::unique_ptr<Engine::SignalSlot::Slot<decltype(&Inspector::itemUpdate), &Inspector::itemUpdate>> mItemUpdate;
 
 			static const luaL_Reg sMarkMetafunctions[];
-			static int lua_gc(lua_State *);
+			static int lua_scopeGc(lua_State *);
 		};
 	}
 }

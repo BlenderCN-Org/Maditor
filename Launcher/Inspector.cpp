@@ -22,14 +22,14 @@ namespace Maditor {
 
 		const luaL_Reg Inspector::sMarkMetafunctions[] =
 		{
-			{ "__gc", &lua_gc },
+			{ "__gc", &lua_scopeGc },
 			//{ "__pairs", &lua_pairs },
 			//{"__newindex", &lua_newindex}
 			{ NULL, NULL }
 		};
 
 
-		int Inspector::lua_gc(lua_State *state) {
+		int Inspector::lua_scopeGc(lua_State *state) {
 			bool **ptr = static_cast<bool**>(lua_touserdata(state, -1));
 			**ptr = false;
 			lua_pop(state, 1);
@@ -38,7 +38,8 @@ namespace Maditor {
 
 
 		InspectorThreadInstance::InspectorThreadInstance() :
-			mUpdate(this)
+			mUpdate(this),
+			mGlobalScope(&Engine::Scripting::GlobalScopeBase::getSingleton())
 		{
 		}
 
@@ -109,7 +110,7 @@ namespace Maditor {
 			}
 
 			Engine::Serialize::SerializableMap<std::string, Engine::ValueType> attributes;
-			for (std::unique_ptr<Engine::Scripting::KeyValueIterator> it = scope->iterator(); !it->ended(); ++(*it)) {
+			for (std::unique_ptr<Engine::KeyValueIterator> it = scope->iterator(); !it->ended(); ++(*it)) {
 
 				Engine::ValueType value = it->value();
 				if (value.is<Engine::Scripting::ScopeBase*>()) {
@@ -164,12 +165,12 @@ namespace Maditor {
 			mItemsMutex.lock();
 			mItems.erase(ptr);
 			mItemsMutex.unlock();
-			mSendItemRemoved(ptr, {});
+			mSendUpdate(ptr, false, {}, {});
 		}
 
 		void Inspector::itemUpdate(Engine::InvScopePtr ptr, const Engine::Serialize::SerializableMap<std::string, Engine::ValueType>& attributes)
 		{
-			mSendUpdate(ptr, attributes, {});
+			mSendUpdate(ptr, true, attributes, {});
 		}
 
 		void Inspector::requestUpdateImpl(Engine::InvScopePtr ptr)
@@ -178,10 +179,7 @@ namespace Maditor {
 				mItemsMutex.lock();
 				auto it = mItems.find(ptr);
 				mItemsMutex.unlock();
-				if (it == mItems.end()) {
-					mSendItemRemoved(ptr, {});
-				}
-				else {
+				if (it != mItems.end()) {
 					InspectorThreadInstance *thread = std::get<0>(it->second);
 					if (thread) {
 						thread->getUpdate(ptr, this);
@@ -190,11 +188,13 @@ namespace Maditor {
 						getUpdate(ptr, nullptr);
 					}
 				}
+				else {
+					mSendUpdate(ptr, false, {}, {});
+				}
 			}
 			else {
 				getUpdate(ptr, nullptr);
-			}
-			
+			}			
 		}
 
 		bool Inspector::isValid(Engine::InvScopePtr ptr)
@@ -205,6 +205,11 @@ namespace Maditor {
 			else {
 				mItemsMutex.lock();
 				auto it = mItems.find(ptr);
+				InspectorThreadInstance *thread = std::get<0>(it->second);
+				mItemsMutex.unlock();
+				lua_State *state = thread ? thread->state() : Engine::Scripting::GlobalScopeBase::getSingleton().lua_state();
+				lua_gc(state, LUA_GCCOLLECT, 0);
+				mItemsMutex.lock();
 				bool valid = std::get<1>(it->second);
 				mItemsMutex.unlock();
 				return valid;
@@ -238,6 +243,10 @@ namespace Maditor {
 				return ptr.validate();
 			else
 				return &Engine::Scripting::GlobalScopeBase::getSingleton();
+		}
+
+		Engine::Scripting::GlobalScopeBase *InspectorThreadInstance::globalScope() {
+			return mGlobalScope;
 		}
 
 	}

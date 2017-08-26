@@ -61,12 +61,6 @@ namespace Maditor {
 			using namespace Engine::Serialize;
 
 			switch (op) {
-			case BEFORE | CLEAR:
-				beginResetModel();
-				break;
-			case AFTER | CLEAR:
-				endResetModel();
-				break;
 			case INSERT_ITEM:
 				beginInsertRows(parent, row, row);
 				endInsertRows();

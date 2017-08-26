@@ -19,16 +19,17 @@ namespace Maditor {
 			Engine::ValueType mValue;
 		};
 
-		class ValueItem : public TreeUnitItem<ValueItem> {
+		class ValueItem : public TreeItem {
 		public:
 			ValueItem(ScopeWrapperItem *parent, ValueWrapper *val);
 
 			virtual TreeItem *child(int) override { throw 0; };
 			virtual QVariant data(int col) const override;
+			virtual TreeItem *parentItem() const override;
 
 		private:
 			ValueWrapper *mValue;
-
+			ScopeWrapperItem *mParent;
 		};
 
 		class ScopeWrapper {
@@ -65,7 +66,7 @@ namespace Maditor {
 
 		};
 
-		class ScopeWrapperItem : public TreeUnitItem<ScopeWrapperItem> {
+		class ScopeWrapperItem : public TreeItem {
 		public:
 			ScopeWrapperItem(Inspector *parent, const std::shared_ptr<ScopeWrapper> &scope);
 			ScopeWrapperItem(ScopeWrapperItem *parent, const std::shared_ptr<ScopeWrapper> &scope);
@@ -77,14 +78,20 @@ namespace Maditor {
 			virtual int childCount() const override;
 			virtual TreeItem *child(int i) override;
 			virtual QVariant data(int col) const override;		
+			virtual TreeItem *parentItem() const override;
 
 			void addChild(const std::shared_ptr<ScopeWrapper> &scope);
+			void removeChild(int i);
 			void addValue(ValueWrapper *value);
+			void removeValue(int i);
+
+			QModelIndex getIndex();
 
 		private:
 			std::shared_ptr<ScopeWrapper> mScope;
 
-			
+			ScopeWrapperItem *mScopeParent;
+			TreeItem *mParent;
 
 			std::list<ScopeWrapperItem> mChildren;
 			std::list<ValueItem> mValues;

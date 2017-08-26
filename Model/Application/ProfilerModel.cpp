@@ -44,7 +44,12 @@ namespace Maditor {
 		{
 			auto it = mChildren.begin();
 			std::advance(it, i);
-			return &it->second;
+			return &*it;
+		}
+
+		const std::string & ProfilerItem::key() const
+		{
+			return mName;
 		}
 
 		QVariant ProfilerItem::data(int col) const
@@ -63,9 +68,9 @@ namespace Maditor {
 			return QVariant();
 		}
 
-		std::tuple<std::string, ProfilerItem*, std::string> ProfilerItem::createNode(const std::string & name)
+		std::tuple<ProfilerItem*, std::string> ProfilerItem::createNode(const std::string & name)
 		{
-			return{ name, this, name };
+			return{ this, name };
 		}
 
 		void ProfilerItem::update(size_t fullDuration)
@@ -73,8 +78,8 @@ namespace Maditor {
 			mFullDuration = fullDuration;
 			notify();
 			//notifyDataChange(3);
-			for (std::pair<const std::string, ProfilerItem> &child : mChildren) {
-				child.second.update(fullDuration);
+			for (ProfilerItem &child : mChildren) {
+				child.update(fullDuration);
 			}
 		}
 
@@ -92,7 +97,7 @@ namespace Maditor {
 		{
 			auto it = mTopLevelItems.begin();
 			std::advance(it, i);
-			return &it->second;
+			return &*it;
 		}
 
 		void ProfilerModel::reset()
@@ -116,9 +121,9 @@ namespace Maditor {
 			}
 		}
 
-		std::tuple<std::string, ProfilerModel*, std::string> ProfilerModel::createNode(const std::string & name)
+		std::tuple<ProfilerModel*, std::string> ProfilerModel::createNode(const std::string & name)
 		{
-			return{ name, this, name };
+			return{ this, name };
 		}
 
 	}

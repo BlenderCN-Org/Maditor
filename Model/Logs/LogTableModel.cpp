@@ -16,7 +16,7 @@ namespace Maditor {
 			}
 
 			void LogTableModel::addMessage(const QString &msg, Engine::Util::MessageType level, const QString &logName, const QString &traceback, const std::string &fileName, int lineNr) {
-				beginInsertRows(QModelIndex(), 0, 0);
+				beginInsertRows(QModelIndex(), mItems.size(), mItems.size());
 				mItems.emplace_front(level, msg, logName, traceback, fileName, lineNr);
 				endInsertRows();
 			}

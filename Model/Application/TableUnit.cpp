@@ -18,21 +18,15 @@ namespace Maditor {
 			using namespace Engine::Serialize;
 
 			switch (op) {
-			case BEFORE | CLEAR:
-				beginResetModel();
-				break;
-			case AFTER | CLEAR:
-				endResetModel();
-				break;
-			case INSERT_ITEM:
-				beginInsertRows(QModelIndex(), row, row);
-				endInsertRows();
-				break;
 			case BEFORE | RESET:
 				beginResetModel();
 				break;
 			case AFTER | RESET:
 				endResetModel();
+				break;
+			case INSERT_ITEM:
+				beginInsertRows(QModelIndex(), row, row);
+				endInsertRows();
 				break;
 			default:
 				throw 0;

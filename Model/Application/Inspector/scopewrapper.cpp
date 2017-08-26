@@ -28,7 +28,7 @@ namespace Maditor {
 		}
 
 		ValueItem::ValueItem(ScopeWrapperItem * parent, ValueWrapper *val) :
-			TreeUnitItem(parent),
+			mParent(parent),
 			mValue(val)
 		{
 
@@ -45,15 +45,22 @@ namespace Maditor {
 			return QVariant();
 		}
 
+		TreeItem * ValueItem::parentItem() const
+		{
+			return mParent;
+		}
+
 		ScopeWrapperItem::ScopeWrapperItem(Inspector * parent, const std::shared_ptr<ScopeWrapper> &scope) :
-			TreeUnitItem(parent),			
+			mParent(parent),	
+			mScopeParent(nullptr),
 			mScope(scope)
 		{
 			scope->addItem(this);
 		}
 
 		ScopeWrapperItem::ScopeWrapperItem(ScopeWrapperItem * parent, const std::shared_ptr<ScopeWrapper> &scope) :
-			TreeUnitItem(parent),
+			mParent(parent),
+			mScopeParent(parent),
 			mScope(scope)
 		{
 			scope->addItem(this);
@@ -174,13 +181,26 @@ namespace Maditor {
 					attributes.insert(p.first);
 				}
 			}
-			//TODO proper cleanup
 			int i = 0;
 			for (auto it = mChildren.begin(); it != mChildren.end(); ){
-				if (ptrs.find(it->first) == ptrs.end()) {					
-					//mInspector->beginRemoveRows(getIndex(), i, i);
+				if (ptrs.find(it->first) == ptrs.end()) {
+					for (ScopeWrapperItem *item : mItems) {
+						item->removeChild(i);
+					}
 					it = mChildren.erase(it);
-					//mInspector->endRemoveRows();
+				}
+				else {
+					++it;
+					++i;
+				}
+			}
+			i = 0;
+			for (auto it = mValues.begin(); it != mValues.end(); ) {
+				if (attributes.find(it->first) == attributes.end()) {
+					for (ScopeWrapperItem *item : mItems) {
+						item->removeValue(i);
+					}
+					it = mValues.erase(it);
 				}
 				else {
 					++it;
@@ -201,11 +221,37 @@ namespace Maditor {
 			mScope->inspector()->endInsertRows();
 		}
 
+		void ScopeWrapperItem::removeChild(int i)
+		{
+			mScope->inspector()->beginRemoveRows(getIndex(), i, i);
+			auto it = mChildren.begin();
+			std::advance(it, i);
+			mChildren.erase(it);
+			mScope->inspector()->endRemoveRows();
+		}
+
 		void ScopeWrapperItem::addValue(ValueWrapper * value)
 		{
 			mScope->inspector()->beginInsertRows(getIndex(), mChildren.size() + mValues.size(), mChildren.size() + mValues.size());
 			mValues.emplace_back(this, value);
 			mScope->inspector()->endInsertRows();
+		}
+
+		void ScopeWrapperItem::removeValue(int i)
+		{
+			mScope->inspector()->beginRemoveRows(getIndex(), i + mChildren.size(), i + mChildren.size());
+			auto it = mValues.begin();
+			std::advance(it, i);
+			mValues.erase(it);
+			mScope->inspector()->endRemoveRows();
+		}
+
+		TreeItem *ScopeWrapperItem::parentItem() const {
+			return mParent;
+		}
+
+		QModelIndex ScopeWrapperItem::getIndex() {
+			return mScope->inspector()->index(parentIndex(), 0, mScopeParent ? mScopeParent->getIndex() : QModelIndex());
 		}
 
 	}

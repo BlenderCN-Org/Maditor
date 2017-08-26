@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Serialize\serializemanager.h"
+#include "serialize/serializemanager.h"
 #include "boostIPCstream.h"
 
 
@@ -10,7 +10,7 @@ namespace Maditor {
 		class MADITOR_SHARED_EXPORT BoostIPCManager : public Engine::Serialize::SerializeManager{
 
 		public:
-			BoostIPCManager(SharedMemory *memory);
+			BoostIPCManager(SharedMemory *memory, const std::string &name);
 			BoostIPCManager(const BoostIPCManager &) = delete;
 			BoostIPCManager(BoostIPCManager &&);
 			virtual ~BoostIPCManager();

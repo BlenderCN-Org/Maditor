@@ -66,6 +66,7 @@ namespace Maditor {
 
 		Project::~Project()
 		{	
+			Engine::Serialize::Debugging::StreamDebugging::setLoggingEnabled(false);
 		}
 
 		void Project::mediaDoubleClicked(const QModelIndex & index)
@@ -78,6 +79,9 @@ namespace Maditor {
 		void Project::init()
 		{
 			mMediaFolder.setRootPath(mPath + "data/media");
+
+			Engine::Serialize::Debugging::StreamDebugging::setLoggingPath(mPath.toStdString() + "debug/runtime/maditor/");
+			Engine::Serialize::Debugging::StreamDebugging::setLoggingEnabled(true);
 
 			connect(mModules.get(), &ModuleList::classAdded, this, &Project::onClassAdded);
 

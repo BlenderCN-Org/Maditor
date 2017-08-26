@@ -23,7 +23,7 @@ namespace Maditor {
 		ApplicationLauncher::ApplicationLauncher(ApplicationConfig *config, const QString &uniqueName) :
 			Document(uniqueName),
 			AppControl(),
-			mNetwork(&mMemory),
+			mNetwork(&mMemory, uniqueName.toStdString()),
 			mInput(new InputWrapper(mMemory.data().mInput)),
 			mWindow(config->launcher() == ApplicationConfig::MADITOR_LAUNCHER ? new OgreWindow(mInput.get()) : nullptr),
 			mLoader(config),
@@ -70,9 +70,9 @@ namespace Maditor {
 			if (!SetHandleInformation(mChildInWrite, HANDLE_FLAG_INHERIT, 0))
 				return;
 
-			postConstruct();
-
 			std::experimental::filesystem::create_directory(runtimeDir());
+
+			init();
 		}
 
 		ApplicationLauncher::~ApplicationLauncher()
@@ -180,7 +180,7 @@ namespace Maditor {
 			if (isLauncher()) {				
 				Shared::BoostIPCManager *net = &mNetwork;
 				setStaticSlaveId(Engine::Serialize::MADITOR);
-				if (!net->connect(10000)) {
+				if (!net->connect(1000000)) {
 					kill(Shared::KILL_FAILED_CONNECTION);
 					return;
 				}
@@ -195,7 +195,7 @@ namespace Maditor {
 			}
 		}
 		std::string ApplicationLauncher::runtimeDir() {
-			return (mConfig->project()->path() + "debug/runtime/" + mName.replace(':', '_') + "/").toStdString();
+			return (mConfig->project()->path() + "debug/runtime/" + mName + "/").toStdString();
 		}
 		void ApplicationLauncher::setupNoDebug()
 		{

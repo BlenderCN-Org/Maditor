@@ -17,12 +17,12 @@ namespace Maditor {
 
 		//int NetworkManager::sManagerCount = 0;
 
-		BoostIPCManager::BoostIPCManager(SharedMemory *mem) :
+		BoostIPCManager::BoostIPCManager(SharedMemory *mem, const std::string &name) :
 			mServer(nullptr),
 			mIsServer(false),
 			mSlaveStream(nullptr),
 			mMemory(mem),
-			SerializeManager("Maditor-Link")
+			SerializeManager(name)
 		{
 		}
 

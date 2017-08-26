@@ -3,6 +3,7 @@
 #include "Shared\moduleinstance.h"
 #include "Serialize\Container\action.h"
 #include "Util\UtilMethods.h"
+#include "signalslot/slot.h"
 
 namespace Maditor {
 	namespace Launcher {
@@ -12,6 +13,8 @@ class LogListener : public Engine::Serialize::SerializableUnit<LogListener>, pub
 public:
 	LogListener(Engine::Serialize::TopLevelSerializableUnitBase *topLevel);
 	~LogListener();
+
+	void init();
 
 protected:
 	// Inherited via LogListener
@@ -25,7 +28,9 @@ private:
 
 private:
 	Engine::Serialize::Action<decltype(&LogListener::receiveImpl), &LogListener::receiveImpl, Engine::Serialize::ActionPolicy::notification> receiveMessage;
-
+	typedef Engine::SignalSlot::Slot<decltype(&decltype(LogListener::receiveMessage)::operator()), &decltype(LogListener::receiveMessage)::operator()> SlotType;
+	std::unique_ptr<SlotType> mSlot;
+	
 };
 
 	}

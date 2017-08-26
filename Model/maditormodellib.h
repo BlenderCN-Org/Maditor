@@ -17,7 +17,7 @@
 #include "SignalSlot\signal.h"
 #include "Serialize\Container\serialized.h"
 #include "Serialize\Container\observed.h"
-#include "Serialize\Container\serializablecontainer.h"
+#include "Serialize\Container\observablecontainer.h"
 
 #include <memory>
 

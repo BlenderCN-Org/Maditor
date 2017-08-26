@@ -56,9 +56,9 @@ namespace Maditor {
 		}
 
 		void LogWidget::resize() {
-			ui->tableView->resizeColumnToContents(3);
+			/*ui->tableView->resizeColumnToContents(3);
 			ui->tableView->resizeColumnToContents(2);
-			ui->tableView->resizeRowsToContents();
+			ui->tableView->resizeRowsToContents();*/ //TODO
 		}
 
 	}

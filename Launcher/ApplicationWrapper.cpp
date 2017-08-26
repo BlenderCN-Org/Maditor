@@ -24,7 +24,7 @@ namespace Maditor {
 		ApplicationWrapper::ApplicationWrapper(size_t id) :
 			AppControl(Shared::AppControl::masterLauncher),
 			mMemory(id),
-			mNetwork(&mMemory),
+			mNetwork(&mMemory, "Maditor-Link"),
 			mInput(nullptr),
 			mRunning(false),
 			mStartRequested(false),
@@ -34,6 +34,8 @@ namespace Maditor {
 			Engine::Serialize::Debugging::StreamDebugging::setLoggingEnabled(true);
 
 			mNetwork.addTopLevelItem(this);
+
+			init();
 		}
 
 		ApplicationWrapper::~ApplicationWrapper()
@@ -71,6 +73,19 @@ namespace Maditor {
 
 			mSettings.mRootDir = appInfo.mMediaDir.c_str();
 			mSettings.mPluginsFile = mSettings.mRootDir + "plugins.cfg";
+
+
+			mRunning = true;
+
+			std::string project = appInfo.mProjectDir.c_str();
+			mLoader->setup(project + "debug/bin/");
+			while (mLoader->receiving() && mRunning && net->clientCount() == 1) {
+				net->sendAndReceiveMessages();
+			}
+			if (net->clientCount() != 1 || !mRunning) {
+				//net->close();
+				return Shared::MODULE_LOAD_FAILED;
+			}
 
 			if (appInfo.mServerClass.empty()) {
 
@@ -112,28 +127,22 @@ namespace Maditor {
 				mApplication->setup(mSettings);
 				mUtil->setApp(mApplication);
 
-				Ogre::LogManager::getSingleton().getLog("Ogre.log")->addListener(mLog.ptr());
 			}
+			else {
+				mServer = mLoader->createServer(appInfo.mServerClass.c_str(), appInfo.mAppName.c_str(), appInfo.mMediaDir.c_str());
+				if (!mServer)
+					return Shared::FAILED_CREATE_SERVER_CLASS;
+			}			
 
-			mRunning = true;			
+			mLog->init();
 
 			Engine::Util::UtilMethods::addListener(mLog.ptr());
-					
 
-			std::string project = appInfo.mProjectDir.c_str();
 
-			mLoader->setup(project + "debug/bin/");
-			while (mLoader->receiving() && mRunning && net->clientCount() == 1) {
-				net->sendAndReceiveMessages();
-			}
-			if (net->clientCount() != 1 || !mRunning) {
-				//net->close();
-				return Shared::MODULE_LOAD_FAILED;
-			}
-
-			
 			int result = 0;
+
 			if (appInfo.mServerClass.empty()) {
+				Ogre::LogManager::getSingleton().getLog("Ogre.log")->addListener(mLog.ptr());
 				mApplication->addFrameListener(this);
 				mInput->setSystem(&Engine::GUI::GUISystem::getSingleton());
 				if (!mApplication->init()) {
@@ -158,9 +167,6 @@ namespace Maditor {
 				mApplication = nullptr;
 			}
 			else {
-				mServer = mLoader->createServer(appInfo.mServerClass.c_str(), appInfo.mAppName.c_str(), appInfo.mMediaDir.c_str());
-				if (!mServer)
-					return Shared::FAILED_CREATE_SERVER_CLASS;
 				mServer->addFrameListener(this);
 				applicationSetup({});
 				result = mServer->run();
@@ -237,13 +243,16 @@ namespace Maditor {
 
 		void ApplicationWrapper::resizeWindowImpl()
 		{
-			mApplication->resizeWindow();
+			if (mApplication)
+				mApplication->resizeWindow();
 		}
 
 		void ApplicationWrapper::execLuaImpl(const std::string & cmd)
 		{
 			std::cout << cmd << std::endl;
-			Engine::Scripting::GlobalScopeBase *scope = mApplication ? mApplication->globalScope() : mServer->globalScope();
+			Engine::Scripting::GlobalScopeBase *scope;
+			if (mApplication) scope = mApplication;
+			else scope = mServer;
 			scope->executeString(cmd);
 			std::cout.flush();
 		}

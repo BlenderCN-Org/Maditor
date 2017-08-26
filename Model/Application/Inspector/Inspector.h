@@ -21,7 +21,7 @@ namespace Maditor {
 
 			void requestUpdate(const std::shared_ptr<ScopeWrapper> &wrapper);
 
-			void sendUpdateImpl(Engine::InvScopePtr ptr, const Engine::Serialize::SerializableMap<std::string, Engine::ValueType> &attributes);
+			void sendUpdateImpl(Engine::InvScopePtr ptr, bool exists, const Engine::Serialize::SerializableMap<std::string, Engine::ValueType> &attributes);
 
 			std::shared_ptr<ScopeWrapper> getScope(Engine::InvScopePtr ptr, const std::string &name);
 
