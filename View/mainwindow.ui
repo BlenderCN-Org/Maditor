@@ -247,30 +247,15 @@
   </widget>
   <widget class="QDockWidget" name="inspectorDockWidget">
    <property name="windowTitle">
-    <string>Inspector</string>
+    <string>new Inspector</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
    <widget class="QWidget" name="inspectorDockWidgetContents">
-    <layout class="QGridLayout" name="gridLayout_2">
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
-     <property name="spacing">
-      <number>0</number>
-     </property>
+    <layout class="QGridLayout" name="gridLayout_4">
      <item row="0" column="0">
-      <widget class="QTreeView" name="inspectorWidget"/>
+      <widget class="Maditor::View::InspectorView" name="inspectorWidget" native="true"/>
      </item>
     </layout>
    </widget>
@@ -390,6 +375,12 @@
    <class>Maditor::View::LogWidget</class>
    <extends>QWidget</extends>
    <header>logs/logwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Maditor::View::InspectorView</class>
+   <extends>QWidget</extends>
+   <header>application/inspector/inspectorview.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

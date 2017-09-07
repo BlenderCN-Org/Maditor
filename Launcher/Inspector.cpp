@@ -109,12 +109,12 @@ namespace Maditor {
 				return;
 			}
 
-			Engine::Serialize::SerializableMap<std::string, Engine::ValueType> attributes;
+			Engine::Serialize::SerializableMap<std::string, std::tuple<Engine::ValueType, Engine::KeyValueValueFlags>> attributes;
 			for (std::unique_ptr<Engine::KeyValueIterator> it = scope->iterator(); !it->ended(); ++(*it)) {
 
 				Engine::ValueType value = it->value();
 				if (value.is<Engine::Scripting::ScopeBase*>()) {
-					attributes.try_emplace(it->key(), Engine::ValueType(Engine::InvScopePtr(value.as<Engine::Scripting::ScopeBase*>())));
+					attributes.try_emplace(it->key(), Engine::ValueType(Engine::InvScopePtr(value.as<Engine::Scripting::ScopeBase*>())), it->flags());
 					mItemsMutex.lock();
 					auto it = mItems.find(value.as<Engine::Scripting::ScopeBase*>());
 					if (it == mItems.end()) {
@@ -127,7 +127,7 @@ namespace Maditor {
 					InspectorThreadInstance *otherThread = InspectorThreadInstance::getInstance(luaThread);
 					if (otherThread) {
 						Engine::Scripting::ScopeBase *global = otherThread->globalScope();
-						attributes.try_emplace(it->key(), Engine::ValueType(Engine::InvScopePtr(global)));
+						attributes.try_emplace(it->key(), Engine::ValueType(Engine::InvScopePtr(global)), it->flags());
 						mItemsMutex.lock();
 						auto it = mItems.find(global);
 						if (it == mItems.end()) {
@@ -140,7 +140,7 @@ namespace Maditor {
 
 				}
 				else {
-					attributes.try_emplace(it->key(), value);
+					attributes.try_emplace(it->key(), value, it->flags());
 				}
 			}
 			mItemUpdate->queue(ptr, attributes);
@@ -168,7 +168,7 @@ namespace Maditor {
 			mSendUpdate(ptr, false, {}, {});
 		}
 
-		void Inspector::itemUpdate(Engine::InvScopePtr ptr, const Engine::Serialize::SerializableMap<std::string, Engine::ValueType>& attributes)
+		void Inspector::itemUpdate(Engine::InvScopePtr ptr, const Engine::Serialize::SerializableMap<std::string, std::tuple<Engine::ValueType, Engine::KeyValueValueFlags>>& attributes)
 		{
 			mSendUpdate(ptr, true, attributes, {});
 		}
@@ -178,9 +178,9 @@ namespace Maditor {
 			if (ptr) {
 				mItemsMutex.lock();
 				auto it = mItems.find(ptr);
-				mItemsMutex.unlock();
 				if (it != mItems.end()) {
 					InspectorThreadInstance *thread = std::get<0>(it->second);
+					mItemsMutex.unlock();
 					if (thread) {
 						thread->getUpdate(ptr, this);
 					}
@@ -189,6 +189,7 @@ namespace Maditor {
 					}
 				}
 				else {
+					mItemsMutex.unlock();
 					mSendUpdate(ptr, false, {}, {});
 				}
 			}

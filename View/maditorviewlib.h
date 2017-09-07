@@ -31,5 +31,11 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QShortcut>
+#include <QSpinBox>
+#include <QDataWidgetMapper>
+#include <QSignalMapper>
+#include <QScrollBar>
+
+
 
 /// @endcond

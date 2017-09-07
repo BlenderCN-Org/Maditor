@@ -44,4 +44,6 @@
 #include <QTime>
 #include <QTimer>
 
+Q_DECLARE_METATYPE(Engine::ValueType);
+
 /// @endcond

@@ -14,7 +14,6 @@
 
 #include "Shared\errorcodes.h"
 
-#include "Scripting/Types/globalscope.h"
 
 #include <iostream>
 
@@ -152,6 +151,7 @@ namespace Maditor {
 
 				while (mRunning) {
 					net->sendAndReceiveMessages();
+					Engine::SignalSlot::ConnectionManager::getSingleton().update();
 					if (net->clientCount() != 1) {
 						//net->close();
 						return Shared::MADITOR_DISCONNECTED;

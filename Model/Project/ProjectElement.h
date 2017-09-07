@@ -21,7 +21,7 @@ namespace Maditor {
 			virtual QString path() const;
 			virtual Project *project();
 			virtual ProjectElement * parentItem() const override;
-			virtual QVariant data(int col) const override;
+			virtual QVariant cellData(int col) const override;
 
 			bool save();
 			void discardChanges();

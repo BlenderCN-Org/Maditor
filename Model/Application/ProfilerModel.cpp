@@ -52,7 +52,7 @@ namespace Maditor {
 			return mName;
 		}
 
-		QVariant ProfilerItem::data(int col) const
+		QVariant ProfilerItem::cellData(int col) const
 		{
 			switch (col) {
 			case 0:

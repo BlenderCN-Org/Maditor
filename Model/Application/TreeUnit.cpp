@@ -51,7 +51,7 @@ namespace Maditor {
 			return mParent ? mTree->index(parentIndex(), 0, mParent->getIndex()) : QModelIndex();
 		}
 
-		QVariant TreeUnitBase::data(int col) const
+		QVariant TreeUnitBase::cellData(int col) const
 		{
 			return QVariant();
 		}

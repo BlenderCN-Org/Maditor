@@ -46,10 +46,10 @@ namespace Maditor {
 		
 		protected:
 			void requestUpdateImpl(Engine::InvScopePtr ptr);
-			void sendUpdateImpl(Engine::InvScopePtr ptr, bool exists, const Engine::Serialize::SerializableMap<std::string, Engine::ValueType> &attributes) {}
+			void sendUpdateImpl(Engine::InvScopePtr ptr, bool exists, const Engine::Serialize::SerializableMap<std::string, std::tuple<Engine::ValueType, Engine::KeyValueValueFlags>> &attributes) {}
 
 			void itemRemoved(Engine::InvScopePtr ptr);
-			void itemUpdate(Engine::InvScopePtr ptr, const Engine::Serialize::SerializableMap<std::string, Engine::ValueType> &attributes);
+			void itemUpdate(Engine::InvScopePtr ptr, const Engine::Serialize::SerializableMap<std::string, std::tuple<Engine::ValueType, Engine::KeyValueValueFlags>> &attributes);
 
 		protected:
 			Engine::Scripting::ScopeBase *validate(Engine::InvScopePtr ptr);

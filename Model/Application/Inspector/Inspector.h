@@ -8,7 +8,7 @@
 
 namespace Maditor {
 	namespace Model {
-		class Inspector : public TreeUnit<Inspector> {
+		class MADITOR_MODEL_EXPORT Inspector : public TreeUnit<Inspector> {
 			Q_OBJECT
 		public:
 			Inspector(Engine::Serialize::TopLevelSerializableUnitBase *topLevel);
@@ -19,11 +19,16 @@ namespace Maditor {
 			virtual TreeItem *child(int i) override;
 			virtual int childCount() const override;
 
-			void requestUpdate(const std::shared_ptr<ScopeWrapper> &wrapper);
+			void sendUpdateImpl(Engine::InvScopePtr ptr, bool exists, const Engine::Serialize::SerializableMap<std::string, std::tuple<Engine::ValueType, Engine::KeyValueValueFlags>> &attributes);
 
-			void sendUpdateImpl(Engine::InvScopePtr ptr, bool exists, const Engine::Serialize::SerializableMap<std::string, Engine::ValueType> &attributes);
 
-			std::shared_ptr<ScopeWrapper> getScope(Engine::InvScopePtr ptr, const std::string &name);
+			QModelIndex registerIndex(QObject *object, Engine::InvScopePtr ptr);
+			void unregisterIndex(QObject *object);
+
+			QModelIndex updateIndex(QObject *object, Engine::InvScopePtr ptr);
+
+			virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
+
 
 		protected:
 			void requestUpdateImpl(Engine::InvScopePtr ptr) {}
@@ -31,11 +36,9 @@ namespace Maditor {
 			virtual void timerEvent(QTimerEvent *e) override;
 
 		private:
-			std::shared_ptr<ScopeWrapper> mGlobalWrapper;
-			ScopeWrapperItem mGlobalWrapperItem;
-
-			std::map<Engine::InvScopePtr, std::weak_ptr<ScopeWrapper>> mWrappers;
-			std::map<Engine::InvScopePtr, std::weak_ptr<ScopeWrapper>>::iterator mIt;
+			std::map<Engine::InvScopePtr, ScopeWrapperItem> mWrappers;
+			std::map<QObject *, Engine::InvScopePtr> mIndices;
+			std::map<QObject *, Engine::InvScopePtr>::iterator mIt;
 
 			Engine::Serialize::Action<decltype(&Inspector::requestUpdateImpl), &Inspector::requestUpdateImpl, Engine::Serialize::ActionPolicy::request> mRequestUpdate;
 			Engine::Serialize::Action<decltype(&Inspector::sendUpdateImpl), &Inspector::sendUpdateImpl, Engine::Serialize::ActionPolicy::notification> mSendUpdate;

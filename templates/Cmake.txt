@@ -12,7 +12,7 @@ if (NOT sources STREQUAL "")
 
     target_link_libraries (%1 ${MADGINE_LIBRARIES})
 
-    set_target_properties(%1 PROPERTIES LINKER_LANGUAGE CXX)
+    set_target_properties(%1 PROPERTIES LINKER_LANGUAGE CXX LINK_FLAGS /PDBALTPATH:./%1.pdb)
     
     %3
 

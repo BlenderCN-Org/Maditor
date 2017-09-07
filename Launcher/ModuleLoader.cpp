@@ -145,6 +145,10 @@ namespace Maditor {
 				throw 0;
 			}
 
+			if (!std::experimental::filesystem::copy_file(binaryPdbPath, runtimePdbPath, std::experimental::filesystem::copy_options::overwrite_existing, err)) {
+				std::cout << "Warning: Pdb might not be up to date!" << std::endl;
+			}
+
 			mEntityComponentNames.clear();
 			mSceneComponentHashes.clear();
 			mGameHandlerHashes.clear();

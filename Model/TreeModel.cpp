@@ -73,13 +73,14 @@ namespace Maditor {
 			if (!index.isValid())
 				return QVariant();
 
-			if (role != Qt::DisplayRole && role != Qt::DecorationRole)
+			if (role != Qt::DisplayRole && role != Qt::DecorationRole && role != Qt::EditRole)
 				return QVariant();
 
 			TreeItem *el = item(index);
 			switch (role) {
 			case Qt::DisplayRole:
-				return el->data(index.column());
+			case Qt::EditRole:
+				return el->cellData(index.column());
 			case Qt::DecorationRole:
 				return el->icon();
 			default:

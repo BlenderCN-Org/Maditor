@@ -6,12 +6,11 @@ namespace Maditor {
 
 		Inspector::Inspector(Engine::Serialize::TopLevelSerializableUnitBase *topLevel) :
 			TreeUnit(topLevel, 2),
-			mGlobalWrapper(std::make_shared<ScopeWrapper>(this, nullptr, "Global")),
-			mGlobalWrapperItem(this, mGlobalWrapper),
 			mPending(false),
 			mTimer(0)
 		{
 			reset();
+			
 		}
 
 		void Inspector::start()
@@ -22,10 +21,9 @@ namespace Maditor {
 		void Inspector::reset()
 		{
 			beginResetModel();
-			mGlobalWrapper->clear();
 			mWrappers.clear();
-			mWrappers[nullptr] = mGlobalWrapper;
-			mIt = mWrappers.begin();
+			mWrappers.try_emplace(nullptr, this, nullptr);
+			mIt = mIndices.end();
 			if (mTimer) {
 				killTimer(mTimer);
 				mTimer = 0;
@@ -36,64 +34,82 @@ namespace Maditor {
 
 		TreeItem * Inspector::child(int i)
 		{
-			assert(i == 0);
-			return &mGlobalWrapperItem;
+			auto it = mWrappers.begin();
+			std::advance(it, i);
+			return &it->second;
 		}
 
 		int Inspector::childCount() const
 		{
-			return 1;
+			return mWrappers.size();
 		}
 
 		void Inspector::timerEvent(QTimerEvent * e)
 		{
 			if (mPending)
 				return;
-			mPending = true;
-			mRequestUpdate(mIt->first, {});
-			++mIt;
-			if (mIt == mWrappers.end())
-				mIt = mWrappers.begin();			
-		}
-
-		std::shared_ptr<ScopeWrapper> Inspector::getScope(Engine::InvScopePtr ptr, const std::string &name)
-		{
-			auto it = mWrappers.find(ptr);
-			if (it != mWrappers.end()) {
-				if (std::shared_ptr<ScopeWrapper> ptr = it->second.lock()) {
-					return ptr;
-				}
-				if (mIt == it) {
-					++mIt;
-					if (mIt == mWrappers.end())
-						mIt = mWrappers.begin();
-				}
-				mWrappers.erase(it);
+			if (!mIndices.empty()) {
+				if (mIt == mIndices.end())
+					mIt = mIndices.begin();
+				mPending = true;
+				mRequestUpdate(mIt->second, {});
+				++mIt;				
 			}
-			
-			std::shared_ptr<ScopeWrapper> scope = std::make_shared<ScopeWrapper>(this, ptr, name);
-			mWrappers.try_emplace(ptr, scope);
-			return scope;
 		}
 
-		void Inspector::sendUpdateImpl(Engine::InvScopePtr ptr, bool exists, const Engine::Serialize::SerializableMap<std::string, Engine::ValueType> &attributes) {
+		void Inspector::sendUpdateImpl(Engine::InvScopePtr ptr, bool exists, const Engine::Serialize::SerializableMap<std::string, std::tuple<Engine::ValueType, Engine::KeyValueValueFlags>> &attributes) {
 			mPending = false;
 			auto it = mWrappers.find(ptr);
 			assert(it != mWrappers.end());
 			if (exists) {
-				if (std::shared_ptr<ScopeWrapper> p = it->second.lock()) {
-					p->update(attributes.data());
-				}
-				else {
-					mWrappers.erase(it);
-				}
+				it->second.update(attributes.data());
 			}
 			else {
 				mWrappers.erase(it);
 			}
 		}
 
+		QModelIndex Inspector::updateIndex(QObject *object, Engine::InvScopePtr ptr) {
+			auto it = mIndices.find(object);
+			if (it == mIndices.end())
+				throw 0;
+			it->second = ptr;
+			auto result = mWrappers.try_emplace(ptr, this, ptr);
+			int i = std::distance(mWrappers.begin(), result.first);
+			if (result.second) {
+				beginInsertRows(QModelIndex(), i, i);
+				endInsertRows();
+			}			
+			return index(i, 0);
+		}
 
+		QModelIndex Inspector::registerIndex(QObject * object, Engine::InvScopePtr ptr)
+		{
+			auto it = mIndices.find(object);
+			if (it != mIndices.end())
+				throw 0;
+			mIndices[object] = ptr;
+			auto it2 = mWrappers.find(ptr);
+			return index(std::distance(mWrappers.begin(), it2), 0);
+		}
+
+		void Inspector::unregisterIndex(QObject * object)
+		{
+			auto it = mIndices.find(object);
+			if (it == mIndices.end())
+				throw 0;
+			mIndices.erase(it);
+		}
+
+		Qt::ItemFlags Inspector::flags(const QModelIndex & index) const
+		{
+			Qt::ItemFlags flags = TreeUnit::flags(index);
+			ValueItem *value = dynamic_cast<ValueItem*>(item(index));
+			if (value && value->isEditable()) {
+				flags |= Qt::ItemIsEditable;
+			}
+			return flags;
+		}
 
 	}
 }

@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.6)
 
-set(BLENDER_TOOL FALSE CACHE BOOL "Enables and installs blender tools")
-set(VS_TOOL FALSE CACHE BOOL "Enables Visual Studio tools")
+option(BLENDER_TOOL "Enables and installs blender tools")
+option(VS_TOOL "Enables Visual Studio tools")
 
 
 Project(Tools)

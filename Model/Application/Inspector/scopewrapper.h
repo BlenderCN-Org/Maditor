@@ -5,97 +5,49 @@
 namespace Maditor {
 	namespace Model {
 
-		class ValueWrapper {
+		class ValueItem : public TreeItem {
 		public:
-			ValueWrapper(const std::string &name, const Engine::ValueType &value);
+			ValueItem(ScopeWrapperItem *parent, const std::string &name, const Engine::ValueType &value);
 
-			std::string toString() const;
-			const std::string &name() const;
+			virtual TreeItem *child(int) override { throw 0; };
+			virtual QVariant cellData(int col) const override;
+			virtual TreeItem *parentItem() const override;
 
-			void operator=(const Engine::ValueType &value);
+			void setValue(const Engine::ValueType &val);
+			bool isEditable();
+			void setEditable(bool b);
 
 		private:
 			std::string mName;
 			Engine::ValueType mValue;
-		};
-
-		class ValueItem : public TreeItem {
-		public:
-			ValueItem(ScopeWrapperItem *parent, ValueWrapper *val);
-
-			virtual TreeItem *child(int) override { throw 0; };
-			virtual QVariant data(int col) const override;
-			virtual TreeItem *parentItem() const override;
-
-		private:
-			ValueWrapper *mValue;
 			ScopeWrapperItem *mParent;
+			bool mEditable;
 		};
 
-		class ScopeWrapper {
-		public:
-			ScopeWrapper(Inspector *inspector, Engine::InvScopePtr ptr, const std::string &name);
-
-			
-			void clear();
-
-			Engine::InvScopePtr ptr() const;
-
-			int childCount() const;
-			int valueCount() const;
-
-			void update(const std::map<std::string, Engine::ValueType> &data);
-
-			void addItem(ScopeWrapperItem *item);
-			void removeItem(ScopeWrapperItem *item);
-
-			const std::string &name() const;
-
-			Inspector *inspector();
-
-		private:
-			Engine::InvScopePtr mPtr;
-			std::string mName;
-
-			std::map<Engine::InvScopePtr, std::shared_ptr<ScopeWrapper>> mChildren;
-			std::map<std::string, ValueWrapper> mValues;
-
-			std::list<ScopeWrapperItem*> mItems;
-
-			Inspector *mInspector;
-
-		};
 
 		class ScopeWrapperItem : public TreeItem {
 		public:
-			ScopeWrapperItem(Inspector *parent, const std::shared_ptr<ScopeWrapper> &scope);
-			ScopeWrapperItem(ScopeWrapperItem *parent, const std::shared_ptr<ScopeWrapper> &scope);
+			ScopeWrapperItem(Inspector *parent, Engine::InvScopePtr ptr);
 			virtual ~ScopeWrapperItem();
 
-			void clearValues();
 			void clear();
 
 			virtual int childCount() const override;
 			virtual TreeItem *child(int i) override;
-			virtual QVariant data(int col) const override;		
+			virtual QVariant cellData(int col) const override;		
 			virtual TreeItem *parentItem() const override;
 
-			void addChild(const std::shared_ptr<ScopeWrapper> &scope);
-			void removeChild(int i);
-			void addValue(ValueWrapper *value);
-			void removeValue(int i);
+			void update(const std::map<std::string, std::tuple<Engine::ValueType, Engine::KeyValueValueFlags>> &data);
 
 			QModelIndex getIndex();
 
 		private:
-			std::shared_ptr<ScopeWrapper> mScope;
 
-			ScopeWrapperItem *mScopeParent;
-			TreeItem *mParent;
+			std::map<std::string, ValueItem> mValues;
 
-			std::list<ScopeWrapperItem> mChildren;
-			std::list<ValueItem> mValues;
+			Engine::InvScopePtr mPtr;
 			
+			Inspector *mInspector;
 
 		};
 	}

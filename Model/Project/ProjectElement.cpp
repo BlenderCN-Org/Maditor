@@ -147,7 +147,7 @@ namespace Maditor {
 			return mParent;
 		}
 
-		QVariant ProjectElement::data(int col) const
+		QVariant ProjectElement::cellData(int col) const
 		{
 			return mName;
 		}

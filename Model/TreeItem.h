@@ -15,7 +15,7 @@ public:
 
 	virtual TreeItem *parentItem() const = 0;
 
-	virtual QVariant data(int col) const = 0;
+	virtual QVariant cellData(int col) const = 0;
 
 	virtual QVariant icon() const;
 

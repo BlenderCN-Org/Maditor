@@ -18,7 +18,7 @@ namespace Maditor {
 			// Geerbt über TreeUnitItem
 			virtual int childCount() const override;
 			virtual ProfilerItem * child(int i) override;
-			virtual QVariant data(int col) const override;
+			virtual QVariant cellData(int col) const override;
 
 			const std::string &key() const;
 

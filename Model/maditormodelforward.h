@@ -37,7 +37,6 @@ namespace Maditor {
 		class DialogManager;
 
 		class Inspector;
-		class ScopeWrapper;
 		class ScopeWrapperItem;
 
 		namespace Generators {

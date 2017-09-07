@@ -46,7 +46,7 @@ namespace Maditor {
 			
 			TreeUnitBase(int columnCount);
 
-			virtual QVariant data(int column) const override;
+			virtual QVariant cellData(int column) const override;
 
 			void handleOperation(const QModelIndex &parent, int row, int op);
 			void onDataChanged(const QModelIndex &parent, int row, int fromCol, int toCol);

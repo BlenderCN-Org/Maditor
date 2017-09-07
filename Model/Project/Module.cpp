@@ -135,6 +135,10 @@ namespace Maditor {
 			
 			mDependencies.insert(other);
 			other->mDependedBy.insert(this);	
+			
+			QDomElement el =  element().ownerDocument().createElement("Dependency");
+			el.setAttribute("name", dep);
+			element().appendChild(el);
 
 			dirty();
 
@@ -149,6 +153,15 @@ namespace Maditor {
 			Module *other = mParent->getModule(dep);
 			mDependencies.erase(other);
 			other->mDependedBy.erase(this);
+
+			QDomNodeList list = element().elementsByTagName("Dependency");
+			for (int i = 0; i < list.count(); ++i) {
+				QDomNode el = list.at(i);
+				if (el.toElement().attribute("name") == dep) {
+					element().removeChild(el);
+					break;
+				}
+			}
 			
 			dirty();
 		}
