@@ -18,40 +18,29 @@ namespace View {
 		mList(nullptr),
 		mCurrentWidget(nullptr){
 
+
 	}
 
-	void ApplicationView::setupUi(Ui::MainWindow * ui, MainWindow * window)
+	void ApplicationView::setupUi(MainWindow * window)
 	{
-		WindowSpawner<Model::ApplicationLauncher, ApplicationWindow>::setupUi(ui);
-		WindowSpawner<Model::ApplicationLauncher, ApplicationLog>::setupUi(ui);
+		mUi = window->ui;
 
-		mUi = ui;
+		WindowSpawner::setupUi(mUi);
 
-		setConnections({
-			{ ui->actionSetup, &Model::ApplicationLauncher::setup },
-			{ ui->actionSetup_No_Debug, &Model::ApplicationLauncher::setupNoDebug },
-			{ ui->actionShutdown, &Model::ApplicationLauncher::shutdown },
-			{ ui->actionKill, &Model::ApplicationLauncher::kill},
-			{ ui->actionStart, &Model::ApplicationLauncher::start },
-			{ ui->actionPause, &Model::ApplicationLauncher::pause },
-			{ ui->actionStop, &Model::ApplicationLauncher::stop },
-		});
 
-		createToolbar(window, "Application", {
-			mCurrentConfigSelector.menuAction(),
-			ui->actionSetup,
-			ui->actionSetup_No_Debug,
-			ui->actionShutdown,
-			ui->actionKill,
-			ui->actionStart,
-			ui->actionPause,
-			ui->actionStop
-		});
+		mApplicationInitialActionCount = mUi->menuDocument->actions().count();
 
-		mApplicationInitialActionCount = ui->menuApplication->actions().count();
+		mCurrentConfigSelector = new QMenu(window);
 
-		connect(&mCurrentConfigSelector, &QMenu::triggered, this, &ApplicationView::selectConfig);
-		connect(mCurrentConfigSelector.menuAction(), &QAction::triggered, this, &ApplicationView::createCurrentConfig);
+		connect(mCurrentConfigSelector, &QMenu::triggered, this, &ApplicationView::selectConfig);
+		connect(mCurrentConfigSelector->menuAction(), &QAction::triggered, this, &ApplicationView::createCurrentConfig);
+
+
+		QToolBar *toolbar = new QToolBar(window);
+
+		toolbar->addAction(mCurrentConfigSelector->menuAction());
+
+		window->addToolBar(toolbar);
 
 	}
 
@@ -59,17 +48,17 @@ namespace View {
 	{
 		mList = list;
 
-		mCurrentConfigSelector.clear();
+		mCurrentConfigSelector->clear();
 		for (const QString &action : list->getConfigs()) {
-			mCurrentConfigSelector.addAction(action);
+			mCurrentConfigSelector->addAction(action);
 		}		
 
-		if (mCurrentConfigSelector.actions().size() > 0) {
-			mCurrentConfigSelector.setEnabled(true);
-			mCurrentConfigSelector.setTitle(QString("New %1").arg(mCurrentConfigSelector.actions().front()->text()));
+		if (mCurrentConfigSelector->actions().size() > 0) {
+			mCurrentConfigSelector->setEnabled(true);
+			mCurrentConfigSelector->setTitle(QString("New %1").arg(mCurrentConfigSelector->actions().front()->text()));
 		}
 		else {
-			mCurrentConfigSelector.setEnabled(false);
+			mCurrentConfigSelector->setEnabled(false);
 		}
 
 		connect(list, &Model::ConfigList::instanceAdded, this, &ApplicationView::onInstanceAdded);
@@ -78,58 +67,20 @@ namespace View {
 
 	void ApplicationView::setModel(Model::ApplicationLauncher * app)
 	{
-		ComponentView::setModel(app);
-
-		for (QMetaObject::Connection &conn : mAppConnections)
-			disconnect(conn);
-
 		
 		mUi->modulesWidget->setModel(app->moduleLoader());
 		mUi->performanceWidget->setModel(app->util()->profiler());
 		mUi->appStatsWidget->setModel(app->util()->stats());
-		mUi->inspectorWidget->setModel(app->inspector());
-
-		mAppConnections.emplace_back(connect(app, &Model::ApplicationLauncher::applicationSettingup, this, &ApplicationView::onApplicationSettingup));
-		mAppConnections.emplace_back(connect(app, &Model::ApplicationLauncher::applicationSetup, this, &ApplicationView::onApplicationSetup));
-		mAppConnections.emplace_back(connect(app, &Model::ApplicationLauncher::applicationStarted, this, &ApplicationView::onApplicationStarted));
-		mAppConnections.emplace_back(connect(app, &Model::ApplicationLauncher::applicationStopped, this, &ApplicationView::onApplicationStopped));
-		mAppConnections.emplace_back(connect(app, &Model::ApplicationLauncher::applicationShutdown, this, &ApplicationView::onApplicationShutdown));
-
-		mUi->actionSetup->setEnabled(!app->isLaunched());
-		mUi->actionSetup_No_Debug->setEnabled(!app->isLaunched());
-		mUi->actionShutdown->setEnabled(app->isSetup() && app->isLauncher());
-		mUi->actionKill->setEnabled(app->isLaunched());
-		mUi->actionStart->setEnabled(!app->isRunning() && app->isSetup() && app->isClient());
-		mUi->actionStop->setEnabled(app->isRunning() && app->isClient());
-		mUi->actionPause->setEnabled(app->isRunning() && app->isClient());
+		mUi->inspectorWidget->setModel(app->inspector());		
 	}
 
 	void ApplicationView::clearModel()
-	{
-		ComponentView::clearModel();
-
-		for (QMetaObject::Connection &conn : mAppConnections)
-			disconnect(conn);
-
+	{	
 		mUi->modulesWidget->setModel(nullptr);
 		mUi->appStatsWidget->clearModel();
-
-		mUi->actionSetup->setEnabled(false);
-		mUi->actionSetup_No_Debug->setEnabled(false);
-		mUi->actionShutdown->setEnabled(false);
-		mUi->actionKill->setEnabled(false);
-		mUi->actionStart->setEnabled(false);
-		mUi->actionStop->setEnabled(false);
-		mUi->actionPause->setEnabled(false);
 	}
 
-	void ApplicationView::currentTabSet(ApplicationWindow * win)
-	{
-		setModel(win->app());
-		setCurrentTab(win);
-	}
-
-	void ApplicationView::currentTabSet(ApplicationLog * win)
+	void ApplicationView::currentTabSet(ApplicationContainerWindow * win)
 	{
 		setModel(win->app());
 		setCurrentTab(win);
@@ -139,6 +90,7 @@ namespace View {
 	{
 		if (mCurrentWidget != w) {
 			clearModel();
+			mUi->menuDocument->menuAction()->setVisible(false);
 		}
 	}
 
@@ -146,7 +98,8 @@ namespace View {
 	{
 		mCurrentWidget = tab;
 
-		QMenu *menu = mUi->menuApplication;
+		QMenu *menu = mUi->menuDocument;
+		menu->setTitle("Application");
 		for (QAction *action : menu->actions().mid(mApplicationInitialActionCount)) {
 			menu->removeAction(action);
 		}
@@ -154,6 +107,8 @@ namespace View {
 		for (QAction *a : tab->actions()) {
 			menu->addAction(a);
 		}
+
+		menu->menuAction()->setVisible(true);
 
 	}
 
@@ -166,72 +121,31 @@ namespace View {
 	{
 		Model::ApplicationConfig *config = mList->getConfig(name);
 		assert(config);
-		setModel(config->createInstace());
+		Model::ApplicationLauncher *launcher = config->createInstace();
+		//setModel(launcher);
 	}
 
 	void ApplicationView::onConfigAdded(Model::ApplicationConfig *config) {
-		mCurrentConfigSelector.addAction(config->name());
-		if (!mCurrentConfigSelector.isEnabled()) {
-			mCurrentConfigSelector.setEnabled(true);
-			mCurrentConfigSelector.setTitle(QString("New %1").arg(config->name()));
+		mCurrentConfigSelector->addAction(config->name());
+		if (!mCurrentConfigSelector->isEnabled()) {
+			mCurrentConfigSelector->setEnabled(true);
+			mCurrentConfigSelector->setTitle(QString("New %1").arg(config->name()));
 		}
 	}
 
 	void ApplicationView::onInstanceAdded(Model::ApplicationLauncher * instance)
 	{
-		if (instance->isClient())
-			WindowSpawner<Model::ApplicationLauncher, ApplicationWindow>::spawn(instance);
-		else
-			WindowSpawner<Model::ApplicationLauncher, ApplicationLog>::spawn(instance);
+		WindowSpawner::spawn(instance);
 	}
 
 	void ApplicationView::onInstanceDestroyed(Model::ApplicationLauncher * instance)
 	{
-		if (instance->isClient())
-			WindowSpawner<Model::ApplicationLauncher, ApplicationWindow>::remove(instance);
-		else
-			WindowSpawner<Model::ApplicationLauncher, ApplicationLog>::remove(instance);
+		WindowSpawner::remove(instance);
 	}
 
 	void ApplicationView::createCurrentConfig()
 	{
-		selectConfigName(mCurrentConfigSelector.title().mid(4));
-	}
-
-	void ApplicationView::onApplicationSettingup() {		
-		mUi->actionSetup->setEnabled(false);
-		mUi->actionSetup_No_Debug->setEnabled(false);
-		mUi->actionKill->setEnabled(true);
-	}
-
-	void ApplicationView::onApplicationSetup()
-	{		
-		mUi->actionStart->setEnabled(model()->isClient());
-		mUi->actionShutdown->setEnabled(model()->isLauncher());		
-	}
-
-	void ApplicationView::onApplicationStarted() {		
-		mUi->actionStart->setEnabled(false);
-		mUi->actionPause->setEnabled(true);
-		mUi->actionStop->setEnabled(true);
-	}
-
-	void ApplicationView::onApplicationStopped()
-	{		
-		mUi->actionStart->setEnabled(true);
-		mUi->actionPause->setEnabled(false);
-		mUi->actionStop->setEnabled(false);
-	}
-
-	void ApplicationView::onApplicationShutdown()
-	{		
-		mUi->actionSetup->setEnabled(true);
-		mUi->actionSetup_No_Debug->setEnabled(true);
-		mUi->actionShutdown->setEnabled(false);
-		mUi->actionKill->setEnabled(false);
-		mUi->actionStart->setEnabled(false);
-		mUi->actionStop->setEnabled(false);
-		mUi->actionPause->setEnabled(false);
+		selectConfigName(mCurrentConfigSelector->title().mid(4));
 	}
 
 

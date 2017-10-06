@@ -56,7 +56,22 @@ namespace Maditor {
 			connect(config, &ApplicationConfig::documentCreated, this, &ConfigList::instanceAdded);
 			connect(config, &ApplicationConfig::documentDestroyed, this, &ConfigList::instanceDestroyed);
 			
+			connect(config, &ApplicationConfig::launcherChanged, this, &ConfigList::launcherChanged);
+			connect(config, &ApplicationConfig::launcherTypeChanged, this, &ConfigList::launcherTypeChanged);
+
 			//emit moduleAdded(module);
+		}
+
+		void ConfigList::launcherTypeChanged(ApplicationConfig::LauncherType type, ApplicationConfig::LauncherType oldLauncherType)
+		{
+			ApplicationConfig *conf = static_cast<ApplicationConfig*>(sender());
+			emit applicationLauncherTypeChanged(conf, conf->launcher(), conf->launcher(), type, oldLauncherType);
+		}
+
+		void ConfigList::launcherChanged(ApplicationConfig::Launcher launcher, ApplicationConfig::Launcher oldLauncher)
+		{
+			ApplicationConfig *conf = static_cast<ApplicationConfig*>(sender());
+			emit applicationLauncherTypeChanged(conf, launcher, oldLauncher, conf->launcherType(), conf->launcherType());
 		}
 
 		void ConfigList::newConfig()

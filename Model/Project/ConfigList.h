@@ -57,6 +57,14 @@ namespace Maditor {
 
 			void openConfig(ApplicationConfig *);
 
+			void applicationLauncherTypeChanged(ApplicationConfig *, 
+				ApplicationConfig::Launcher newLauncher, ApplicationConfig::Launcher oldLauncher, 
+				ApplicationConfig::LauncherType newLauncherType, ApplicationConfig::LauncherType oldLauncherType);
+
+		private slots:
+			void launcherChanged(ApplicationConfig::Launcher launcher, ApplicationConfig::Launcher oldLauncher);
+			void launcherTypeChanged(ApplicationConfig::LauncherType type, ApplicationConfig::LauncherType oldLauncherType);
+
 		private:
 			Project *mParent;
 

@@ -66,6 +66,16 @@ namespace Maditor {
 				mLibraryDependencies << dependency;
 			}
 
+			void CmakeGenerator::addConfig(const QString & config)
+			{
+				mConfigs << config;
+			}
+
+			void CmakeGenerator::removeConfig(const QString & config)
+			{
+				mConfigs.removeAll(config);
+			}
+
 			const QStringList & CmakeGenerator::dependencies() const
 			{
 				return mDependencies;
@@ -80,13 +90,13 @@ namespace Maditor {
 			{
 				QString files = mFileList.join(" ");
 				
-				QString dependencies = mDependencies.join(" ");
+				QString dependencies = mDependencies.empty() ? "" : QString("${config}_") + mDependencies.join(" ${config}_");
 				for (const QString &libraryDep : mLibraryDependencies)
-					dependencies += QString(" ${%1_LIBRARIES}").arg(libraryDep);
+					dependencies += QString(" ${${config}_%1_LIBRARIES}").arg(libraryDep);
 				
-				QString link = QString("target_link_libraries(%1 %2)").arg(mName, dependencies);
+				QString link = QString("target_link_libraries(${config}_%1 PUBLIC %2)").arg(mName, dependencies);
 
-				stream << templateFile("Cmake.txt").arg(mName, files, link);
+				stream << templateFile("Cmake.txt").arg(mName, files, link, mConfigs.join(" "));
 
 			}
 

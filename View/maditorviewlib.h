@@ -35,7 +35,11 @@
 #include <QDataWidgetMapper>
 #include <QSignalMapper>
 #include <QScrollBar>
-
+#include <QToolButton>
+#include <QDrag>
+#include <QMimeData>
+#include <QSplitter>
+#include <QMenuBar>
 
 
 /// @endcond

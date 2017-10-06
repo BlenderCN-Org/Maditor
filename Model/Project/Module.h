@@ -4,6 +4,7 @@
 #include "Generators\CmakeGenerator.h"
 #include "Generators\ClassGenerator.h"
 #include "ProjectElement.h"
+#include "ApplicationConfig.h"
 
 namespace Maditor {
 	namespace Model {
@@ -64,6 +65,13 @@ namespace Maditor {
 			void deleteClass(Generators::ClassGenerator *generator);
 			void removeClass(Generators::ClassGenerator *generator);
 
+			void addConfigs(ApplicationConfig::Launcher newLauncher,
+				ApplicationConfig::LauncherType newLauncherType);
+			void updateConfigs(ApplicationConfig::Launcher newLauncher, ApplicationConfig::Launcher oldLauncher,
+				ApplicationConfig::LauncherType newLauncherType, ApplicationConfig::LauncherType oldLauncherType);
+			void removeConfigs(ApplicationConfig::Launcher oldLauncher,
+				ApplicationConfig::LauncherType oldLauncherType);
+
 		private:
 			void addClassImpl(Generators::ClassGenerator *generator, bool callInsert = true);
 
@@ -82,7 +90,8 @@ namespace Maditor {
 			
 			std::set<Module *> mDependencies, mDependedBy;
 
-
+			int mServerConfigCount;
+			int mClientConfigCount;
 
 		};
 

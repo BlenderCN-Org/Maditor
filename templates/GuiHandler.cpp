@@ -9,7 +9,7 @@ namespace %game {
 	namespace %module {
 
 		%name::%name() :
-			GuiHandler("%window", %type%layout) {
+			Scope("%window", %type%layout) {
 
 		}
 

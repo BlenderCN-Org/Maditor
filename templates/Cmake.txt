@@ -8,13 +8,17 @@ PROJECT(%1)
 set (sources %2)
 
 if (NOT sources STREQUAL "")  
-    add_library(%1 SHARED ${sources})
-
-    target_link_libraries (%1 ${MADGINE_LIBRARIES})
-
-    set_target_properties(%1 PROPERTIES LINKER_LANGUAGE CXX LINK_FLAGS /PDBALTPATH:./%1.pdb)
+	foreach (config %4)
     
-    %3
+		add_library(${config}_%1 SHARED ${sources})
+
+		setup_target_config(${config}_%1 ${config})
+
+		set_target_properties(${config}_%1 PROPERTIES LINKER_LANGUAGE CXX LINK_FLAGS /PDBALTPATH:./${config}_%1.pdb)
+    
+		%3
+
+	endforeach()
 
 endif()
 

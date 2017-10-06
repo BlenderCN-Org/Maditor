@@ -14,7 +14,7 @@ namespace Maditor {
 			DocumentStore(DocumentStore &&) = delete;
 
 			template <class Doc, class... _Ty>
-			Doc *createDocument(_Ty&&... args) {
+			Doc *createDocument( _Ty&&... args) {
 				Doc *document = new Doc(std::forward<_Ty>(args)...);
 				mDocuments.emplace_back(document);
 				connect(document, &Doc::destroySignal, this, &DocumentStore::destroyDocument);

@@ -31,6 +31,8 @@ namespace Maditor {
 			if (mReloadProject && !mRecentProjects.isEmpty()) {
 				loadProject(mRecentProjects.front());
 			}
+
+			startTimer(100);
 		}
 
 
@@ -137,6 +139,11 @@ namespace Maditor {
 			if (mDialogManager->showLoadProjectDialog(path)) {
 				loadProject(path);
 			}
+		}
+
+		void Maditor::timerEvent(QTimerEvent * e)
+		{
+			mConnMgr.update();
 		}
 
 	}

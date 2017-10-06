@@ -17,12 +17,12 @@ public:
 
 	LogsView();
 	
-	void setupUi(Ui::MainWindow *ui, QMainWindow *window);
+	void setupUi(MainWindow *window);
 	virtual void setModel(Model::LogTableModel *logs) override;
 
-
 private:
-	Ui::MainWindow *mUi;
+	LogWidget *mLogsWidget;
+
 };
 
 

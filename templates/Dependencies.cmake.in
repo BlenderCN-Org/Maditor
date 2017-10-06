@@ -1,2 +1,1 @@
-set(Interfaces_DIR "${Interfaces_DIR}")
 set(Madgine_DIR "${Madgine_DIR}")

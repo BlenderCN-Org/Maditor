@@ -19,11 +19,17 @@ FolderSources(sources "" "" ApplicationWrapper.cpp ApplicationWrapper.h InputWra
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${lua_include})
 
 
-add_executable(Maditor_Launcher ${sources})
+add_executable(Server_Launcher ${sources})
+add_executable(Client_Launcher ${sources})
 
-add_precompiled_header(Maditor_Launcher maditorlauncherlib.h FORCEINCLUDE SOURCE_CXX maditorlauncherlib.cpp)
+#add_precompiled_header(Server_Launcher maditorlauncherlib2.h FORCEINCLUDE SOURCE_CXX maditorlauncherlib.cpp)
+#add_precompiled_header(Client_Launcher maditorlauncherlib.h FORCEINCLUDE SOURCE_CXX maditorlauncherlib.cpp)
 
-include_targets(Maditor_Launcher Maditor_Shared)
-include_library(Maditor_Launcher Madgine OgreMadgine MadgineServer)
+include_targets(Server_Launcher Maditor_Shared)
+include_library(Server_Launcher Madgine MadgineServer)
 
-target_link_libraries (Maditor_Launcher PRIVATE ${lua_lib})
+include_targets(Client_Launcher Maditor_Shared)
+include_library(Client_Launcher Madgine OgreMadgine)
+
+target_link_libraries (Server_Launcher PRIVATE ${lua_lib})
+target_link_libraries (Client_Launcher PRIVATE ${lua_lib})

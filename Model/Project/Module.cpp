@@ -13,7 +13,9 @@ namespace Maditor {
 		Module::Module(ModuleList *parent, const QString & name) :
 			ProjectElement(name, "Module", parent),
 			mParent(parent),
-			mCmake(parent->cmake(), name)
+			mCmake(parent->cmake(), name),
+			mServerConfigCount(0),
+			mClientConfigCount(0)
 		{
 			
 			init();
@@ -28,7 +30,9 @@ namespace Maditor {
 		Module::Module(QDomElement data, ModuleList *parent) :
 			ProjectElement(data, parent),
 			mParent(parent),
-			mCmake(parent->cmake(), mName)
+			mCmake(parent->cmake(), mName),
+			mServerConfigCount(0),
+			mClientConfigCount(0)
 		{
 
 			init();
@@ -256,6 +260,56 @@ namespace Maditor {
 			project()->writeToDisk();
 			
 		}
+
+		void Module::addConfigs(ApplicationConfig::Launcher newLauncher, ApplicationConfig::LauncherType newLauncherType)
+		{
+			if (newLauncher == ApplicationConfig::MADITOR_LAUNCHER) {
+				switch (newLauncherType) {
+				case ApplicationConfig::CLIENT_LAUNCHER:
+					if (mClientConfigCount == 0) {
+						mCmake.addConfig("CLIENT");
+					}
+					++mClientConfigCount;
+					break;
+				case ApplicationConfig::SERVER_LAUNCHER:
+					if (mServerConfigCount == 0) {
+						mCmake.addConfig("SERVER");
+					}
+					++mServerConfigCount;
+					break;
+				default:
+					throw 0;
+				}
+			}
+		}
+
+		void Module::updateConfigs(ApplicationConfig::Launcher newLauncher, ApplicationConfig::Launcher oldLauncher, ApplicationConfig::LauncherType newLauncherType, ApplicationConfig::LauncherType oldLauncherType)
+		{
+			addConfigs(newLauncher, newLauncherType);
+			removeConfigs(oldLauncher, oldLauncherType);
+		}
 		
+		void Module::removeConfigs(ApplicationConfig::Launcher oldLauncher, ApplicationConfig::LauncherType oldLauncherType)
+		{
+			if (oldLauncher == ApplicationConfig::MADITOR_LAUNCHER) {
+				switch (oldLauncherType) {
+				case ApplicationConfig::CLIENT_LAUNCHER:
+					--mClientConfigCount;
+					if (mClientConfigCount == 0) {
+						mCmake.removeConfig("CLIENT");
+					}
+					break;
+				case ApplicationConfig::SERVER_LAUNCHER:
+					--mServerConfigCount;
+					if (mServerConfigCount == 0) {
+						mCmake.removeConfig("SERVER");
+					}
+					break;
+				default:
+					throw 0;
+				}
+			}
+		}
+
 	}
 }

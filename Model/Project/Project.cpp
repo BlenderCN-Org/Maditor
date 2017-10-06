@@ -84,6 +84,14 @@ namespace Maditor {
 			Engine::Serialize::Debugging::StreamDebugging::setLoggingEnabled(true);
 
 			connect(mModules.get(), &ModuleList::classAdded, this, &Project::onClassAdded);
+			connect(mConfigs.get(), &ConfigList::applicationLauncherTypeChanged, mModules.get(), &ModuleList::updateConfigs);
+
+			for (const std::unique_ptr<ApplicationConfig> &conf : *mConfigs) {
+				for (const std::unique_ptr<Module> &mod : *mModules) {
+					if (conf->hasModuleEnabled(mod.get()))
+						mod->addConfigs(conf->launcher(), conf->launcherType());
+				}
+			}
 
 			setContextMenuItems({
 				{ "Properties", [this]() {emit showProperties(); } }

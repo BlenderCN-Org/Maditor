@@ -39,8 +39,11 @@ namespace Maditor {
 			mChildInWrite(NULL),
 			mChildOutRead(NULL),
 			mChildOutWrite(NULL),
-			mPong(false)
+			mPong(false),
+			mOnConnectionResult(this)
 		{
+			mNetwork.connectConnectionSlot(mOnConnectionResult);
+
 			mNetwork.addTopLevelItem(this);
 
 			if (mWindow)
@@ -135,7 +138,9 @@ namespace Maditor {
 
 				mConfig->generateInfo(appInfo, mWindow);
 
-				cmd = std::string("Maditor_Launcher.exe ") + std::to_string(mMemory.id());
+				cmd = isClient() ? "Client_Launcher.exe " : "Server_Launcher.exe ";
+
+				cmd += std::to_string(mMemory.id());
 			}
 			else {
 				cmd = mConfig->customExecutableCmd().toStdString();
@@ -180,35 +185,43 @@ namespace Maditor {
 			if (isLauncher()) {				
 				Shared::BoostIPCManager *net = &mNetwork;
 				setStaticSlaveId(Engine::Serialize::MADITOR);
-				if (!net->connect(1000000)) {
-					kill(Shared::KILL_FAILED_CONNECTION);
-					return;
-				}
-
-				mLoader->setup();
-
-				mWaitingForLoader = true;
-
+				net->connect_async(10000);
 			}
 			else {
 				onApplicationSetup();
 			}
 		}
+
+		void ApplicationLauncher::onConnectionResult(bool b)
+		{
+			if (!b) {
+				kill(Shared::KILL_FAILED_CONNECTION);
+			}
+			else {
+				mLoader->setup();
+				mWaitingForLoader = true;
+			}
+		}
+
 		std::string ApplicationLauncher::runtimeDir() {
 			return (mConfig->project()->path() + "debug/runtime/" + mName + "/").toStdString();
 		}
+
 		void ApplicationLauncher::setupNoDebug()
 		{
 			setupImpl(false);
 		}
+
 		void ApplicationLauncher::start()
 		{
 			AppControl::start({});
 		}
+
 		void ApplicationLauncher::pause()
 		{
 			AppControl::pause({});
 		}
+
 		void ApplicationLauncher::stop()
 		{
 			AppControl::stop({});
@@ -219,11 +232,13 @@ namespace Maditor {
 			mRunning = true;
 			emit applicationStarted();
 		}
+
 		void ApplicationLauncher::stopImpl()
 		{
 			mRunning = false;
 			emit applicationStopped();
 		}
+
 		void ApplicationLauncher::pauseImpl()
 		{
 		}
@@ -304,27 +319,28 @@ namespace Maditor {
 				checkProcess();
 			}
 
-			DWORD dwRead;
-			CHAR buffer[256];
+			if (mPID) {
 
-			QStringList msg;
+				DWORD dwRead;
+				CHAR buffer[256];
 
-			
-			bool result = PeekNamedPipe(mChildOutRead, NULL, 0, NULL, &dwRead, NULL);
-			assert(result);
+				bool result = PeekNamedPipe(mChildOutRead, NULL, 0, NULL, &dwRead, NULL);
 
-			while(dwRead > 0) {
-				DWORD bytesRead;
-				result = ReadFile(mChildOutRead, buffer, std::min(sizeof(buffer) - 1, size_t(dwRead)), &bytesRead, NULL);
-				assert(result && bytesRead > 0);
-				buffer[bytesRead] = '\0';
-				msg << QString(buffer);
-				dwRead -= bytesRead;
+				if (result) {
+					QStringList msg;
+					while (dwRead > 0) {
+						DWORD bytesRead;
+						result = ReadFile(mChildOutRead, buffer, std::min(sizeof(buffer) - 1, size_t(dwRead)), &bytesRead, NULL);
+						assert(result && bytesRead > 0);
+						buffer[bytesRead] = '\0';
+						msg << QString(buffer);
+						dwRead -= bytesRead;
+					}
+
+					if (!msg.empty())
+						emit outputReceived(msg.join(""));
+				}
 			}
-
-			if (!msg.empty())
-				emit outputReceived(msg.join(""));
-
 		}
 
 		void ApplicationLauncher::kill()
@@ -362,7 +378,7 @@ namespace Maditor {
 				mHandle = NULL;
 
 				//receive pending messages
-				//while (network()->getSlaveStream() && network()->getSlaveStream()->isMessageAvailable())
+				while (mNetwork.getSlaveStream() && mNetwork.getSlaveStream()->isMessageAvailable())
 					mNetwork.receiveMessages();
 
 				mInspector->reset();

@@ -7,7 +7,14 @@
 
 #include "Scene/Entity/entity.h"
 #include "Scene\scenecomponent.h"
-#include "Scene/ogrescenemanager.h"
+#include "scripting/types/globalapicomponent.h"
+
+#ifdef MADGINE_CLIENT_BUILD
+#include "ogreuniquecomponentcollector.h"
+#include "ui/guihandler.h"
+#include "ui/gamehandler.h"
+#include "ui/uimanager.h"
+#endif
 
 namespace Maditor {
 	namespace Launcher {
@@ -102,6 +109,7 @@ namespace Maditor {
 			}
 		}
 
+#ifdef MADGINE_SERVER_BUILD
 		Engine::Server::ServerBase * ModuleLoader::createServer(const std::string & fullName, const std::string &instanceName, const std::string &mediaDir)
 		{
 			size_t delimPos = fullName.find("::");
@@ -119,11 +127,18 @@ namespace Maditor {
 
 			return nullptr;
 		}
+#endif
 
 		bool ModuleLoader::ModuleLauncherInstance::load(bool callInit)
 		{
 			if (isLoaded())
 				return true;
+
+#ifdef MADGINE_CLIENT_BUILD
+			const std::string prefix = "CLIENT_";
+#else
+			const std::string prefix = "SERVER_";
+#endif
 
 			for (ModuleInstance *dep : dependencies()) {
 				ModuleLauncherInstance *d = dynamic_cast<ModuleLauncherInstance*>(dep);
@@ -135,10 +150,10 @@ namespace Maditor {
 
 			std::cout << "Loading " << name() << "..." << std::endl;
 
-			std::string runtimePath = name() + ".dll";
-			std::string runtimePdbPath = name() + ".pdb";
-			std::string binaryPath = mParent->binaryDir() + name() + ".dll";
-			std::string binaryPdbPath = mParent->binaryDir() + name() + ".pdb";
+			std::string runtimePath = prefix + name() + ".dll";
+			std::string runtimePdbPath = prefix + name() + ".pdb";
+			std::string binaryPath = mParent->binaryDir() + prefix + name() + ".dll";
+			std::string binaryPdbPath = mParent->binaryDir() + prefix + name() + ".pdb";
 
 			std::error_code err;
 			if (!std::experimental::filesystem::copy_file(binaryPath, runtimePath, std::experimental::filesystem::copy_options::overwrite_existing, err)) {
@@ -161,18 +176,22 @@ namespace Maditor {
 
 			Engine::BaseUniqueComponentCollector<Engine::Scene::SceneComponentBase, Engine::Serialize::SerializableUnitHeapCreator, Engine::Scene::SceneManagerBase*> *sceneComponentCollector = Engine::BaseUniqueComponentCollector<Engine::Scene::SceneComponentBase, Engine::Serialize::SerializableUnitHeapCreator, Engine::Scene::SceneManagerBase*>::getSingletonPtr();
 			Engine::BaseUniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase> *globalAPIComponentCollector = Engine::BaseUniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase>::getSingletonPtr();
+#ifdef MADGINE_CLIENT_BUILD
 			Engine::OgreUniqueComponentCollector<Engine::UI::GameHandlerBase> *gameHandlerCollector = Engine::OgreUniqueComponentCollector<Engine::UI::GameHandlerBase>::getSingletonPtr();
 			Engine::OgreUniqueComponentCollector<Engine::UI::GuiHandlerBase> *guiHandlerCollector = Engine::OgreUniqueComponentCollector<Engine::UI::GuiHandlerBase>::getSingletonPtr();
+#endif
 
 			std::set<std::string> beforeEntityComponents = Engine::Scene::Entity::Entity::registeredComponentNames();
 			std::list<void *> beforeSceneComponentsHashesList = sceneComponentCollector->registeredComponentsHashes();
 			std::set<void *> beforeSceneComponentsHashes(beforeSceneComponentsHashesList.begin(), beforeSceneComponentsHashesList.end());
 			std::list<void *> beforeGlobalAPIComponentsHashesList = globalAPIComponentCollector->registeredComponentsHashes();
 			std::set<void *> beforeGlobalAPIComponentsHashes(beforeGlobalAPIComponentsHashesList.begin(), beforeGlobalAPIComponentsHashesList.end());
+#ifdef MADGINE_CLIENT_BUILD
 			std::list<void *> beforeGameHandlerHashesList = gameHandlerCollector->registeredComponentsHashes();
 			std::set<void *> beforeGameHandlerHashes(beforeGameHandlerHashesList.begin(), beforeGameHandlerHashesList.end());
 			std::list<void *> beforeGuiHandlerHashesList = guiHandlerCollector->registeredComponentsHashes();
 			std::set<void *> beforeGuiHandlerHashes(beforeGuiHandlerHashesList.begin(), beforeGuiHandlerHashesList.end());
+#endif
 
 			UINT errorMode = GetErrorMode();
 			//SetErrorMode(SEM_FAILCRITICALERRORS);
@@ -199,12 +218,14 @@ namespace Maditor {
 			std::list<void *> afterGlobalAPIComponentsHashesList = globalAPIComponentCollector->registeredComponentsHashes();
 			std::set<void *> afterGlobalAPIComponentsHashes(afterGlobalAPIComponentsHashesList.begin(), afterGlobalAPIComponentsHashesList.end());
 			std::set_difference(afterGlobalAPIComponentsHashes.begin(), afterGlobalAPIComponentsHashes.end(), beforeGlobalAPIComponentsHashes.begin(), beforeGlobalAPIComponentsHashes.end(), std::inserter(mGlobalAPIComponentHashes, mGlobalAPIComponentHashes.end()));
+#ifdef MADGINE_CLIENT_BUILD
 			std::list<void *> afterGameHandlerHashesList = gameHandlerCollector->registeredComponentsHashes();
 			std::set<void *> afterGameHandlerHashes(afterGameHandlerHashesList.begin(), afterGameHandlerHashesList.end());
 			std::set_difference(afterGameHandlerHashes.begin(), afterGameHandlerHashes.end(), beforeGameHandlerHashes.begin(), beforeGameHandlerHashes.end(), std::inserter(mGameHandlerHashes, mGameHandlerHashes.end()));
 			std::list<void *> afterGuiHandlerHashesList = guiHandlerCollector->registeredComponentsHashes();
 			std::set<void *> afterGuiHandlerHashes(afterGuiHandlerHashesList.begin(), afterGuiHandlerHashesList.end());
 			std::set_difference(afterGuiHandlerHashes.begin(), afterGuiHandlerHashes.end(), beforeGuiHandlerHashes.begin(), beforeGuiHandlerHashes.end(), std::inserter(mGuiHandlerHashes, mGuiHandlerHashes.end()));
+#endif
 
 			if (sceneComponentCollector) {
 				for (void *h : mSceneComponentHashes) {
@@ -224,6 +245,7 @@ namespace Maditor {
 				}
 			}
 
+#ifdef MADGINE_CLIENT_BUILD
 			if (guiHandlerCollector) {
 				for (void *h : mGuiHandlerHashes) {
 					auto it = guiHandlerCollector->postCreate(h);
@@ -241,6 +263,7 @@ namespace Maditor {
 					mGameHandlers.push_back(it->get());
 				}
 			}
+#endif
 
 			for (const std::pair<const std::string, std::list<Engine::Scene::Entity::Entity*>> &ents : mStoredComponentEntities) {
 				for (Engine::Scene::Entity::Entity*p : ents.second) {
@@ -268,7 +291,7 @@ namespace Maditor {
 
 
 			std::list<Engine::Scene::Entity::Entity*> entities;
-			if (Engine::Scene::OgreSceneManager *mgr = Engine::Scene::OgreSceneManager::getSingletonPtr())
+			if (Engine::Scene::SceneManagerBase *mgr = Engine::Scene::SceneManagerBase::getSingletonPtr())
 				entities = mgr->entities();
 
 
@@ -296,6 +319,7 @@ namespace Maditor {
 				}
 			}
 
+#ifdef MADGINE_CLIENT_BUILD
 			if (Engine::OgreUniqueComponentCollector<Engine::UI::GameHandlerBase>::getSingletonPtr()) {
 				for (Engine::UI::GameHandlerBase *h : mGameHandlers) {
 					if (h->getState() == Engine::ObjectState::INITIALIZED)
@@ -309,6 +333,7 @@ namespace Maditor {
 						if (h->getState() == Engine::ObjectState::INITIALIZED)
 							h->finalize(i);
 			}
+#endif
 			
 
 			bool result = (FreeLibrary(mHandle) != 0);

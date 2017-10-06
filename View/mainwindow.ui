@@ -25,7 +25,7 @@
   <property name="dockOptions">
    <set>QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
   </property>
-  <widget class="QWidget" name="centralwidget">
+  <widget class="Maditor::View::CentralWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <property name="leftMargin">
      <number>0</number>
@@ -40,7 +40,7 @@
      <number>0</number>
     </property>
     <item row="0" column="0">
-     <widget class="QTabWidget" name="tabWidget">
+     <widget class="Maditor::View::DocumentTabWidget" name="tabWidget">
       <property name="documentMode">
        <bool>false</bool>
       </property>
@@ -67,26 +67,19 @@
     <property name="title">
      <string>File</string>
     </property>
-    <widget class="QMenu" name="menuRecentProjects">
-     <property name="title">
-      <string>Recent Projects</string>
-     </property>
-     <addaction name="actionClear_List"/>
-     <addaction name="separator"/>
-    </widget>
-    <addaction name="menuRecentProjects"/>
+    <addaction name="actionNewProject"/>
+    <addaction name="actionLoadProject"/>
     <addaction name="actionSettings"/>
-    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
-   <widget class="QMenu" name="menuApplication">
+   <widget class="QMenu" name="menuDocument">
     <property name="title">
-     <string>Application</string>
+     <string>Document</string>
     </property>
     <addaction name="separator"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuApplication"/>
+   <addaction name="menuDocument"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="modulesDockWidget">
@@ -278,11 +271,6 @@
     <string>Setup</string>
    </property>
   </action>
-  <action name="actionClear_List">
-   <property name="text">
-    <string>Clear List</string>
-   </property>
-  </action>
   <action name="actionSettings">
    <property name="text">
     <string>Settings</string>
@@ -381,6 +369,18 @@
    <class>Maditor::View::InspectorView</class>
    <extends>QWidget</extends>
    <header>application/inspector/inspectorview.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Maditor::View::DocumentTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>Documents/documenttabwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Maditor::View::CentralWidget</class>
+   <extends>QWidget</extends>
+   <header>Documents/centralwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

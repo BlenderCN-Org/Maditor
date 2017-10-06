@@ -10,7 +10,7 @@ namespace View {
 
 
 
-class MaditorView : 
+class MADITOR_VIEW_EXPORT MaditorView : 
 	public QObject, 
 	public ComponentView<Model::Maditor> 
 {
@@ -21,29 +21,34 @@ public:
 	MaditorView();
 	virtual ~MaditorView();
 	
-	void setupUi(Ui::MainWindow *ui, MainWindow *window);
+	void setupUi(MainWindow *window);
 	virtual void setModel(Model::Maditor *model) override;
 
 	Dialogs::DialogManager *dialogs();
 
 	bool closeEvent();
 
+	void createMainWindow();
+
 private slots:
-	void onProjectOpened(Model::Project *project);
 
 	void updateRecentProjects(const QStringList &list);
 	void recentProjectClicked(QAction *action);
 
 private:
-	Ui::MainWindow *mUi;
 
 	Dialogs::DialogManager *mDialogManager;
 
-	int mRecentProjectInitialActionCount;
+	
 
-	LogsView *mLogs;
-	ApplicationView *mApplication;
-	ProjectView *mProject;
+
+	QSettings *mSettings;
+
+	QMenu *mRecentProjectsMenu;
+	int mRecentProjectInitialActionCount;
+	QAction *mClearRecentProjectsAction;
+
+	MainWindow *mMainWindow;
 
 };
 

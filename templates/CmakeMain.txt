@@ -28,7 +28,12 @@ endfunction(include_library)
 
 include_library(Madgine Interfaces OgreMadgine MadgineServer)
 
-set(MADGINE_LIBRARIES OgreMadgine MadgineServer Interfaces)
+set(SERVER_LIBRARIES MadgineServer Interfaces)
+set(CLIENT_LIBRARIES OgreMadgine Interfaces)
+
+function(setup_target_config target config)
+	target_link_libraries(${target} PRIVATE ${${config}_LIBRARIES})
+endfunction(setup_target_config)
 
 %2
 

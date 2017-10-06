@@ -25,6 +25,7 @@ namespace Maditor {
 		{
 		}
 
+#ifdef MADGINE_CLIENT_BUILD
 		void LogListener::messageLogged(const Ogre::String & message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String & logName, bool & skipThisMessage)
 		{
 			if (lml != Ogre::LML_CRITICAL) return;
@@ -44,6 +45,7 @@ namespace Maditor {
 			}
 			mSlot->queue(message.c_str(), level, logName.c_str(), "", "", -1, {});
 		}
+#endif
 
 		void LogListener::messageLogged(const std::string & message, Engine::Util::MessageType lml, const std::list<Engine::Util::TraceBack> &traceback, const std::string & logName)
 		{

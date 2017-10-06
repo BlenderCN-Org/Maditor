@@ -17,7 +17,7 @@ FolderSources(sources "" "" componentview.h editorsettingswidget.cpp editorsetti
 	FolderSources(sources "" Application applicationlog.cpp applicationlog.h applicationlog.ui ApplicationView.cpp ApplicationView.h ApplicationWindow.cpp ApplicationWindow.h appstatswidget.cpp appstatswidget.h appstatswidget.ui configwidget.cpp configwidget.h configwidget.ui)
 		FolderSources(sources Application Inspector inspectorview.cpp inspectorview.h inspectorview.ui valuetypeedit.cpp valuetypeedit.h)
 	FolderSources(sources "" Dialogs DialogManager.cpp DialogManager.h NewClassDialog.cpp NewClassDialog.h NewClassDialog.ui NewGuiHandlerDialog.cpp NewGuiHandlerDialog.h NewGuiHandlerDialog.ui NewModuleDialog.cpp NewModuleDialog.h NewModuleDialog.ui NewOtherClassDialog.cpp NewOtherClassDialog.h NewOtherClassDialog.ui NewProjectDialog.cpp NewProjectDialog.h NewProjectDialog.ui settingsdialog.cpp settingsdialog.h settingsdialog.ui settingstab.h)
-	FolderSources(sources "" Documents DocumentView.cpp DocumentView.h IndependentWindowSpawner.h WindowSpawner.h)
+	FolderSources(sources "" Documents CentralWidget.cpp CentralWidget.h DocumentTabBar.cpp DocumentTabBar.h DocumentTabWidget.cpp DocumentTabWidget.h DocumentView.cpp DocumentView.h IndependentWindowSpawner.h WindowSpawner.h)
 	FolderSources(sources "" Logs LogsView.cpp LogsView.h LogWidget.cpp LogWidget.h)
 	FolderSources(sources "" Project FilesView.cpp FilesView.h ModulePropertiesWidget.cpp ModulePropertiesWidget.h ModulePropertiesWidget.ui ProjectView.cpp ProjectView.h propertiesWidget.cpp propertiesWidget.h propertiesWidget.ui)
 

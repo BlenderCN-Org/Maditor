@@ -70,8 +70,8 @@ namespace Maditor {
 			void documentCreated(ApplicationLauncher *);
 			void documentDestroyed(ApplicationLauncher *);
 
-			void launcherChanged(Launcher);
-			void launcherTypeChanged(LauncherType);
+			void launcherChanged(Launcher newValue, Launcher old);
+			void launcherTypeChanged(LauncherType newValue, LauncherType old);
 			void customExecutableCmdChanged(const QString &);
 			void serverChanged(Generators::ServerClassGenerator*);
 

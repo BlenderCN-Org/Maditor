@@ -17,7 +17,7 @@ namespace Maditor {
 
 
 		ModuleLoader::ModuleLoader(Engine::Serialize::TopLevelSerializableUnitBase *topLevel, ApplicationConfig *config) :			
-			mBinaryDir(config->path() + "debug/bin/"),
+			mBinaryDir(config->project()->path() + "debug/bin/"),
 			mModules(*config->project()->moduleList()),
 			TableUnit(topLevel, 2),
 			mModulesCount(-1),
@@ -35,6 +35,7 @@ namespace Maditor {
 			connect(&mWatcher, &QFileSystemWatcher::directoryChanged, this, &ModuleLoader::onFolderChanged);
 
 			mWatcher.addPath(mBinaryDir);
+			qDebug() << mBinaryDir;
 		}
 
 

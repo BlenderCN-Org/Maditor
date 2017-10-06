@@ -11,7 +11,8 @@ namespace Maditor {
 			virtual ~Addon();
 
 			virtual void update();
-			virtual void setupUi(View::Ui::MainWindow *ui, View::MainWindow *window);
+			virtual void setup(View::MaditorView *view);
+			virtual void setupUi(View::MainWindow *window);
 			virtual void onProjectOpened(Model::Project *project);
 
 			virtual QString resourceGroupName();
@@ -33,7 +34,8 @@ namespace Maditor {
 			std::list<Addon*>::const_iterator begin();
 			std::list<Addon*>::const_iterator end();
 
-			void setupUi(View::Ui::MainWindow *ui, View::MainWindow *window);
+			void setup(View::MaditorView *view);
+			void setupUi(View::MainWindow *window);
 
 		public slots:
 			void onProjectOpened(Model::Project *project);

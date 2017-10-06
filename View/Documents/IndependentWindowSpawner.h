@@ -16,7 +16,7 @@ namespace Maditor {
 			{
 			}
 
-			void setupUi(Ui::MainWindow * ui) {
+			void setupUi(const Ui::MainWindow * ui) {
 				mTabWidget = ui->tabWidget;
 				QObject::connect(ui->tabWidget, &QTabWidget::tabCloseRequested, std::bind(&IndependentWindowSpawner<Model, View>::onTabCloseRequest, this, std::placeholders::_1));
 			}

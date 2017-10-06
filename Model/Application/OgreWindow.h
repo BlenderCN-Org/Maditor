@@ -3,7 +3,7 @@
 
 namespace Maditor {
 	namespace Model {
-		class OgreWindow : public QWindow
+		class MADITOR_MODEL_EXPORT OgreWindow : public QWindow
 		{
 			Q_OBJECT
 
@@ -23,6 +23,7 @@ namespace Maditor {
 
 		signals:
 			void resized();
+			void clicked();
 
 		protected:
 

@@ -14,9 +14,11 @@ class VSLinkView : public QObject, public Maditor::View::ComponentView<VSLink> {
 public:
 	VSLinkView(VSLink *model);
 	
-	void setupUi(Maditor::View::Ui::MainWindow *ui, Maditor::View::MainWindow *window);
+	void setup(Maditor::View::MaditorView *view);
+	void setupUi(Maditor::View::MainWindow *window);
 
 private:
 
 	VSSettingsWidget *mSettingsWidget;
+	QAction *mOpenAction;
 };

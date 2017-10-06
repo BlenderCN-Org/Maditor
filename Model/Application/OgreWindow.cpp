@@ -102,6 +102,7 @@ namespace Maditor {
 		void OgreWindow::mousePressEvent(QMouseEvent* ev)
 		{
 			mInput->mousePressEvent(ev);
+			emit clicked();
 		}
 
 		void OgreWindow::mouseReleaseEvent(QMouseEvent* ev)

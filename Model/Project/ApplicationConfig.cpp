@@ -75,6 +75,7 @@ namespace Maditor {
 		ApplicationLauncher * ApplicationConfig::createInstace()
 		{
 			return mDocuments.createDocument<ApplicationLauncher>(this, name() + "-" + QString::number(++mInstanceCounter));
+			
 		}
 
 		ApplicationConfig::Launcher ApplicationConfig::launcher()
@@ -128,9 +129,11 @@ namespace Maditor {
 
 		void ApplicationConfig::setLauncherType(LauncherType type)
 		{
-			mLauncherType = type;
-			setDirtyFlag(true);
-			emit launcherTypeChanged(type);
+			if (mLauncherType != type) {
+				emit launcherTypeChanged(type, mLauncherType);
+				mLauncherType = type;
+				setDirtyFlag(true);				
+			}
 		}
 
 		void ApplicationConfig::setCustomExecutableCmd(const QString & cmd)
@@ -154,16 +157,18 @@ namespace Maditor {
 
 		void ApplicationConfig::setLauncher(Launcher launcher)
 		{
-			mLauncher = launcher;
-			setDirtyFlag(true);
-			emit launcherChanged(launcher);
-			if (launcher == MADITOR_LAUNCHER) {
-				setContextMenuItems({
-					{ "Release", [this]() {release(); } }
-				});
-			}
-			else {
-				setContextMenuItems({});
+			if (mLauncher != launcher) {
+				emit launcherChanged(launcher, mLauncher);
+				mLauncher = launcher;
+				setDirtyFlag(true);				
+				if (launcher == MADITOR_LAUNCHER) {
+					setContextMenuItems({
+						{ "Release", [this]() {release(); } }
+					});
+				}
+				else {
+					setContextMenuItems({});
+				}
 			}
 		}
 

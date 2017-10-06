@@ -6,9 +6,6 @@
 
 
 namespace Maditor {
-
-	
-
 	namespace Launcher {
 		
 		class InputWrapper : public Engine::Input::InputHandler {

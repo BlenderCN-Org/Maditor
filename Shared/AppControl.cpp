@@ -17,7 +17,7 @@ namespace Maditor {
 		}
 
 		AppControl::AppControl(masterLauncher_t) :
-			TopLevelSerializableUnit(Engine::Serialize::MADITOR)
+			SerializableUnit(Engine::Serialize::MADITOR)
 		{
 		}
 

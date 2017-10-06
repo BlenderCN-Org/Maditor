@@ -17,12 +17,13 @@ namespace View {
 
 	}
 
-	void ProjectView::setupUi(Ui::MainWindow * ui, QMainWindow * window)
+	void ProjectView::setupUi(MainWindow * window)
 	{
-		mUi = ui;
+		mUi = window->ui;
 
-		IndependentWindowSpawner<Model::ApplicationConfig, ConfigWidget>::setupUi(ui);
-		IndependentWindowSpawner<Model::Project, PropertiesWidget>::setupUi(ui);
+		IndependentWindowSpawner<Model::ApplicationConfig, ConfigWidget>::setupUi(mUi);
+		IndependentWindowSpawner<Model::Project, PropertiesWidget>::setupUi(mUi);
+
 
 		/*createToolbar(window, "ApplicationToolbar", {
 			{ ui->actionInit, &Model::Project::init },
@@ -39,8 +40,9 @@ namespace View {
 	{
 		ComponentView::setModel(project);
 
-		mUi->projectWidget->setModel(project->model());
-		mUi->mediaWidget->setModel(project->getMedia());
+
+		mUi->projectWidget->setModel(model()->model());
+		mUi->mediaWidget->setModel(model()->getMedia());
 
 		connect(project, &Model::Project::showProperties, std::bind(&IndependentWindowSpawner<Model::Project, PropertiesWidget>::spawn<>, this, project));
 		connect(project->configList(), &Model::ConfigList::openConfig, this, &ProjectView::openConfig);

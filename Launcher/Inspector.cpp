@@ -116,8 +116,8 @@ namespace Maditor {
 				if (value.is<Engine::Scripting::ScopeBase*>()) {
 					attributes.try_emplace(it->key(), Engine::ValueType(Engine::InvScopePtr(value.as<Engine::Scripting::ScopeBase*>())), it->flags());
 					mItemsMutex.lock();
-					auto it = mItems.find(value.as<Engine::Scripting::ScopeBase*>());
-					if (it == mItems.end()) {
+					auto it2 = mItems.find(value.as<Engine::Scripting::ScopeBase*>());
+					if (it2 == mItems.end()) {
 						markItem(value.as<Engine::Scripting::ScopeBase*>(), thread);
 					}
 					mItemsMutex.unlock();

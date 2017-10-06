@@ -5,6 +5,7 @@ class VectorWidget : public QWidget {
 public:
 	VectorWidget(int size);
 
+	void setValue(const std::array<float, 4> &v);
 	void setValue(const Engine::Vector3 &v);
 	void setValue(const Engine::Vector2 &v);
 
@@ -43,9 +44,10 @@ private:
 		QLabel *mNullLabel;
 		QSpinBox *mIntBox;
 		QSpinBox *mUIntBox;
-		VectorWidget *mVector3Box;
+		VectorWidget *mVectorBox;
 		QPushButton *mScopeField;
 		QCheckBox *mBoolBox;
+		QLineEdit *mStringBox;
 	};
 	QWidget *mInputWidget;
 	QMenu *mTypeMenu;

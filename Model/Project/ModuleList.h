@@ -7,6 +7,8 @@
 
 #include "Module.h"
 
+#include "ApplicationConfig.h"
+
 namespace Maditor {
 	namespace Model {
 		class MADITOR_MODEL_EXPORT ModuleList : public QObject, public ProjectElement{
@@ -64,6 +66,10 @@ namespace Maditor {
 		public slots:
 			void createModule(const QString &name);
 			void drawDependenciesGraph();
+
+			void updateConfigs(ApplicationConfig *config,
+				ApplicationConfig::Launcher newLauncher, ApplicationConfig::Launcher oldLauncher,
+				ApplicationConfig::LauncherType newLauncherType, ApplicationConfig::LauncherType oldLauncherType);
 
 		private:
 			void init();

@@ -57,6 +57,7 @@ protected:
 	virtual QRegion visualRegionForSelection(const QItemSelection &selection) const;
 
 	virtual void rowsInserted(const QModelIndex &parent, int start, int end) override;
+	virtual void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end) override;
 
 	virtual void resizeEvent(QResizeEvent *e) override;
 
@@ -65,7 +66,7 @@ protected:
 	virtual void scrollContentsBy(int, int) override;
 
 private:
-	void addRow(int i);
+	void addRow();
 	void refresh();
 	void updateView();
 

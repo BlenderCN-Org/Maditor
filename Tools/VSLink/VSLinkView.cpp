@@ -7,25 +7,33 @@
 #include "vssettingswidget.h"
 
 #include "View/mainwindow.h"
+#include "View/maditorview.h"
 
-VSLinkView::VSLinkView(VSLink *model) {
+VSLinkView::VSLinkView(VSLink *model) :
+	mOpenAction(nullptr){
 	setModel(model);
-}
 
-void VSLinkView::setupUi(Maditor::View::Ui::MainWindow *ui, Maditor::View::MainWindow * window)
-{
-	QAction *openAction = new QAction("OpenSolution");
-
-	createToolbar(window, "VSLink", {
-		openAction
-	});
+	mOpenAction = new QAction("Open Solution");
 
 	setConnections({
-		{openAction, &VSLink::openSolution}
+		{ mOpenAction, &VSLink::openSolution }
 	});
 
-	createSettingsTab(window->dialogs(), new VSSettingsWidget(model()), "Visual Studio");
+	createMenu("VSLink", {
+		mOpenAction
+	});
+
+}
+
+void VSLinkView::setup(Maditor::View::MaditorView *view) {
 	
+
+	createSettingsTab(view->dialogs(), new VSSettingsWidget(model()), "Visual Studio");
+}
+
+void VSLinkView::setupUi(Maditor::View::MainWindow * window)
+{
+	addItemsToWindow(window);
 }
 
 

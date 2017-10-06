@@ -63,8 +63,6 @@ namespace Maditor {
 			Engine::Serialize::Action<decltype(&AppControl::pingImpl2), &AppControl::pingImpl2, Engine::Serialize::ActionPolicy::broadcast> ping;
 			Engine::Serialize::Action<decltype(&AppControl::execLuaImpl2), &AppControl::execLuaImpl2, Engine::Serialize::ActionPolicy::request> execLua;
 			
-
-			
 		};
 
 

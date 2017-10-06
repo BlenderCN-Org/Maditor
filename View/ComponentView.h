@@ -10,8 +10,8 @@ template <class T>
 class ComponentView
 {
 public:
-	ComponentView() :
-	mModel(nullptr){
+	ComponentView(T *model = nullptr) :
+	mModel(model){
 
 	}
 
@@ -48,15 +48,33 @@ private:
 	}
 
 protected:
-	QToolBar *createToolbar(QMainWindow *window, const QString &name, const QList<QAction *> &actions) {
+	QToolBar *createToolbar(const QString &name, const QList<QAction *> &actions) {
 		QToolBar *toolbar = new QToolBar(name);
 		toolbar->setObjectName(name);
 
 		toolbar->addActions(actions);
 
-		window->addToolBar(toolbar);
+		mToolBars.push_back(toolbar);
 
 		return toolbar;
+	}
+
+	QMenu *createMenu(const QString &name, const QList<QAction *> &actions) {
+		QMenu *menu = new QMenu(name);
+		menu->setObjectName(name);
+		menu->addActions(actions);
+		mMenus.push_back(menu);
+
+		return menu;
+	}
+
+	void addItemsToWindow(QMainWindow *window) {
+		for (QToolBar *toolbar : mToolBars) {
+			window->addToolBar(toolbar);
+		}
+		for (QMenu *menu : mMenus) {
+			window->menuBar()->addMenu(menu);
+		}
 	}
 
 	void createSettingsTab(Dialogs::DialogManager *dialogs, Dialogs::SettingsTab *tab, const QString &name) {
@@ -70,6 +88,9 @@ protected:
 private:
 	std::list<QMetaObject::Connection> mCurrentConnections;
 	std::list<std::pair<QAction *, void (T::*)()>> mConnections;
+
+	std::list<QToolBar*> mToolBars;
+	std::list<QMenu*> mMenus;
 
 	T *mModel;
 };

@@ -2,6 +2,7 @@
 
 #include "serialize/serializemanager.h"
 #include "boostIPCstream.h"
+#include "signalslot/slot.h"
 
 
 namespace Maditor {
@@ -20,7 +21,7 @@ namespace Maditor {
 
 			bool startServer();
 			bool connect(int timeout = 0);
-			//void connect_async(const std::string &url, int portNr, int timeout = 0);
+			void connect_async(int timeout = 0);
 
 			void close();
 
@@ -47,7 +48,7 @@ namespace Maditor {
 
 			BoostIPCStream &addMasterStream(BoostIPCStream &&stream, bool sendState = true);
 
-			bool connectImpl(int timeout);
+			void onConnectionEstablished(SharedConnectionPtr &&conn, int timeout);
 
 		private:
 			BoostIPCServer *mServer;
@@ -63,6 +64,7 @@ namespace Maditor {
 			//static int sManagerCount;
 
 			Engine::SignalSlot::Signal<bool> mConnectionResult;
+			Engine::SignalSlot::Slot<decltype(&BoostIPCManager::onConnectionEstablished), &BoostIPCManager::onConnectionEstablished> mConnectionEstablished;
 
 		};
 

@@ -24,7 +24,8 @@ public:
 	// Inherited via ProcessTalker
 	virtual void receiveMessage(const VSMsg & msg) override;
 
-	virtual void setupUi(Maditor::View::Ui::MainWindow *ui, Maditor::View::MainWindow *window) override;
+	virtual void setup(Maditor::View::MaditorView *view) override;
+	virtual void setupUi(Maditor::View::MainWindow *window) override;
 
 	virtual QStringList supportedFileExtensions() override;
 	virtual void openFile(const QString &path, int lineNr) override;

@@ -99,10 +99,14 @@ void VSLink::receiveMessage(const VSMsg & msg)
 
 }
 
-
-void VSLink::setupUi(Maditor::View::Ui::MainWindow *ui, Maditor::View::MainWindow * window)
+void VSLink::setup(Maditor::View::MaditorView * view)
 {
-	mView->setupUi(ui, window);
+	mView->setup(view);
+}
+
+void VSLink::setupUi(Maditor::View::MainWindow * window)
+{
+	mView->setupUi(window);
 
 }
 

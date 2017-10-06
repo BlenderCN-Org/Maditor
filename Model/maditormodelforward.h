@@ -50,6 +50,7 @@ namespace Maditor {
 
 	namespace View {
 		class MainWindow;
+		class MaditorView;
 		namespace Dialogs {
 			class SettingsDialog;
 		}

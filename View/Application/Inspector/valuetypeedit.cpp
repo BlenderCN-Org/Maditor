@@ -12,8 +12,18 @@ VectorWidget::VectorWidget(int size) {
 
 	for (int i = 0; i < size; ++i) {
 		QDoubleSpinBox *box = new QDoubleSpinBox(this);
+		double limit = std::round(std::numeric_limits<double>::max() * 10000.0f) / 10000.0f;
+		box->setRange(-limit, limit);
 		layout->addWidget(box, 0, i);
 		mBoxes[i] = box;
+	}
+}
+
+void VectorWidget::setValue(const std::array<float, 4>& v)
+{
+	assert(mBoxes.size() == 4);
+	for (int i = 0; i < 4; ++i) {
+		mBoxes[i]->setValue(v[i]);
 	}
 }
 
@@ -59,9 +69,13 @@ ValueTypeEdit::ValueTypeEdit(QWidget *parent) :
 	mLayout->addWidget(mOuterMenu, 0, 1, Qt::AlignRight);
 
 	for (Engine::ValueType::Type type : {
-			Engine::ValueType::Type::NullValue,
+		Engine::ValueType::Type::NullValue,
 			Engine::ValueType::Type::IntValue,
-			Engine::ValueType::Type::Vector3Value
+			Engine::ValueType::Type::Vector3Value,
+			Engine::ValueType::Type::Vector4Value,
+			Engine::ValueType::Type::StringValue,
+			Engine::ValueType::Type::BoolValue,
+			Engine::ValueType::Type::UIntValue
 	}) {
 		mTypeMenu->addAction(QString::fromStdString(Engine::ValueType::getTypeString(type)), this, [=]() { setType(type); });
 	}
@@ -87,11 +101,17 @@ void ValueTypeEdit::setType(Engine::ValueType::Type type) {
 		case Engine::ValueType::Type::Vector3Value:
 			mValue = Engine::Vector3{};
 			break;
+		case Engine::ValueType::Type::Vector4Value:
+			mValue = std::array<float, 4>{};
+			break;
 		case Engine::ValueType::Type::UIntValue:
 			mValue = static_cast<size_t>(0);
 			break;
 		case Engine::ValueType::Type::BoolValue:
 			mValue = false;
+			break;
+		case Engine::ValueType::Type::StringValue:
+			mValue = "";
 			break;
 		default:
 			throw 0;
@@ -119,7 +139,8 @@ void ValueTypeEdit::setReadOnly(bool b)
 		mIntBox->setReadOnly(b);		
 		break;
 	case Engine::ValueType::Type::Vector3Value:
-		mVector3Box->setReadOnly(b);
+	case Engine::ValueType::Type::Vector4Value:
+		mVectorBox->setReadOnly(b);
 		break;
 	case Engine::ValueType::Type::InvScopePtrValue:
 		break;
@@ -128,6 +149,9 @@ void ValueTypeEdit::setReadOnly(bool b)
 		break;
 	case Engine::ValueType::Type::BoolValue:
 		mBoolBox->setEnabled(!b);
+		break;
+	case Engine::ValueType::Type::StringValue:
+		mStringBox->setReadOnly(b);
 		break;
 	default:
 		throw 0;
@@ -150,8 +174,12 @@ void ValueTypeEdit::onTypeChanged() {
 		mInputWidget = mIntBox;
 		break;
 	case Engine::ValueType::Type::Vector3Value:
-		mVector3Box = new VectorWidget(3);
-		mInputWidget = mVector3Box;
+		mVectorBox = new VectorWidget(3);
+		mInputWidget = mVectorBox;
+		break;
+	case Engine::ValueType::Type::Vector4Value:
+		mVectorBox = new VectorWidget(4);
+		mInputWidget = mVectorBox;
 		break;
 	case Engine::ValueType::Type::InvScopePtrValue:
 		mScopeField = new QPushButton("->", this);
@@ -167,6 +195,10 @@ void ValueTypeEdit::onTypeChanged() {
 	case Engine::ValueType::Type::BoolValue:
 		mBoolBox = new QCheckBox(this);
 		mInputWidget = mBoolBox;
+		break;
+	case Engine::ValueType::Type::StringValue:
+		mStringBox = new QLineEdit(this);
+		mInputWidget = mStringBox;
 		break;
 	default:
 		throw 0;
@@ -187,7 +219,10 @@ void ValueTypeEdit::onValueChanged() {
 		mIntBox->setValue(mValue.as<int>());
 		break;
 	case Engine::ValueType::Type::Vector3Value:
-		mVector3Box->setValue(mValue.as<Engine::Vector3>());
+		mVectorBox->setValue(mValue.as<Engine::Vector3>());
+		break;
+	case Engine::ValueType::Type::Vector4Value:
+		mVectorBox->setValue(mValue.as<std::array<float, 4>>());
 		break;
 	case Engine::ValueType::Type::InvScopePtrValue:
 		break;
@@ -196,6 +231,9 @@ void ValueTypeEdit::onValueChanged() {
 		break;
 	case Engine::ValueType::Type::BoolValue:
 		mBoolBox->setChecked(mValue.as<bool>());
+		break;
+	case Engine::ValueType::Type::StringValue:
+		mStringBox->setText(QString::fromStdString(mValue.as<std::string>()));
 		break;
 	default:
 		throw 0;

@@ -9,57 +9,58 @@
 
 #include "editorsettingswidget.h"
 
-#include "Application\applicationview.h"
-#include "Logs\logsview.h"
-#include "Project\projectview.h"
+
+#include "Model/Addons/Addon.h"
+
+#include "Model/maditor.h"
 
 namespace Maditor {
 namespace View {
 
 	MaditorView::MaditorView() :
 		mDialogManager(new Dialogs::DialogManager),
-		mApplication(new ApplicationView),
-		mLogs(new LogsView),
-		mProject(new ProjectView),
-		mUi(nullptr){
+
+		mSettings(nullptr),
+		mMainWindow(nullptr){
+
+		mRecentProjectsMenu = new QMenu("Recent Projects");
+		mClearRecentProjectsAction = mRecentProjectsMenu->addAction("Clear List");
+		mRecentProjectsMenu->addSeparator();
+		mRecentProjectInitialActionCount = mRecentProjectsMenu->actions().count();
+
+		connect(mRecentProjectsMenu, &QMenu::triggered, this, &MaditorView::recentProjectClicked);
+
+		setConnections({
+			{ mClearRecentProjectsAction, &Model::Maditor::clearRecentProjects }
+		});
 
 	}
 
 	MaditorView::~MaditorView()
 	{
+
+		mSettings->beginGroup("Window");
+		mSettings->setValue("geometry", mMainWindow->saveGeometry());
+		mSettings->setValue("state", mMainWindow->saveState(0));
+		mSettings->endGroup();
+
 		delete mDialogManager;
-		delete mApplication;
-		delete mLogs;
-		delete mProject;
+
 
 	}
 
-	void MaditorView::setupUi(Ui::MainWindow * ui, MainWindow * window)
+	void MaditorView::setupUi(MainWindow * window)
 	{
-		mUi = ui;
 
-		mApplication->setupUi(ui, window);
-		mLogs->setupUi(ui, window);
-		mProject->setupUi(ui, window);
+		window->ui->menuFile->insertMenu(window->ui->actionSettings, mRecentProjectsMenu);
+
+		if (model())
+			model()->addons()->setupUi(window);
 
 
-		mRecentProjectInitialActionCount = ui->menuRecentProjects->actions().count();
-	
-		createToolbar(window, "Projects",
-		{
-			ui->actionNewProject,
-			ui->actionLoadProject
-		});
+		addItemsToWindow(window);
 
-		setConnections({
-			{ ui->actionNewProject, &Model::Maditor::newProject },
-			{ ui->actionLoadProject, &Model::Maditor::loadProject },
-			{ ui->actionClear_List, &Model::Maditor::clearRecentProjects}
-		});
-
-		connect(ui->menuRecentProjects, &QMenu::triggered, this, &MaditorView::recentProjectClicked);
-
-		connect(ui->actionSettings, &QAction::triggered, mDialogManager, &Dialogs::DialogManager::showSettingsDialog);
+		connect(window->ui->actionSettings, &QAction::triggered, mDialogManager, &Dialogs::DialogManager::showSettingsDialog);
 
 	}
 
@@ -67,7 +68,9 @@ namespace View {
 	{
 		ComponentView::setModel(model);
 
-		mLogs->setModel(model->logs());
+		mSettings = &model->settings();
+
+		
 
 		model->setDialogManager(mDialogManager);
 		createSettingsTab(mDialogManager, new EditorSettingsWidget(model), "Projects");
@@ -75,11 +78,11 @@ namespace View {
 		updateRecentProjects(model->recentProjects());
 
 		connect(model, &Model::Maditor::recentProjectsChanged, this, &MaditorView::updateRecentProjects);
-		connect(model, &Model::Maditor::projectOpened, this, &MaditorView::onProjectOpened);
 
-		if (model->project()) {
-			onProjectOpened(model->project());
-		}
+		model->addons()->setup(this);
+
+		if (mMainWindow)
+			mMainWindow->setModel(model);
 	}
 
 
@@ -90,43 +93,30 @@ namespace View {
 
 	bool MaditorView::closeEvent()
 	{
-		bool yesToAll = false, noToAll = false;
-		for (int i = 0; i < mUi->tabWidget->count(); ++i) {
-			if (DocumentView *view = dynamic_cast<DocumentView*>(mUi->tabWidget->widget(i))) {
-				if (yesToAll) {
-					view->save();
-				}
-				else if (noToAll) {
-					view->discardChanges();
-				}
-				else {
-					switch (view->requestClose(true)) {
-					case QMessageBox::NoToAll:
-						noToAll = true;
-						break;
-					case QMessageBox::YesToAll:
-						yesToAll = true;
-						break;
-					case QMessageBox::Abort:
-						return false;
-					default:
-						break;
-					}
-				}
-			}
-		}
+		
 		return true;
 	}
 
+	void MaditorView::createMainWindow() {
+		mMainWindow = new MainWindow;
+		setupUi(mMainWindow);
 
-	void MaditorView::onProjectOpened(Model::Project *project) {
-		mApplication->setConfigModel(project->configList());
-		mProject->setModel(project);
+		mMainWindow->show();
+
+		mSettings->beginGroup("Window");
+		mMainWindow->restoreGeometry(mSettings->value("geometry").toByteArray());
+		mMainWindow->restoreState(mSettings->value("state").toByteArray(), 0);
+		mSettings->endGroup(); 
+
+		if (model())
+			mMainWindow->setModel(model());
 	}
+
+
 
 	void MaditorView::updateRecentProjects(const QStringList & list)
 	{
-		QMenu *menu = mUi->menuRecentProjects;
+		QMenu *menu = mRecentProjectsMenu;
 		for (QAction *action : menu->actions().mid(mRecentProjectInitialActionCount)) {
 			menu->removeAction(action);
 		}
@@ -140,7 +130,7 @@ namespace View {
 
 	void MaditorView::recentProjectClicked(QAction * action)
 	{
-		if (mUi->menuRecentProjects->actions().indexOf(action) >= mRecentProjectInitialActionCount)
+		if (mRecentProjectsMenu->actions().indexOf(action) >= mRecentProjectInitialActionCount)
 			model()->loadProject(action->text());
 	}
 

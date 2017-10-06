@@ -2,8 +2,12 @@
 
 #include "Shared/AppControl.h"
 
+#ifdef MADGINE_CLIENT_BUILD
 #include "App\Ogreappsettings.h"
 #include "App/OgreApplication.h"
+#else
+#include "App/serverappsettings.h"
+#endif
 
 #include "ModuleLoader.h"
 #include "Util\LogListener.h"
@@ -61,9 +65,13 @@ namespace Maditor {
 			Engine::Serialize::Serialized<Util> mUtil;
 			Engine::Serialize::Serialized<Inspector> mInspector;
 
+#ifdef MADGINE_CLIENT_BUILD
 			Engine::App::OgreAppSettings mSettings;
-			Engine::App::OgreApplication *mApplication;
-			Engine::Server::ServerBase *mServer;
+			std::unique_ptr<Engine::App::OgreApplication> mApplication;
+#else
+			Engine::App::ServerAppSettings mSettings;
+			std::unique_ptr<Engine::Server::ServerBase> mServer;
+#endif
 
 			InputWrapper *mInput;
 

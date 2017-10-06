@@ -22,7 +22,9 @@ public:
 
 	const std::string &binaryDir();
 
+#ifdef MADGINE_SERVER_BUILD
 	Engine::Server::ServerBase * createServer(const std::string & fullName, const std::string &instanceName, const std::string &mediaDir);
+#endif
 
 private:
 

@@ -9,6 +9,8 @@ namespace Maditor {
 		class ProjectView;
 		class ModulePropertiesWidget;
 		class MaditorView;
+		class DocumentTabWidget;
+		class CentralWidget;
 		namespace Ui {
 			class MainWindow;
 		}

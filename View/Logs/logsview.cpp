@@ -9,31 +9,20 @@
 namespace Maditor {
 namespace View {
 
-	LogsView::LogsView() :
-		mUi(nullptr){
+	LogsView::LogsView() {
 
 	}
 
-	void LogsView::setupUi(Ui::MainWindow * ui, QMainWindow * window)
+	void LogsView::setupUi(MainWindow * window)
 	{
-		mUi = ui;
-
-		/*createToolbar(window, "ApplicationToolbar", {
-			{ ui->actionInit, &Model::ApplicationLauncher::init },
-			{ ui->actionInit_No_Debug, &Model::ApplicationLauncher::initNoDebug },
-			{ ui->actionFinalize, &Model::ApplicationLauncher::finalize },
-			{ ui->actionStart, &Model::ApplicationLauncher::start },
-			{ ui->actionPause, &Model::ApplicationLauncher::pause },
-			{ ui->actionStop, &Model::ApplicationLauncher::stop },
-		});*/
-
+		mLogsWidget = window->ui->logsWidget;
 	}
 
 	void LogsView::setModel(Model::LogTableModel * logs)
 	{
 		ComponentView::setModel(logs);
 
-		mUi->logsWidget->setModel(logs);
+		mLogsWidget->setModel(model());
 
 	}
 

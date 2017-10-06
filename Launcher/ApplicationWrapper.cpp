@@ -4,13 +4,16 @@
 
 #include "Shared\SharedMemory.h"
 
-#include "InputWrapper.h"
 
-#include "GUI\GUISystem.h"
 
 #include "Shared\IPCManager\boostIPCmanager.h"
 
+#ifdef MADGINE_SERVER_BUILD
 #include "Server\serverbase.h"
+#else
+#include "InputWrapper.h"
+#include "gui/guisystem.h"
+#endif
 
 #include "Shared\errorcodes.h"
 
@@ -26,9 +29,7 @@ namespace Maditor {
 			mNetwork(&mMemory, "Maditor-Link"),
 			mInput(nullptr),
 			mRunning(false),
-			mStartRequested(false),
-			mApplication(nullptr),
-			mServer(nullptr)
+			mStartRequested(false)
 		{
 			Engine::Serialize::Debugging::StreamDebugging::setLoggingEnabled(true);
 
@@ -39,6 +40,11 @@ namespace Maditor {
 
 		ApplicationWrapper::~ApplicationWrapper()
 		{
+			Engine::SignalSlot::ConnectionManager::getSingleton().update();
+			mNetwork.sendMessages();
+			Engine::SignalSlot::ConnectionStore::globalStore().clear();
+			using namespace std::chrono;
+			std::this_thread::sleep_for(2000ms);
 			if (mInput)
 				delete mInput;
 		}
@@ -47,7 +53,7 @@ namespace Maditor {
 		int ApplicationWrapper::start()
 		{
 
-			Shared::ApplicationInfo &appInfo = mMemory.data().mAppInfo;			
+			Shared::ApplicationInfo &appInfo = mMemory.data().mAppInfo;
 
 			Shared::BoostIPCManager *net = &mNetwork;
 
@@ -57,7 +63,7 @@ namespace Maditor {
 			if (!net->acceptConnection(2000)) {
 				net->close();
 				return Shared::MADITOR_CONNECTION_TIMEOUT;
-			}			
+			}
 
 			size_t j = 0;
 			while (appInfo.mDebugged &&
@@ -70,8 +76,7 @@ namespace Maditor {
 				}
 			}
 
-			mSettings.mRootDir = appInfo.mMediaDir.c_str();
-			mSettings.mPluginsFile = mSettings.mRootDir + "plugins.cfg";
+			int result = 0;
 
 
 			mRunning = true;
@@ -86,96 +91,100 @@ namespace Maditor {
 				return Shared::MODULE_LOAD_FAILED;
 			}
 
-			if (appInfo.mServerClass.empty()) {
+#ifdef MADGINE_CLIENT_BUILD
 
-				mInput = new InputWrapper(mMemory.data().mInput);
-				mSettings.mInput = mInput;
-				mSettings.mUseExternalSettings = true;
-				mSettings.mWindowName = "QtOgre";
-				mSettings.mWindowWidth = appInfo.mWindowWidth;
-				mSettings.mWindowHeight = appInfo.mWindowHeight;		
-				mSettings.mAppName = appInfo.mAppName.c_str();
+			assert(appInfo.mServerClass.empty());
 
-				Ogre::NameValuePairList &parameters = mSettings.mWindowParameters;
+			mSettings.mRootDir = appInfo.mMediaDir.c_str();
+			mSettings.mPluginsFile = mSettings.mRootDir + "plugins.cfg";
 
-				/*
-				Flag within the parameters set so that Ogre3D initializes an OpenGL context on it's own.
-				*/
-				parameters["currentGLContext"] = Ogre::String("false");
+			mInput = new InputWrapper(mMemory.data().mInput);
+			mSettings.mInput = mInput;
+			mSettings.mUseExternalSettings = true;
+			mSettings.mWindowName = "QtOgre";
+			mSettings.mWindowWidth = appInfo.mWindowWidth;
+			mSettings.mWindowHeight = appInfo.mWindowHeight;
+			mSettings.mAppName = appInfo.mAppName.c_str();
 
-				/*
-				We need to supply the low level OS window handle to this QWindow so that Ogre3D knows where to draw
-				the scene. Below is a cross-platform method on how to do this.
-				If you set both options (externalWindowHandle and parentWindowHandle) this code will work with OpenGL
-				and DirectX.
-				*/
+			Ogre::NameValuePairList &parameters = mSettings.mWindowParameters;
+
+			/*
+			Flag within the parameters set so that Ogre3D initializes an OpenGL context on it's own.
+			*/
+			parameters["currentGLContext"] = Ogre::String("false");
+
+			/*
+			We need to supply the low level OS window handle to this QWindow so that Ogre3D knows where to draw
+			the scene. Below is a cross-platform method on how to do this.
+			If you set both options (externalWindowHandle and parentWindowHandle) this code will work with OpenGL
+			and DirectX.
+			*/
 #if defined(Q_OS_MAC) || defined(Q_OS_WIN)
-				parameters["externalWindowHandle"] = Ogre::StringConverter::toString();
-				parameters["parentWindowHandle"] = Ogre::StringConverter::toString((size_t)(target->winId()));
+			parameters["externalWindowHandle"] = Ogre::StringConverter::toString();
+			parameters["parentWindowHandle"] = Ogre::StringConverter::toString((size_t)(target->winId()));
 #else
-				parameters["externalWindowHandle"] = Ogre::StringConverter::toString(appInfo.mWindowHandle);
-				parameters["parentWindowHandle"] = Ogre::StringConverter::toString(appInfo.mWindowHandle);
+			parameters["externalWindowHandle"] = Ogre::StringConverter::toString(appInfo.mWindowHandle);
+			parameters["parentWindowHandle"] = Ogre::StringConverter::toString(appInfo.mWindowHandle);
 #endif
 
 #if defined(Q_OS_MAC)
-				parameters["macAPI"] = "cocoa";
-				parameters["macAPICocoaUseNSView"] = "true";
+			parameters["macAPI"] = "cocoa";
+			parameters["macAPICocoaUseNSView"] = "true";
 #endif
 
-				mApplication = new Engine::App::OgreApplication;
-				mApplication->setup(mSettings);
-				mUtil->setApp(mApplication);
-
-			}
-			else {
-				mServer = mLoader->createServer(appInfo.mServerClass.c_str(), appInfo.mAppName.c_str(), appInfo.mMediaDir.c_str());
-				if (!mServer)
-					return Shared::FAILED_CREATE_SERVER_CLASS;
-			}			
+			mApplication = std::make_unique<Engine::App::OgreApplication>();
+			mApplication->setup(mSettings);
+			mUtil->setApp(mApplication.get());
 
 			mLog->init();
 
 			Engine::Util::UtilMethods::addListener(mLog.ptr());
 
 
-			int result = 0;
 
-			if (appInfo.mServerClass.empty()) {
-				Ogre::LogManager::getSingleton().getLog("Ogre.log")->addListener(mLog.ptr());
-				mApplication->addFrameListener(this);
-				mInput->setSystem(&Engine::GUI::GUISystem::getSingleton());
-				if (!mApplication->init()) {
-					return Shared::APP_INIT_FAILED;
-				}
-				applicationSetup({});
 
-				while (mRunning) {
-					net->sendAndReceiveMessages();
-					Engine::SignalSlot::ConnectionManager::getSingleton().update();
-					if (net->clientCount() != 1) {
-						//net->close();
-						return Shared::MADITOR_DISCONNECTED;
-					}
-					if (mStartRequested) {
-						mApplication->go();
-						mStartRequested = false;
-						stop({});
-					}
-				}
+			Ogre::LogManager::getSingleton().getLog("Ogre.log")->addListener(mLog.ptr());
+			mApplication->addFrameListener(this);
+			mInput->setSystem(&Engine::GUI::GUISystem::getSingleton());
+			if (!mApplication->init()) {
 				mApplication->finalize();
-				delete mApplication;
-				mApplication = nullptr;
+				return Shared::APP_INIT_FAILED;
 			}
-			else {
-				mServer->addFrameListener(this);
-				applicationSetup({});
-				result = mServer->run();
-				delete mServer;
-				mServer = nullptr;
-				mRunning = false;
-			}		
+			applicationSetup({});
 
-			
+			while (mRunning) {
+				net->sendAndReceiveMessages();
+				Engine::SignalSlot::ConnectionManager::getSingleton().update();
+				if (net->clientCount() != 1) {
+					//net->close();
+					return Shared::MADITOR_DISCONNECTED;
+				}
+				if (mStartRequested) {
+					mApplication->go();
+					mStartRequested = false;
+					stop({});
+				}
+			}
+			mApplication->finalize();
+
+#else
+
+			assert(!appInfo.mServerClass.empty());
+			mServer = std::unique_ptr<Engine::Server::ServerBase>(mLoader->createServer(appInfo.mServerClass.c_str(), appInfo.mAppName.c_str(), appInfo.mMediaDir.c_str()));
+			if (!mServer)
+				return Shared::FAILED_CREATE_SERVER_CLASS;
+
+			mLog->init();
+
+			Engine::Util::UtilMethods::addListener(mLog.ptr());
+
+			mServer->addFrameListener(this);
+			applicationSetup({});
+			result = mServer->run();
+			mRunning = false;
+
+
+#endif					
 			return result;
 		}
 
@@ -231,10 +240,11 @@ namespace Maditor {
 		}
 		void ApplicationWrapper::stopImpl()
 		{
-			if (mApplication)
+#ifdef MADGINE_CLIENT_BUILD
 				mApplication->shutdown();
-			if (mServer)
+#else
 				mServer->shutdown();
+#endif
 		}
 		void ApplicationWrapper::pauseImpl()
 		{
@@ -243,16 +253,20 @@ namespace Maditor {
 
 		void ApplicationWrapper::resizeWindowImpl()
 		{
-			if (mApplication)
+#ifdef MADGINE_CLIENT_BUILD
 				mApplication->resizeWindow();
+#endif
 		}
 
 		void ApplicationWrapper::execLuaImpl(const std::string & cmd)
 		{
 			std::cout << cmd << std::endl;
 			Engine::Scripting::GlobalScopeBase *scope;
-			if (mApplication) scope = mApplication;
-			else scope = mServer;
+#ifdef MADGINE_CLIENT_BUILD
+			scope = mApplication.get();
+#else
+			scope = mServer.get();
+#endif
 			scope->executeString(cmd);
 			std::cout.flush();
 		}

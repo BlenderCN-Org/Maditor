@@ -59,7 +59,7 @@ if (BUILD_TESTS)
 endif(BUILD_TESTS)
 
 add_executable(Maditor main.cpp)
-add_dependencies(Maditor Maditor_Launcher ${TOOLS_LIBS})
+add_dependencies(Maditor Client_Launcher Server_Launcher ${TOOLS_LIBS})
 target_link_libraries(Maditor Maditor_Model Maditor_View)
 
 

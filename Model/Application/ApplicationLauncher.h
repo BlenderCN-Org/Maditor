@@ -59,6 +59,8 @@ namespace Maditor {
 			void cleanup();
 			void checkProcess();
 
+			void onConnectionResult(bool b);
+
 			// Inherited via AppControl
 			virtual void shutdownImpl() override;
 
@@ -125,6 +127,9 @@ namespace Maditor {
 			Shared::BoostIPCManager mNetwork;
 			std::unique_ptr<InputWrapper> mInput;
 			OgreWindow *mWindow;
+
+			Engine::SignalSlot::Slot<decltype(&ApplicationLauncher::onConnectionResult), &ApplicationLauncher::onConnectionResult> mOnConnectionResult;
+
 		};
 
 	}

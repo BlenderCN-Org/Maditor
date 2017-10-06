@@ -3,6 +3,7 @@
 #include "Project/Project.h"
 #include "MaditorLog.h"
 #include "Logs\LogTableModel.h"
+#include "signalslot/connectionstore.h"
 
 namespace Maditor {
 	namespace Model {
@@ -34,6 +35,9 @@ namespace Maditor {
 
 			void setDialogManager(DialogManager *manager);
 
+		protected:
+			virtual void timerEvent(QTimerEvent *e) override;
+
 		public slots:
 			void loadProject();
 			void newProject();
@@ -62,6 +66,8 @@ namespace Maditor {
 			std::unique_ptr<Project> mProject;
 
 			DialogManager *mDialogManager;
+
+			Engine::SignalSlot::ConnectionManager mConnMgr;
 
 		};
 

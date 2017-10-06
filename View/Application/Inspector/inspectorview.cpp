@@ -69,6 +69,8 @@ namespace Maditor {
 
 		void InspectorView::setModel(Model::Inspector * inspector)
 		{
+			if (mInspector == inspector)
+				return;
 			clearModel();
 			mInspector = inspector;
 			mCurrentRoot = mInspector->registerIndex(this, nullptr);
@@ -94,31 +96,28 @@ namespace Maditor {
 			disconnect(mResetConnection);			
 		}
 
-		void InspectorView::addRow(int i)
+		void InspectorView::addRow()
 		{
 			std::unique_ptr<InspectorRow> row = std::make_unique<InspectorRow>();
 
 			row->mMapper.setModel(mInspector);
 			row->mMapper.setRootIndex(mCurrentRoot);
 
-			for (; i < mRows.size(); ++i) {
-				mRows[i]->mMapper.setCurrentIndex(i);
-			}
 
 			QLabel *label = new QLabel(this);
 			label->update();
 			//label->setText(mInspector->data(mInspector->index(i, 0)).toString());
-			mItemsLayout->addWidget(label, i, 0);
+			mItemsLayout->addWidget(label, mRows.size(), 0);
 			row->mMapper.addMapping(label, 0, "text");
 
 			ValueTypeEdit *edit = new ValueTypeEdit(this);
-			mItemsLayout->addWidget(edit, i, 1);
+			mItemsLayout->addWidget(edit, mRows.size(), 1);
 			row->mMapper.addMapping(edit, 1);
-			edit->setReadOnly((mInspector->flags(mInspector->index(i, 1)) & Qt::ItemIsEditable) == 0);
+			edit->setReadOnly((mInspector->flags(mInspector->index(mRows.size(), 1)) & Qt::ItemIsEditable) == 0);
 			connect(edit, &ValueTypeEdit::scopeLinkClicked, mLinkMapper, static_cast<void (QSignalMapper::*)()>(&QSignalMapper::map));
-			mLinkMapper->setMapping(edit, i);
+			mLinkMapper->setMapping(edit, mRows.size());
 
-			row->mMapper.setCurrentIndex(i);
+			row->mMapper.setCurrentIndex(mRows.size());
 
 			mRows.emplace_back(std::move(row));
 		}
@@ -130,7 +129,7 @@ void InspectorView::refresh() {
 	mRows.clear();
 	if (mInspector) {
 		for (int i = 0; i < mInspector->rowCount(mCurrentRoot); ++i) {
-			addRow(i);
+			addRow();
 		}
 	}
 
@@ -196,9 +195,36 @@ QRegion InspectorView::visualRegionForSelection(const QItemSelection & selection
 void InspectorView::rowsInserted(const QModelIndex & parent, int start, int end)
 {
 	if (parent == mCurrentRoot) {
+		for (int i = start; i < mRows.size(); ++i) {
+			mRows[i]->mMapper.setCurrentIndex(i);
+		}
+
 		for (int i = start; i <= end; ++i) {
-			addRow(i);
-		}	
+			addRow();
+		}
+		
+	}
+}
+
+void InspectorView::rowsAboutToBeRemoved(const QModelIndex & parent, int start, int end)
+{
+	if (!parent.isValid()) {
+		//root
+	}
+	else if (parent == mCurrentRoot) {
+		for (int i = start; i <= end; ++i) {			
+			for (int c = 0; c < mItemsLayout->columnCount(); ++c)
+			{
+				QLayoutItem* item = mItemsLayout->itemAtPosition(i, c);
+				QWidget* itemWidget = item->widget();
+				if (itemWidget)
+				{
+					mItemsLayout->removeWidget(itemWidget);
+					delete itemWidget; 
+				}
+			}
+		}
+		mRows.erase(mRows.begin() + start, mRows.begin() + end + 1);
 	}
 }
 

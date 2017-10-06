@@ -27,14 +27,14 @@ public:
 
 	ProjectView();
 	
-	void setupUi(Ui::MainWindow *ui, QMainWindow *window);
+	void setupUi(MainWindow *window);
 	virtual void setModel(Model::Project *project) override;
 
 private slots:
 	void openConfig(Model::ApplicationConfig *config);
 
 private:
-	Ui::MainWindow *mUi;
+	const Ui::MainWindow *mUi;
 };
 
 

@@ -22,7 +22,8 @@ namespace Maditor {
 			mIsServer(false),
 			mSlaveStream(nullptr),
 			mMemory(mem),
-			SerializeManager(name)
+			SerializeManager(name),
+			mConnectionEstablished(this)
 		{
 		}
 
@@ -31,7 +32,8 @@ namespace Maditor {
 			mServer(other.mServer),
 			mIsServer(other.mIsServer),
 			mSlaveStream(nullptr),
-			mMemory(other.mMemory)
+			mMemory(other.mMemory),
+			mConnectionEstablished(this)
 		{
 			for (std::pair<const Engine::Serialize::ParticipantId, BoostIPCStream> &stream : other.mStreams)
 				if (!stream.second.isClosed())
@@ -69,15 +71,35 @@ namespace Maditor {
 
 		bool BoostIPCManager::connect(int timeout)
 		{
-			bool result = connectImpl(timeout);
-			mConnectionResult.emit(result);
-			return result;
+			if (mServer) {
+				mConnectionResult.emit(false);
+				return false;
+			}
+
+			std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::high_resolution_clock::now();
+			mServer = mMemory->mgr()->find<BoostIPCServer>("Server").first;
+			while (!mServer) {
+				if (std::chrono::duration_cast<std::chrono::milliseconds>
+					(std::chrono::high_resolution_clock::now() - start).count() > timeout) {
+					mConnectionResult.emit(false);
+					return false;
+				}
+				mServer = mMemory->mgr()->find<BoostIPCServer>("Server").first;
+			}
+
+			SharedConnectionPtr conn = boost::interprocess::make_managed_shared_ptr(
+				mMemory->mgr()->construct<BoostIPCConnection>(boost::interprocess::anonymous_instance)(mMemory->uniqueName(), mMemory->mgr()), mMemory->memory());
+			mServer->enqueue(conn, timeout);
+
+			mConnectionEstablished.queue_direct(std::move(conn), timeout);
+
+			return true;
 		}
 
-		/*void BoostIPCManager::connect_async(const std::string & url, int portNr, int timeout)
+		void BoostIPCManager::connect_async(int timeout)
 		{
-			std::thread(&NetworkManager::connect, this, url, portNr, timeout).detach();
-		}*/
+			std::thread(&BoostIPCManager::connect, this, timeout).detach();
+		}
 
 		void BoostIPCManager::close()
 		{
@@ -168,36 +190,20 @@ namespace Maditor {
 			return res.first->second;
 		}
 
-		bool BoostIPCManager::connectImpl(int timeout)
+		void BoostIPCManager::onConnectionEstablished(SharedConnectionPtr &&conn, int timeout)
 		{
+			bool result = true;
 
-			if (mServer)
-				return false;
-
-			std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::high_resolution_clock::now();
-			mServer = mMemory->mgr()->find<BoostIPCServer>("Server").first;
-			while (!mServer) {
-				if (std::chrono::duration_cast<std::chrono::milliseconds>
-					(std::chrono::high_resolution_clock::now() - start).count() > timeout) {
-					return false;
-				}
-				mServer = mMemory->mgr()->find<BoostIPCServer>("Server").first;
-			}
-
-			SharedConnectionPtr conn = boost::interprocess::make_managed_shared_ptr(
-				mMemory->mgr()->construct<BoostIPCConnection>(boost::interprocess::anonymous_instance)(mMemory->uniqueName(), mMemory->mgr()), mMemory->memory());
-			mServer->enqueue(conn, timeout);
-
-			mSlaveStream = new BoostIPCStream(std::move(conn), true, *this);
+			mSlaveStream = new BoostIPCStream(std::forward<SharedConnectionPtr>(conn), true, *this);
 			if (setSlaveStream(mSlaveStream, true, timeout) != Engine::Serialize::NO_ERROR) {
 				delete mSlaveStream;
 				mSlaveStream = 0;
 				mServer = nullptr;
-				return false;
+				result = false;
 			}
 
+			mConnectionResult.emit(result);
 
-			return true;
 		}
 
 	}
