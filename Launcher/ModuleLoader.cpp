@@ -20,8 +20,8 @@ namespace Maditor {
 	namespace Launcher {
 
 
-		ModuleLoader::ModuleLoader(Engine::Serialize::TopLevelSerializableUnitBase *topLevel) :
-			SerializableUnit(topLevel),
+		ModuleLoader::ModuleLoader(Engine::Serialize::SerializableUnitBase *parent) :
+			SerializableUnit(parent),
 			mInit(false)
 		{
 			mInstances.setCreator(std::bind(&ModuleLoader::createModule, this, std::placeholders::_1));
@@ -77,7 +77,7 @@ namespace Maditor {
 
 
 		ModuleLoader::ModuleLauncherInstance::ModuleLauncherInstance(ModuleLoader * parent, const std::string & name) :
-			ModuleInstance(parent->topLevel(), name),
+			ModuleInstance(parent, name),
 			mHandle(0),
 			mParent(parent)
 		{

@@ -12,7 +12,7 @@ namespace Maditor {
 class ModuleLoader : public Engine::Serialize::SerializableUnit<ModuleLoader> {
 
 public:
-	ModuleLoader(Engine::Serialize::TopLevelSerializableUnitBase *topLevel);
+	ModuleLoader(Engine::Serialize::SerializableUnitBase *parent);
 	~ModuleLoader();
 
 	void setup(const std::string &binaryDir);

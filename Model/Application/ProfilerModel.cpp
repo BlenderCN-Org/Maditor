@@ -5,8 +5,8 @@
 namespace Maditor {
 	namespace Model {
 
-		ProfilerModel::ProfilerModel(Engine::Serialize::TopLevelSerializableUnitBase *topLevel) :
-			TreeUnit(topLevel, 4)
+		ProfilerModel::ProfilerModel(Engine::Serialize::SerializableUnitBase *parent) :
+			TreeUnit(parent, 4)
 		{
 			setContainer(mTopLevelItems);
 		}

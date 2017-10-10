@@ -4,8 +4,8 @@
 namespace Maditor {
 	namespace Model {
 
-		Inspector::Inspector(Engine::Serialize::TopLevelSerializableUnitBase *topLevel) :
-			TreeUnit(topLevel, 2),
+		Inspector::Inspector(Engine::Serialize::SerializableUnitBase *parent) :
+			TreeUnit(parent, 2),
 			mPending(false),
 			mTimer(0)
 		{

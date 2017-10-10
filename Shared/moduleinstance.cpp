@@ -6,8 +6,8 @@
 
 namespace Maditor {
 	namespace Shared {
-		ModuleInstance::ModuleInstance(Engine::Serialize::TopLevelSerializableUnitBase *topLevel, const std::string & name) :
-			SerializableUnit(topLevel),
+		ModuleInstance::ModuleInstance(Engine::Serialize::SerializableUnitBase *parent, const std::string & name) :
+			SerializableUnit(parent),
 			mLoaded(false),
 			mExists(false),
 			mName(name)/*,

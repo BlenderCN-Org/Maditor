@@ -17,7 +17,7 @@ class LogListener : public Engine::Serialize::SerializableUnit<LogListener>
 
 
 public:
-	LogListener(Engine::Serialize::TopLevelSerializableUnitBase *topLevel);
+	LogListener(Engine::Serialize::SerializableUnitBase *parent);
 	~LogListener();
 
 	void init();

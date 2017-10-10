@@ -27,9 +27,11 @@ namespace Maditor {
 			AppControl(Shared::AppControl::masterLauncher),
 			mMemory(id),
 			mNetwork(&mMemory, "Maditor-Link"),
-			mInput(nullptr),
 			mRunning(false),
 			mStartRequested(false)
+#ifdef MADGINE_CLIENT_BUILD
+			, mInput(nullptr)
+#endif
 		{
 			Engine::Serialize::Debugging::StreamDebugging::setLoggingEnabled(true);
 
@@ -45,8 +47,10 @@ namespace Maditor {
 			Engine::SignalSlot::ConnectionStore::globalStore().clear();
 			using namespace std::chrono;
 			std::this_thread::sleep_for(2000ms);
+#ifdef MADGINE_CLIENT_BUILD
 			if (mInput)
 				delete mInput;
+#endif
 		}
 
 

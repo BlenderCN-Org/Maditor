@@ -7,8 +7,8 @@
 namespace Maditor {
 	namespace Launcher {
 
-		AppStats::AppStats(Engine::Serialize::TopLevelSerializableUnitBase *topLevel) :
-			SerializableUnit(topLevel)
+		AppStats::AppStats(Engine::Serialize::SerializableUnitBase *parent) :
+			SerializableUnit(parent)
 		{
 		}
 

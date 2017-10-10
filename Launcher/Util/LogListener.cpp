@@ -7,8 +7,8 @@
 namespace Maditor {
 	namespace Launcher {
 
-		LogListener::LogListener(Engine::Serialize::TopLevelSerializableUnitBase *topLevel) :
-			SerializableUnit(topLevel)
+		LogListener::LogListener(Engine::Serialize::SerializableUnitBase *parent) :
+			SerializableUnit(parent)
 		{
 
 		}

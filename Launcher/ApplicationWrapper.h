@@ -68,14 +68,12 @@ namespace Maditor {
 #ifdef MADGINE_CLIENT_BUILD
 			Engine::App::OgreAppSettings mSettings;
 			std::unique_ptr<Engine::App::OgreApplication> mApplication;
+
+			InputWrapper *mInput;
 #else
 			Engine::App::ServerAppSettings mSettings;
 			std::unique_ptr<Engine::Server::ServerBase> mServer;
-#endif
-
-			InputWrapper *mInput;
-
-			
+#endif			
 
 			bool mRunning;			
 			bool mStartRequested;

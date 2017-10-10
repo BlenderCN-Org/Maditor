@@ -33,9 +33,9 @@ namespace Maditor {
 		template <class T>
 		class TableUnit : public TableUnitBase, public Engine::Serialize::SerializableUnit<T> {
 		public:
-			TableUnit(Engine::Serialize::TopLevelSerializableUnitBase *topLevel, int columnCount) :
+			TableUnit(Engine::Serialize::SerializableUnitBase *parent, int columnCount) :
 				TableUnitBase(columnCount),
-				SerializableUnit(topLevel) {}
+				SerializableUnit(parent) {}
 			
 		};
 

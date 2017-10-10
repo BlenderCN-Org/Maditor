@@ -56,9 +56,9 @@ namespace Maditor {
 		template <class T>
 		class TreeUnit : public TreeUnitBase, public Engine::Serialize::SerializableUnit<T> {
 		public:
-			TreeUnit(Engine::Serialize::TopLevelSerializableUnitBase *topLevel, int columnCount) :
+			TreeUnit(Engine::Serialize::SerializableUnitBase *parent, int columnCount) :
 				TreeUnitBase(columnCount),
-				SerializableUnit(topLevel) {}
+				SerializableUnit(parent) {}
 		};
 
 		template <class T>
@@ -66,13 +66,13 @@ namespace Maditor {
 		public:
 			template <class U>
 			TreeUnitItem(TreeUnitItem<U> *parent) :
-				SerializableUnit(parent->topLevel()),
+				SerializableUnit(parent),
 				TreeUnitItemBase(parent) {}
 
 		protected:
 			template <class U>
 			TreeUnitItem(TreeUnit<U> *tree) :
-				SerializableUnit(tree->topLevel()),
+				SerializableUnit(tree),
 				TreeUnitItemBase(static_cast<TreeUnitItemBase*>(tree)) {}
 		};
 

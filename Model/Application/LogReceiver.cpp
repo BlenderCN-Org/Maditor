@@ -16,8 +16,8 @@
 namespace Maditor {
 	namespace Model {
 
-		LogReceiver::LogReceiver(Engine::Serialize::TopLevelSerializableUnitBase *topLevel, LogTableModel * model, const std::list<std::string> &textLogs) :
-			SerializableUnit(topLevel),
+		LogReceiver::LogReceiver(Engine::Serialize::SerializableUnitBase *parent, LogTableModel * model, const std::list<std::string> &textLogs) :
+			SerializableUnit(parent),
 			mModel(model)
 		{
 
