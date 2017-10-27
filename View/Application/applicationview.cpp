@@ -37,6 +37,7 @@ namespace View {
 
 
 		QToolBar *toolbar = new QToolBar(window);
+		toolbar->setObjectName("ConfigSelector");
 
 		toolbar->addAction(mCurrentConfigSelector->menuAction());
 

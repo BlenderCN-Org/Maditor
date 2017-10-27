@@ -28,14 +28,16 @@ namespace Maditor {
 
 			void handleOperation(int row, int op);
 			
+		private:
+			bool mResetting;
+
 		};
 
 		template <class T>
 		class TableUnit : public TableUnitBase, public Engine::Serialize::SerializableUnit<T> {
 		public:
-			TableUnit(Engine::Serialize::SerializableUnitBase *parent, int columnCount) :
-				TableUnitBase(columnCount),
-				SerializableUnit(parent) {}
+			TableUnit(int columnCount) :
+				TableUnitBase(columnCount) {}
 			
 		};
 

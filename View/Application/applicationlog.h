@@ -20,7 +20,7 @@ public:
 	Model::ApplicationLauncher *app();
 
 private slots:
-	void output(const QString &msg);
+	void output(QString msg);
 	void clear();
 	void sendLine();
 

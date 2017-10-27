@@ -11,7 +11,7 @@ namespace Maditor {
 
 		class AppStats : public Engine::Serialize::SerializableUnit<AppStats> {
 		public:
-			AppStats(Engine::Serialize::SerializableUnitBase *parent);
+			AppStats();
 
 			void setApp(Engine::App::Application *app);
 			

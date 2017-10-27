@@ -4,6 +4,8 @@
 
 #include "Shared\errorcodes.h"
 
+#include "serialize/container/noparentunit.h"
+
 int main(int argc, char *argv[]) {
 	if (argc < 2) return Maditor::Shared::ILLEGAL_ARGUMENTS;
 	size_t id;
@@ -11,6 +13,6 @@ int main(int argc, char *argv[]) {
 	ss >> id;
 	if (id == 0)
 		return Maditor::Shared::ILLEGAL_ARGUMENTS;
-	Maditor::Launcher::ApplicationWrapper app(id);
+	Engine::Serialize::NoParentUnit<Maditor::Launcher::ApplicationWrapper> app(id);
 	return app.start();
 }

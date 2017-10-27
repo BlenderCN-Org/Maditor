@@ -11,7 +11,7 @@ namespace Maditor {
 		class MADITOR_MODEL_EXPORT Inspector : public TreeUnit<Inspector> {
 			Q_OBJECT
 		public:
-			Inspector(Engine::Serialize::SerializableUnitBase *parent);
+			Inspector();
 
 			void start();
 			void reset();

@@ -29,7 +29,7 @@ namespace Maditor {
 			Q_OBJECT
 
 		public:
-			ModuleLoader(Engine::Serialize::SerializableUnitBase *parent, ApplicationConfig *config);
+			ModuleLoader(ApplicationConfig *config);
 			~ModuleLoader();
 
 			void reset();

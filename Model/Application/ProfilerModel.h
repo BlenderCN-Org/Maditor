@@ -43,7 +43,7 @@ namespace Maditor {
 			Q_OBJECT
 
 		public:
-			ProfilerModel(Engine::Serialize::SerializableUnitBase *parent);
+			ProfilerModel();
 
 
 			// Geerbt über TreeUnit

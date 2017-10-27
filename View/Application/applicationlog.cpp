@@ -85,23 +85,20 @@ namespace View {
 	}
 
 
-	void ApplicationLog::output(const QString & msg)
+	void ApplicationLog::output(QString msg)
 	{
 		ui->log->setTextCursor(mCursor);
-		for (QChar c : msg) {
-			switch (c.toLatin1()) {
-			case '\r':
-				ui->log->moveCursor(QTextCursor::StartOfLine);
-				break;
-			case '\n':
-				ui->log->moveCursor(QTextCursor::End);
-				ui->log->insertPlainText(QChar('\n'));
-				break;
-			default:
-				ui->log->moveCursor(QTextCursor::Right, QTextCursor::KeepAnchor);
-				ui->log->insertPlainText(c);
-				break;
-			}
+		msg.replace("\r\n", "\n");
+		QStringList list = msg.split('\r');
+		bool first = true;
+		for (const QString &split : list) {
+			if (first)
+				first = false;
+			else {
+				ui->log->moveCursor(QTextCursor::StartOfLine, QTextCursor::KeepAnchor);
+				ui->log->insertPlainText("");
+			}			
+			ui->log->insertPlainText(split);
 		}
 		mCursor = ui->log->textCursor();
 		ui->log->ensureCursorVisible();

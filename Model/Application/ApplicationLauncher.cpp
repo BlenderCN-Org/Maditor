@@ -75,7 +75,6 @@ namespace Maditor {
 
 			std::experimental::filesystem::create_directory(runtimeDir());
 
-			init();
 		}
 
 		ApplicationLauncher::~ApplicationLauncher()
@@ -337,8 +336,9 @@ namespace Maditor {
 						dwRead -= bytesRead;
 					}
 
-					if (!msg.empty())
+					if (!msg.empty()) {
 						emit outputReceived(msg.join(""));
+					}					
 				}
 			}
 		}
@@ -378,7 +378,7 @@ namespace Maditor {
 				mHandle = NULL;
 
 				//receive pending messages
-				while (mNetwork.getSlaveStream() && mNetwork.getSlaveStream()->isMessageAvailable())
+				while (!mNetwork.isMaster() && mNetwork.getSlaveStream()->isMessageAvailable())
 					mNetwork.receiveMessages();
 
 				mInspector->reset();

@@ -9,7 +9,8 @@ namespace Maditor {
 
 		TreeUnitBase::TreeUnitBase(int columnCount) :
 			TreeModel(this, columnCount),
-			TreeUnitItemBase(this)
+			TreeUnitItemBase(this),
+			mResetting(false)
 		{
 
 		}
@@ -62,14 +63,28 @@ namespace Maditor {
 
 			switch (op) {
 			case INSERT_ITEM:
-				beginInsertRows(parent, row, row);
-				endInsertRows();
+				if (!mResetting) {
+					beginInsertRows(parent, row, row);
+					endInsertRows();
+				}
 				break;
 			case BEFORE | RESET:
 				beginResetModel();
+				mResetting = true;
 				break;
 			case AFTER | RESET:
 				endResetModel();
+				mResetting = false;
+				break;
+			case BEFORE | REMOVE_ITEM:
+				if (!mResetting) {
+					beginRemoveRows(parent, row, row);
+				}
+				break;
+			case AFTER | REMOVE_ITEM:
+				if (!mResetting) {
+					endRemoveRows();
+				}
 				break;
 			default:
 				throw 0;

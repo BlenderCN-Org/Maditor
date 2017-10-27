@@ -18,7 +18,7 @@ namespace Maditor {
 			}
 
 		public:
-			ModuleInstance(Engine::Serialize::SerializableUnitBase *parent, const std::string &name);
+			ModuleInstance(const std::string &name);
 
 			const std::string &name() const;
 

@@ -7,8 +7,7 @@
 namespace Maditor {
 	namespace Model {
 
-		StatsModel::StatsModel(Engine::Serialize::SerializableUnitBase *parent) :
-			SerializableUnit(parent),
+		StatsModel::StatsModel() :
 			mTimerId(0),
 			mCurrentUsage(0)
 		{

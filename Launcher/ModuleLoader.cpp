@@ -20,8 +20,7 @@ namespace Maditor {
 	namespace Launcher {
 
 
-		ModuleLoader::ModuleLoader(Engine::Serialize::SerializableUnitBase *parent) :
-			SerializableUnit(parent),
+		ModuleLoader::ModuleLoader() :
 			mInit(false)
 		{
 			mInstances.setCreator(std::bind(&ModuleLoader::createModule, this, std::placeholders::_1));
@@ -77,7 +76,7 @@ namespace Maditor {
 
 
 		ModuleLoader::ModuleLauncherInstance::ModuleLauncherInstance(ModuleLoader * parent, const std::string & name) :
-			ModuleInstance(parent, name),
+			ModuleInstance(name),
 			mHandle(0),
 			mParent(parent)
 		{
@@ -174,8 +173,8 @@ namespace Maditor {
 			mGuiHandlers.clear();
 			mGlobalAPIComponents.clear();
 
-			Engine::BaseUniqueComponentCollector<Engine::Scene::SceneComponentBase, Engine::Serialize::SerializableUnitHeapCreator, Engine::Scene::SceneManagerBase*> *sceneComponentCollector = Engine::BaseUniqueComponentCollector<Engine::Scene::SceneComponentBase, Engine::Serialize::SerializableUnitHeapCreator, Engine::Scene::SceneManagerBase*>::getSingletonPtr();
-			Engine::BaseUniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase> *globalAPIComponentCollector = Engine::BaseUniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase>::getSingletonPtr();
+			Engine::Scene::SceneComponentCollector *sceneComponentCollector = Engine::Scene::SceneComponentCollector::getSingletonPtr();
+			Engine::Scripting::GlobalAPICollector *globalAPIComponentCollector = Engine::Scripting::GlobalAPICollector::getSingletonPtr();
 #ifdef MADGINE_CLIENT_BUILD
 			Engine::OgreUniqueComponentCollector<Engine::UI::GameHandlerBase> *gameHandlerCollector = Engine::OgreUniqueComponentCollector<Engine::UI::GameHandlerBase>::getSingletonPtr();
 			Engine::OgreUniqueComponentCollector<Engine::UI::GuiHandlerBase> *guiHandlerCollector = Engine::OgreUniqueComponentCollector<Engine::UI::GuiHandlerBase>::getSingletonPtr();
@@ -305,14 +304,14 @@ namespace Maditor {
 				}
 			}
 
-			if (Engine::BaseUniqueComponentCollector<Engine::Scripting::GlobalAPIComponentBase>::getSingletonPtr()) {
+			if (Engine::Scripting::GlobalAPICollector::getSingletonPtr()) {
 				for (Engine::Scripting::GlobalAPIComponentBase *api : mGlobalAPIComponents) {
 					if (api->getState() == Engine::ObjectState::INITIALIZED)
 						api->finalize();
 				}
 			}
 
-			if (Engine::BaseUniqueComponentCollector<Engine::Scene::SceneComponentBase, Engine::Serialize::SerializableUnitHeapCreator, Engine::Scene::SceneManagerBase*>::getSingletonPtr()){
+			if (Engine::Scene::SceneComponentCollector::getSingletonPtr()){
 				for (Engine::Scene::SceneComponentBase *c : mSceneComponents) {
 					if (c->getState() == Engine::ObjectState::INITIALIZED)
 						c->finalize();

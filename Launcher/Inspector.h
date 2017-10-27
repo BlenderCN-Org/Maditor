@@ -39,7 +39,7 @@ namespace Maditor {
 
 		class Inspector : public Engine::Serialize::SerializableUnit<Inspector> {
 		public:
-			Inspector(Engine::Serialize::SerializableUnitBase *parent);
+			Inspector();
 
 			void init();
 			void getUpdate(Engine::InvScopePtr ptr, InspectorThreadInstance *thread);

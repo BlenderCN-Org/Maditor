@@ -13,7 +13,7 @@ namespace Maditor {
 
 		class Util : public Engine::Singleton<Util>, public Engine::Serialize::SerializableUnit<Util> {
 		public:
-			Util(Engine::Serialize::SerializableUnitBase *parent);
+			Util();
 
 			void setApp(Engine::App::Application* app);
 			

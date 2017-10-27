@@ -10,7 +10,7 @@ namespace Maditor {
 		class LogReceiver : public Engine::Serialize::SerializableUnit<LogReceiver> {
 
 		public:
-			LogReceiver(Engine::Serialize::SerializableUnitBase *parent, LogTableModel *model, const std::list<std::string> &textLogs);
+			LogReceiver(LogTableModel *model, const std::list<std::string> &textLogs);
 			virtual ~LogReceiver();
 
 			void clear();

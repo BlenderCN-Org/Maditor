@@ -19,8 +19,5 @@ int main(int argc, char **argv) {
 
 	view.createMainWindow();
 
-	/*Maditor::View::MainWindow window(&model);
-	window.show();*/
-
 	return app.exec();
 }

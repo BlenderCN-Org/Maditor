@@ -51,14 +51,16 @@ namespace Maditor {
 			void handleOperation(const QModelIndex &parent, int row, int op);
 			void onDataChanged(const QModelIndex &parent, int row, int fromCol, int toCol);
 
+		private:
+			bool mResetting;
+
 		};
 
 		template <class T>
 		class TreeUnit : public TreeUnitBase, public Engine::Serialize::SerializableUnit<T> {
 		public:
-			TreeUnit(Engine::Serialize::SerializableUnitBase *parent, int columnCount) :
-				TreeUnitBase(columnCount),
-				SerializableUnit(parent) {}
+			TreeUnit(int columnCount) :
+				TreeUnitBase(columnCount) {}
 		};
 
 		template <class T>
@@ -66,13 +68,11 @@ namespace Maditor {
 		public:
 			template <class U>
 			TreeUnitItem(TreeUnitItem<U> *parent) :
-				SerializableUnit(parent),
 				TreeUnitItemBase(parent) {}
 
 		protected:
 			template <class U>
 			TreeUnitItem(TreeUnit<U> *tree) :
-				SerializableUnit(tree),
 				TreeUnitItemBase(static_cast<TreeUnitItemBase*>(tree)) {}
 		};
 

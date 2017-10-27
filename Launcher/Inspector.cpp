@@ -92,8 +92,7 @@ namespace Maditor {
 			inspector->getUpdate(ptr, this);
 		}
 
-		Inspector::Inspector(Engine::Serialize::SerializableUnitBase *parent) :
-			SerializableUnit(parent)
+		Inspector::Inspector()
 		{
 			 
 		}

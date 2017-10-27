@@ -8,7 +8,8 @@ namespace Maditor {
 	namespace Model {
 
 		TableUnitBase::TableUnitBase(int columnCount) :
-			TableModel(columnCount)
+			TableModel(columnCount),
+			mResetting(false)
 		{
 
 		}
@@ -20,13 +21,27 @@ namespace Maditor {
 			switch (op) {
 			case BEFORE | RESET:
 				beginResetModel();
+				mResetting = true;
 				break;
 			case AFTER | RESET:
 				endResetModel();
+				mResetting = false;
 				break;
 			case INSERT_ITEM:
-				beginInsertRows(QModelIndex(), row, row);
-				endInsertRows();
+				if (!mResetting) {
+					beginInsertRows(QModelIndex(), row, row);
+					endInsertRows();
+				}
+				break;
+			case BEFORE | REMOVE_ITEM:
+				if (!mResetting) {
+					beginRemoveRows(QModelIndex(), row, row);
+				}
+				break;
+			case AFTER | REMOVE_ITEM:
+				if (!mResetting) {
+					endRemoveRows();
+				}
 				break;
 			default:
 				throw 0;

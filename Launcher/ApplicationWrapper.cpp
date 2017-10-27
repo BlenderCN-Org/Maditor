@@ -36,8 +36,6 @@ namespace Maditor {
 			Engine::Serialize::Debugging::StreamDebugging::setLoggingEnabled(true);
 
 			mNetwork.addTopLevelItem(this);
-
-			init();
 		}
 
 		ApplicationWrapper::~ApplicationWrapper()

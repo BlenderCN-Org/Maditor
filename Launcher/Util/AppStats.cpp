@@ -7,8 +7,7 @@
 namespace Maditor {
 	namespace Launcher {
 
-		AppStats::AppStats(Engine::Serialize::SerializableUnitBase *parent) :
-			SerializableUnit(parent)
+		AppStats::AppStats()
 		{
 		}
 

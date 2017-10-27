@@ -16,6 +16,8 @@
 
 #include "Generators\CommandLine.h"
 
+#include "serialize/container/noparentunit.h"
+
 namespace Maditor {
 	namespace Model {
 		ApplicationConfig::ApplicationConfig(ConfigList *parent, const QString & name) :
@@ -74,7 +76,7 @@ namespace Maditor {
 
 		ApplicationLauncher * ApplicationConfig::createInstace()
 		{
-			return mDocuments.createDocument<ApplicationLauncher>(this, name() + "-" + QString::number(++mInstanceCounter));
+			return mDocuments.createDocument<Engine::Serialize::NoParentUnit<ApplicationLauncher>>(this, name() + "-" + QString::number(++mInstanceCounter));
 			
 		}
 
