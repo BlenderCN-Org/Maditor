@@ -96,9 +96,9 @@ namespace View {
 				first = false;
 			else {
 				ui->log->moveCursor(QTextCursor::StartOfLine, QTextCursor::KeepAnchor);
-				ui->log->insertPlainText("");
 			}			
-			ui->log->insertPlainText(split);
+			if (!split.isEmpty())
+				ui->log->insertPlainText(split);
 		}
 		mCursor = ui->log->textCursor();
 		ui->log->ensureCursorVisible();

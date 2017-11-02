@@ -25,6 +25,8 @@ namespace Maditor {
 			
 			const QStringList &files() const;
 
+			bool empty() const;
+
 			bool addDependency(const QString &dep);
 			void removeDependency(const QString &dep);
 			const QStringList &dependencies() const;

@@ -61,6 +61,11 @@ namespace Maditor {
 			mCmake.addFile(Generators::HeaderGuardGenerator::fileName(mName));
 		}
 
+		bool Module::empty() const
+		{
+			return mClasses.empty();
+		}
+
 		QString Module::path() const
 		{
 			return mParent->path() + mName + "/";

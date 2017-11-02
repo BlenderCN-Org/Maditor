@@ -256,6 +256,7 @@ namespace Maditor {
 		void ApplicationWrapper::resizeWindowImpl()
 		{
 #ifdef MADGINE_CLIENT_BUILD
+			if (mApplication)
 				mApplication->resizeWindow();
 #endif
 		}

@@ -8,7 +8,7 @@ namespace %game {
 
 		class %guard %name : public Engine::Scene::SceneComponent<%name> {
 		public:
-			%name();
+			%name(Engine::Scene::SceneManagerBase *sceneMgr);
 		};
 
 	}

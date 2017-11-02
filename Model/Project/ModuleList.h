@@ -45,7 +45,7 @@ namespace Maditor {
 
 			template <class T>
 			T *getClass(const QString &fullName) {
-				QStringList l = fullName.split(":");
+				QStringList l = fullName.split("::");
 				if (l.size() != 2)
 					return nullptr;
 				return getModule(l[0])->getClass<T>(l[1]);

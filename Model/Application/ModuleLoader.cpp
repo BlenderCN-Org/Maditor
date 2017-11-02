@@ -131,7 +131,7 @@ namespace Maditor {
 		{
 			mModulesCount = 0;
 			for (const std::unique_ptr<Module> &module : mModules) {
-				if (mConfig->hasModuleEnabled(module.get())) {
+				if (mConfig->hasModuleEnabled(module.get()) && !module->empty()) {
 					addModule(module.get());
 					++mModulesCount;
 				}
