@@ -62,7 +62,7 @@ namespace Maditor {
 			//emit moduleAdded(module);
 		}
 
-		void ConfigList::launcherTypeChanged(ApplicationConfig::LauncherType type, ApplicationConfig::LauncherType oldLauncherType)
+		void ConfigList::launcherTypeChanged(Shared::LauncherType type, Shared::LauncherType oldLauncherType)
 		{
 			ApplicationConfig *conf = static_cast<ApplicationConfig*>(sender());
 			emit applicationLauncherTypeChanged(conf, conf->launcher(), conf->launcher(), type, oldLauncherType);

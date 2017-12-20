@@ -68,11 +68,11 @@ namespace Maditor {
 			void removeClass(Generators::ClassGenerator *generator);
 
 			void addConfigs(ApplicationConfig::Launcher newLauncher,
-				ApplicationConfig::LauncherType newLauncherType);
+				Shared::LauncherType newLauncherType);
 			void updateConfigs(ApplicationConfig::Launcher newLauncher, ApplicationConfig::Launcher oldLauncher,
-				ApplicationConfig::LauncherType newLauncherType, ApplicationConfig::LauncherType oldLauncherType);
+				Shared::LauncherType newLauncherType, Shared::LauncherType oldLauncherType);
 			void removeConfigs(ApplicationConfig::Launcher oldLauncher,
-				ApplicationConfig::LauncherType oldLauncherType);
+				Shared::LauncherType oldLauncherType);
 
 		private:
 			void addClassImpl(Generators::ClassGenerator *generator, bool callInsert = true);

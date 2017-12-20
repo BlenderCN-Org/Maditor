@@ -18,7 +18,7 @@ add_definitions(-DQSCINTILLA_DLL)
 set (sources "")
 FolderSources(sources "" "" DialogManager.h maditormodelforward.h maditormodellib.cpp maditormodellib.h maditor.cpp maditor.h MaditorLog.cpp MaditorLog.h TableModel.cpp TableModel.h TreeItem.cpp TreeItem.h TreeModel.cpp TreeModel.h TreeSorter.cpp TreeSorter.h)
 	FolderSources(sources "" Addons Addon.cpp Addon.h)
-	FolderSources(sources "" Application ApplicationLauncher.cpp ApplicationLauncher.h InputWrapper.cpp InputWrapper.h LogReceiver.cpp LogReceiver.h ModuleLoader.cpp ModuleLoader.h OgreWindow.cpp OgreWindow.h ProfilerModel.cpp ProfilerModel.h StatsModel.cpp StatsModel.h TableUnit.cpp TableUnit.h TreeUnit.cpp TreeUnit.h UtilModel.cpp UtilModel.h)
+	FolderSources(sources "" Application ApplicationLauncher.cpp ApplicationLauncher.h EmbeddedLauncher.cpp EmbeddedLauncher.h InputWrapper.cpp InputWrapper.h LogReceiver.cpp LogReceiver.h ModuleLoader.cpp ModuleLoader.h OgreWindow.cpp OgreWindow.h ProfilerModel.cpp ProfilerModel.h StandaloneLauncher.cpp StandaloneLauncher.h StatsModel.cpp StatsModel.h TableUnit.cpp TableUnit.h TreeUnit.cpp TreeUnit.h UtilModel.cpp UtilModel.h)
 		FolderSources(sources Application Inspector Inspector.cpp Inspector.h scopewrapper.cpp scopewrapper.h)
 	FolderSources(sources "" Documents Document.cpp Document.h DocumentStore.h)
 	FolderSources(sources "" Logs LogSorterFilter.cpp LogSorterFilter.h LogTableModel.cpp LogTableModel.h)
@@ -33,6 +33,6 @@ add_precompiled_header(Maditor_Model maditormodellib.h FORCEINCLUDE SOURCE_CXX m
 target_link_libraries(Maditor_Model PUBLIC Qt5::Xml Qt5::Gui Qt5::Widgets ${QSCINTILLA2_LIBRARY})
 
 include_targets(Maditor_Model Maditor_Shared)
-include_library(Maditor_Model Madgine Base)
+include_library(Maditor_Model Madgine PRIVATE Base)
 
 

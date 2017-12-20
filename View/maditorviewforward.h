@@ -19,5 +19,6 @@ namespace Maditor {
 			class SettingsDialog;
 			class SettingsTab;
 		}
+		class ApplicationLog;
 	}
 }

@@ -2,13 +2,13 @@
 
 #include "Shared\moduleinstance.h"
 #include "Serialize\Container\action.h"
-#include "Util\UtilMethods.h"
+#include "Util\loglistener.h"
 #include "signalslot/slot.h"
 
 namespace Maditor {
 	namespace Launcher {
 
-class LogListener : public Engine::Serialize::SerializableUnit<LogListener>
+class LauncherLogListener : public Engine::Serialize::SerializableUnit<LauncherLogListener>
 	, public Engine::Util::LogListener
 #ifdef MADGINE_CLIENT_BUILD
 	, public Ogre::LogListener 
@@ -17,8 +17,8 @@ class LogListener : public Engine::Serialize::SerializableUnit<LogListener>
 
 
 public:
-	LogListener();
-	~LogListener();
+	LauncherLogListener();
+	~LauncherLogListener();
 
 	void init();
 
@@ -33,8 +33,8 @@ private:
 	void receiveImpl(const std::string &msg, Engine::Util::MessageType level, const std::string &logName, const std::string &fullTraceback, const std::string &fileName, int lineNr);
 
 private:
-	Engine::Serialize::Action<decltype(&LogListener::receiveImpl), &LogListener::receiveImpl, Engine::Serialize::ActionPolicy::notification> receiveMessage;
-	typedef Engine::SignalSlot::Slot<decltype(&decltype(LogListener::receiveMessage)::operator()), &decltype(LogListener::receiveMessage)::operator()> SlotType;
+	Engine::Serialize::Action<decltype(&LauncherLogListener::receiveImpl), &LauncherLogListener::receiveImpl, Engine::Serialize::ActionPolicy::notification> receiveMessage;
+	typedef Engine::SignalSlot::Slot<decltype(&decltype(LauncherLogListener::receiveMessage)::operator()), &decltype(LauncherLogListener::receiveMessage)::operator()> SlotType;
 	std::unique_ptr<SlotType> mSlot;
 	
 };

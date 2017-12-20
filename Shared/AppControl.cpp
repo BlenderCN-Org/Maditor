@@ -21,17 +21,24 @@ namespace Maditor {
 		{
 		}
 
-void AppControl::resizeWindowImpl()
-{
-}
+		void AppControl::configImpl(const ApplicationInfo&)
+		{
+		}
 
-void AppControl::pingImpl()
-{
-}
+		void AppControl::resizeWindowImpl()
+		{
+		}
 
-void AppControl::execLuaImpl(const std::string &)
-{
-}
+		void AppControl::pingImpl()
+		{
+		}
 
+		void AppControl::execLuaImpl(const std::string &)
+		{
+		}
+
+		void AppControl::luaResponseImpl(const std::string&, const std::string&, bool)
+		{
+		}
 	}
 }

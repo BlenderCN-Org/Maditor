@@ -35,7 +35,7 @@ namespace Maditor {
 
 			Engine::Serialize::Action<decltype(&ModuleInstance::reloadImpl2), &ModuleInstance::reloadImpl2, Engine::Serialize::ActionPolicy::request> reload;
 
-			const Engine::Serialize::ObservableList<ModuleInstance*, Engine::Serialize::ContainerPolicy::allowAll> &dependencies();
+			const Engine::Serialize::ObservableList<ModuleInstance*, Engine::Serialize::ContainerPolicies::allowAll> &dependencies();
 
 		protected:
 			Engine::Serialize::Observed<bool> mLoaded;
@@ -46,7 +46,7 @@ namespace Maditor {
 			std::string mName;
 
 
-			Engine::Serialize::ObservableList<ModuleInstance*, Engine::Serialize::ContainerPolicy::allowAll> mDependencies;
+			Engine::Serialize::ObservableList<ModuleInstance*, Engine::Serialize::ContainerPolicies::allowAll> mDependencies;
 
 		};
 

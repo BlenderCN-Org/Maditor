@@ -20,7 +20,7 @@ public:
 
 public slots:
 	void setLauncher(Model::ApplicationConfig::Launcher launcher);
-	void setLauncherType(Model::ApplicationConfig::LauncherType type);
+	void setLauncherType(Shared::LauncherType type);
 	void setCustomExecutableCmd(const QString &cmd);
 	void setServer(Model::Generators::ServerClassGenerator *server);
 

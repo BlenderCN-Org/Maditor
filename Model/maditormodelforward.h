@@ -12,6 +12,8 @@ namespace Maditor {
 		class Project;
 		class ApplicationConfig;
 		class ApplicationLauncher;
+		class StandaloneLauncher;
+		class EmbeddedLauncher;
 		class OgreWindow;
 
 		class Module;

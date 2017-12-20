@@ -1,6 +1,6 @@
 #include "maditorlauncherlib.h"
 
-#include "ApplicationWrapper.h"
+#include "EmbeddedWrapper.h"
 
 #include "Shared\errorcodes.h"
 
@@ -13,6 +13,6 @@ int main(int argc, char *argv[]) {
 	ss >> id;
 	if (id == 0)
 		return Maditor::Shared::ILLEGAL_ARGUMENTS;
-	Engine::Serialize::NoParentUnit<Maditor::Launcher::ApplicationWrapper> app(id);
-	return app.start();
+	Engine::Serialize::NoParentUnit<Maditor::Launcher::EmbeddedWrapper> app(id);
+	return app.run();
 }

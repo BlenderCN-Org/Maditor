@@ -1,1 +1,2 @@
-set(Madgine_DIR "${Madgine_DIR}")
+set (Workspace "${Workspace}" CACHE PATH "Path to the local Workspace")
+set(Cmake_Utils "${CMAKE_SOURCE_DIR}/CMake")

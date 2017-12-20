@@ -33,6 +33,10 @@ namespace Maditor {
 				return "Application data not set up correctly";
 			case KILL_CLEANUP:
 				return "Cleaning up application";
+			case APPLICATION_INFO_TIMEOUT:
+				return "Timeout waiting for Application-Info";
+			case UNSUPPORTED_LAUNCHER_TYPE:
+				return "Unsupported Launcher-Type";
 			default:
 				return "unknown error";
 			}

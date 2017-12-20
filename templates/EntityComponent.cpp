@@ -1,5 +1,3 @@
-#pragma once
-
 #include <madginelib.h>
 #include "%header"
 

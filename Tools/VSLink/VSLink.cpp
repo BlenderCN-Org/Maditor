@@ -10,7 +10,7 @@
 #include "View\mainwindow.h"
 #include "View\Dialogs\DialogManager.h"
 #include "Model\Maditor.h"
-#include "Model\Application\ApplicationLauncher.h"
+#include "Model\Application\EmbeddedLauncher.h"
 
 #include "Model\Project\ModuleList.h"
 
@@ -132,8 +132,8 @@ void VSLink::onProjectOpened(Maditor::Model::Project * project)
 
 void VSLink::onInstanceAdded(Maditor::Model::Document * app)
 {
-	if (Maditor::Model::ApplicationLauncher *launcher = dynamic_cast<Maditor::Model::ApplicationLauncher*>(app))
-		connect(launcher, &Maditor::Model::ApplicationLauncher::processStarted, this, &VSLink::onProcessStarted);
+	if (Maditor::Model::EmbeddedLauncher *launcher = dynamic_cast<Maditor::Model::EmbeddedLauncher*>(app))
+		connect(launcher, &Maditor::Model::EmbeddedLauncher::processStarted, this, &VSLink::onProcessStarted);
 }
 
 bool VSLink::autoAttachDebugger()

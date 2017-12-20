@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Util\UtilMethods.h"
+#include "Util\log.h"
 
 namespace Maditor {
 	namespace Model {

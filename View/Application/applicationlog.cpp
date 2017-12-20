@@ -52,7 +52,7 @@ namespace View {
 
 	void ApplicationLog::sendLine()
 	{
-		if (mApp->isLaunched())
+		if (mApp->isSetup())
 			mApp->sendCommand(ui->stdinEdit->text());
 		ui->stdinEdit->clear();
 	}
@@ -79,7 +79,7 @@ namespace View {
 
 	void ApplicationLog::sendLua()
 	{
-		if (mApp->isLaunched())
+		if (mApp->isSetup())
 			mApp->sendLua(ui->luaEdit->text());
 		ui->luaEdit->clear();
 	}

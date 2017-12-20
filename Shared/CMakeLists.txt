@@ -12,7 +12,7 @@ endif ()
 PROJECT(Maditor_Shared)
 
 set (sources "")
-FolderSources(sources "" "" AppControl.cpp AppControl.h ApplicationInfo.h errorcodes.cpp errorcodes.h InputInfo.h maditorsharedlib.cpp maditorsharedlib.h maditorsharedforward.h moduleinstance.cpp moduleinstance.h SharedBase.h sharedmemory.cpp sharedmemory.h)
+FolderSources(sources "" "" AppControl.cpp AppControl.h ApplicationInfo.h errorcodes.cpp errorcodes.h InputInfo.h maditorsharedlib.cpp maditorsharedlib.h maditorsharedforward.h moduleinstance.cpp moduleinstance.h projectfile.cpp projectfile.h SharedBase.h sharedmemory.cpp sharedmemory.h)
 	FolderSources(sources "" IPCManager boostIPCbuffer.cpp boostIPCbuffer.h boostIPCConnection.cpp boostIPCConnection.h boostIPCmanager.cpp boostIPCmanager.h boostIPCServer.cpp boostIPCServer.h boostIPCstream.cpp boostIPCstream.h)
 
 include_directories(${Maditor_Shared_SOURCE_DIR})
@@ -22,7 +22,7 @@ add_precompiled_header(Maditor_Shared maditorsharedlib.h FORCEINCLUDE SOURCE_CXX
 
 target_include_directories(Maditor_Shared PRIVATE ${BOOST_PATH})
 
-include_library(Maditor_Shared Madgine Interfaces)
+include_library(Maditor_Shared Madgine PUBLIC Interfaces)
 
 
 

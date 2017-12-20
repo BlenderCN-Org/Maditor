@@ -25,8 +25,8 @@ ConfigWidget::ConfigWidget(Model::ApplicationConfig *config) :
 	ui->launcherGroup->setId(ui->maditorLauncherButton, Model::ApplicationConfig::MADITOR_LAUNCHER);
 	ui->launcherGroup->setId(ui->customLauncherButton, Model::ApplicationConfig::CUSTOM_LAUNCHER);
 
-	ui->launcherTypeGroup->setId(ui->clientButton, Model::ApplicationConfig::CLIENT_LAUNCHER);
-	ui->launcherTypeGroup->setId(ui->serverButton, Model::ApplicationConfig::SERVER_LAUNCHER);
+	ui->launcherTypeGroup->setId(ui->clientButton, Shared::CLIENT_LAUNCHER);
+	ui->launcherTypeGroup->setId(ui->serverButton, Shared::SERVER_LAUNCHER);
 
 	setLauncher(config->launcher());
 	setLauncherType(config->launcherType());
@@ -47,7 +47,7 @@ ConfigWidget::ConfigWidget(Model::ApplicationConfig *config) :
 	}	
 
 	connect(ui->launcherGroup, static_cast<void(QButtonGroup::*)(int, bool)>(&QButtonGroup::buttonToggled), [=](int id, bool checked) {if (checked) mConfig->setLauncher((Model::ApplicationConfig::Launcher)id); });
-	connect(ui->launcherTypeGroup, static_cast<void(QButtonGroup::*)(int, bool)>(&QButtonGroup::buttonToggled), [=](int id, bool checked) {if (checked) mConfig->setLauncherType((Model::ApplicationConfig::LauncherType)id); });
+	connect(ui->launcherTypeGroup, static_cast<void(QButtonGroup::*)(int, bool)>(&QButtonGroup::buttonToggled), [=](int id, bool checked) {if (checked) mConfig->setLauncherType((Shared::LauncherType)id); });
 	connect(ui->customLauncherCmd, &QLineEdit::textChanged, config, &Model::ApplicationConfig::setCustomExecutableCmd);
 	connect(ui->serverName, &QComboBox::currentTextChanged, config, &Model::ApplicationConfig::setServerByName);
 	connect(ui->modulesView, &QListView::clicked, config->modules(), &Model::ModuleSelection::itemClicked);
@@ -64,7 +64,7 @@ void ConfigWidget::setLauncher(Model::ApplicationConfig::Launcher type)
 	ui->launcherGroup->button(type)->setChecked(true);
 }
 
-void ConfigWidget::setLauncherType(Model::ApplicationConfig::LauncherType type)
+void ConfigWidget::setLauncherType(Shared::LauncherType type)
 {
 	ui->launcherTypeGroup->button(type)->setChecked(true);
 }

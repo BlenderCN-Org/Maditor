@@ -16,7 +16,8 @@ namespace View {
 class ApplicationView : 
 	public QObject, 
 	public ComponentView<Model::ApplicationLauncher>,
-	public WindowSpawner<Model::ApplicationLauncher, ApplicationContainerWindow>
+	public WindowSpawner<Model::EmbeddedLauncher, EmbeddedApplicationContainerWindow>,
+	public WindowSpawner<Model::StandaloneLauncher, StandaloneApplicationContainerWindow>
 {
     Q_OBJECT
 
@@ -32,13 +33,14 @@ protected:
 	virtual void setModel(Model::ApplicationLauncher *app) override;
 	virtual void clearModel() override;
 
-	virtual void currentTabSet(ApplicationContainerWindow *win) override;
+	virtual void currentTabSet(EmbeddedApplicationContainerWindow *win) override;
+	virtual void currentTabSet(StandaloneApplicationContainerWindow *win) override;
 	virtual void currentTabCleared(QWidget *w) override;
 
 	void setCurrentTab(QWidget *tab);
 
 	void selectConfig(QAction *action);
-	void selectConfigName(const QString &name);
+	void selectConfigName(const QString &name, bool remote);
 
 private slots:
 	void onConfigAdded(Model::ApplicationConfig *config);
@@ -60,6 +62,10 @@ private:
 	int mApplicationInitialActionCount;
 
 	std::list<QMetaObject::Connection> mAppConnections;
+
+	QAction *mCurrentConfigSeparator;
+
+	static const QString sRemoteSuffix;
 
 };
 

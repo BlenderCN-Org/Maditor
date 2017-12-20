@@ -5,12 +5,13 @@
 #ifdef MADGINE_CLIENT_BUILD
 #include "App\Ogreappsettings.h"
 #include "App/OgreApplication.h"
-#else
+#endif
+#ifdef MADGINE_SERVER_BUILD
 #include "App/serverappsettings.h"
 #endif
 
 #include "ModuleLoader.h"
-#include "Util\LogListener.h"
+#include "Util\LauncherLogListener.h"
 #include "Serialize\Container\serialized.h"
 
 #include "Util\Util.h"
@@ -19,8 +20,7 @@
 
 #include "Inspector.h"
 
-#include "Shared/SharedMemory.h"
-#include "Shared/IPCManager/boostIPCmanager.h"
+#include "Shared/ApplicationInfo.h"
 
 namespace Maditor {
 
@@ -28,20 +28,26 @@ namespace Maditor {
 
 	namespace Launcher {
 
-		class ApplicationWrapper : public Shared::AppControl, public Engine::App::FrameListener {
+		class ApplicationWrapper : public Engine::Serialize::SerializableUnit<ApplicationWrapper,Shared::AppControl>, public Engine::App::FrameListener {
 
 		public:
-			ApplicationWrapper(size_t id);
+			ApplicationWrapper();
 			~ApplicationWrapper();
 
-			int start();
+			int run();
 			
 		protected:
+			virtual int acceptConnection() = 0;
+			virtual Engine::Serialize::SerializeManager *mgr() = 0;
+#ifdef MADGINE_CLIENT_BUILD
+			virtual Engine::Input::InputHandler *input() = 0;
+#endif
+
 			// Inherited via AppControl
 			virtual void shutdownImpl() override;
 		
 			// Inherited via AppControl
-			virtual void onApplicationSetup() override;
+			virtual void onApplicationConnected() override;
 
 			virtual bool frameStarted(float timeSinceLastFrame) override;
 			virtual bool frameRenderingQueued(float timeSinceLastFrame) override;
@@ -57,20 +63,30 @@ namespace Maditor {
 
 			virtual void execLuaImpl(const std::string &cmd) override;
 
-		private:
-			virtual size_t getSize() const override;
+		protected:
+			void configImpl(const Shared::ApplicationInfo&) override;
 
-			Engine::Serialize::Serialized<LogListener> mLog;
-			Engine::Serialize::Serialized<ModuleLoader> mLoader;
+			static int lua_log(lua_State * state);
+
+		private:
+			lua_State *mCurrentExecScope;
+			std::stringstream mExecOutBuffer;
+
+			static ApplicationWrapper *sInstance;
+
 			Engine::Serialize::Serialized<Util> mUtil;
+			Engine::Serialize::Serialized<LauncherLogListener> mLog;
+			Engine::Serialize::Serialized<ModuleLoader> mLoader;
 			Engine::Serialize::Serialized<Inspector> mInspector;
+
+			Shared::ApplicationInfo mAppInfo;
+			bool mHaveAppInfo;
 
 #ifdef MADGINE_CLIENT_BUILD
 			Engine::App::OgreAppSettings mSettings;
 			std::unique_ptr<Engine::App::OgreApplication> mApplication;
-
-			InputWrapper *mInput;
-#else
+#endif
+#ifdef MADGINE_SERVER_BUILD
 			Engine::App::ServerAppSettings mSettings;
 			std::unique_ptr<Engine::Server::ServerBase> mServer;
 #endif			
@@ -78,9 +94,7 @@ namespace Maditor {
 			bool mRunning;			
 			bool mStartRequested;
 			
-			Shared::SharedMemory mMemory;
-			Shared::BoostIPCManager mNetwork;
-
+			
 		};
 
 	}

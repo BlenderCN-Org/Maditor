@@ -178,7 +178,7 @@ namespace Maditor {
 
 		void ModuleList::updateConfigs(ApplicationConfig *config, 
 			ApplicationConfig::Launcher newLauncher, ApplicationConfig::Launcher oldLauncher, 
-			ApplicationConfig::LauncherType newLauncherType, ApplicationConfig::LauncherType oldLauncherType)
+			Shared::LauncherType newLauncherType, Shared::LauncherType oldLauncherType)
 		{
 			for (const std::unique_ptr<Module> &mod : mModules) {
 				if (config->hasModuleEnabled(mod.get())) {

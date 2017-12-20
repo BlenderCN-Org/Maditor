@@ -69,7 +69,7 @@ namespace Maditor {
 
 			void updateConfigs(ApplicationConfig *config,
 				ApplicationConfig::Launcher newLauncher, ApplicationConfig::Launcher oldLauncher,
-				ApplicationConfig::LauncherType newLauncherType, ApplicationConfig::LauncherType oldLauncherType);
+				Shared::LauncherType newLauncherType, Shared::LauncherType oldLauncherType);
 
 		private:
 			void init();

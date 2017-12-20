@@ -2,23 +2,39 @@
 
 #include "SharedBase.h"
 #include <boost/thread/thread_time.hpp>
+#include "Serialize/container/serialized.h"
+#include "Serialize/serializable.h"
 
 namespace Maditor {
 	namespace Shared {
 
-		struct ApplicationInfo {
-			ApplicationInfo(boost::interprocess::managed_shared_memory::segment_manager *mgr) :
-				mMediaDir(SharedCharAllocator(mgr)),
-				mProjectDir(SharedCharAllocator(mgr)),
-				mServerClass(SharedCharAllocator(mgr)),
-				mAppName(SharedCharAllocator(mgr))
+		
+			enum LauncherType {
+				CLIENT_LAUNCHER = 0,
+				SERVER_LAUNCHER = 1
+			};
+
+		struct ApplicationInfo : public Engine::Serialize::Serializable{
+			ApplicationInfo() :
+			Serializable(true)			
 			{}
+
+			virtual void readState(Engine::Serialize::SerializeInStream& in) override
+			{
+				in >> mDebugged >> mDataDir >> mProjectDir >> mAppName >> mType >> mWindowWidth >> mWindowHeight >> mWindowHandle >> mServerClass;
+			}
+
+			virtual void writeState(Engine::Serialize::SerializeOutStream& out) const override
+			{
+				out << mDebugged << mDataDir << mProjectDir << mAppName << mType << mWindowWidth << mWindowHeight << mWindowHandle << mServerClass;
+			}
 
 			//General Info
 			bool mDebugged;
-			SharedString mMediaDir;
-			SharedString mProjectDir;
-			SharedString mAppName;
+			std::string mDataDir;
+			std::string mProjectDir;
+			std::string mAppName;
+			LauncherType mType;
 			
 			//Client
 			int mWindowWidth;
@@ -26,7 +42,7 @@ namespace Maditor {
 			size_t mWindowHandle;
 
 			//Server
-			SharedString mServerClass;
+			std::string mServerClass;
 			
 		};
 

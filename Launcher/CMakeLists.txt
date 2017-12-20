@@ -7,29 +7,25 @@ cmake_policy(SET CMP0049 OLD)
 PROJECT(Maditor_Launcher)
 
 
-set(lua_include "" CACHE PATH "")
-set(lua_lib "" CACHE FILEPATH "")
-
-
-
 set (sources "")
-FolderSources(sources "" "" ApplicationWrapper.cpp ApplicationWrapper.h InputWrapper.cpp InputWrapper.h Inspector.cpp Inspector.h maditorlauncherlib.cpp maditorlauncherlib.h maditorlauncherforward.h main.cpp ModuleLoader.cpp ModuleLoader.h)
-	FolderSources(sources "" Util AppStats.cpp AppStats.h LogListener.cpp LogListener.h Util.cpp Util.h)	
+FolderSources(sources "" "" ApplicationWrapper.cpp ApplicationWrapper.h EmbeddedWrapper.cpp EmbeddedWrapper.h InputWrapper.cpp InputWrapper.h Inspector.cpp Inspector.h maditorlauncherlib.cpp maditorlauncherlib.h maditorlauncherforward.h main_embedded.cpp ModuleLoader.cpp ModuleLoader.h)
+	FolderSources(sources "" Util AppStats.cpp AppStats.h LauncherLogListener.cpp LauncherLogListener.h Util.cpp Util.h)	
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${lua_include})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 
-add_executable(Server_Launcher ${sources})
-add_executable(Client_Launcher ${sources})
+add_executable(Embedded_Server_Launcher ${sources})
+add_executable(Embedded_Client_Launcher ${sources})
 
-#add_precompiled_header(Server_Launcher maditorlauncherlib2.h FORCEINCLUDE SOURCE_CXX maditorlauncherlib.cpp)
-#add_precompiled_header(Client_Launcher maditorlauncherlib.h FORCEINCLUDE SOURCE_CXX maditorlauncherlib.cpp)
 
-include_targets(Server_Launcher Maditor_Shared)
-include_library(Server_Launcher Madgine MadgineServer)
 
-include_targets(Client_Launcher Maditor_Shared)
-include_library(Client_Launcher Madgine OgreMadgine)
+include_targets(Embedded_Server_Launcher Maditor_Shared)
+include_library(Embedded_Server_Launcher Madgine PRIVATE MadgineServer)
+include_library(Embedded_Server_Launcher Lua PRIVATE lualib)
 
-target_link_libraries (Server_Launcher PRIVATE ${lua_lib})
-target_link_libraries (Client_Launcher PRIVATE ${lua_lib})
+include_targets(Embedded_Client_Launcher Maditor_Shared)
+include_library(Embedded_Client_Launcher Madgine PRIVATE OgreMadgine)
+include_library(Embedded_Client_Launcher Lua PRIVATE lualib)
+
+
+add_subdirectory(Standalone)

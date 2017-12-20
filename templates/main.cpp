@@ -7,7 +7,7 @@ int main() {
 
 	Engine::App::AppSettings settings;
 
-	settings.mRootDir = "";
+	settings.mRootDir = "Media/";
 	settings.mWindowName = "%1";
 
 	return Engine::App::Application::run(settings);

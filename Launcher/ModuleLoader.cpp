@@ -149,10 +149,10 @@ namespace Maditor {
 
 			std::cout << "Loading " << name() << "..." << std::endl;
 
-			std::string runtimePath = prefix + name() + ".dll";
-			std::string runtimePdbPath = prefix + name() + ".pdb";
-			std::string binaryPath = mParent->binaryDir() + prefix + name() + ".dll";
-			std::string binaryPdbPath = mParent->binaryDir() + prefix + name() + ".pdb";
+			std::string runtimePath = prefix + name() + "_d.dll";
+			std::string runtimePdbPath = prefix + name() + "_d.pdb";
+			std::string binaryPath = mParent->binaryDir() + prefix + name() + "_d.dll";
+			std::string binaryPdbPath = mParent->binaryDir() + prefix + name() + "_d.pdb";
 
 			std::error_code err;
 			if (!std::experimental::filesystem::copy_file(binaryPath, runtimePath, std::experimental::filesystem::copy_options::overwrite_existing, err)) {

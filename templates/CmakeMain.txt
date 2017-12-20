@@ -5,35 +5,36 @@ cmake_policy(SET CMP0049 OLD)
 
 set (CMAKE_CXX_STANDARD 17)
 
-add_compile_options(/std:c++latest)
+PROJECT(%1)
+
+if (MSVC)
+	add_compile_options(/std:c++latest)
+endif()
 
 add_definitions(-D_HAS_TR1_NAMESPACE)
 
-PROJECT(%1)
-
 include(Dependencies.cmake)
 
-function(include_library lib)
+set(CMAKE_MODULE_PATH
+  ${CMAKE_MODULE_PATH}
+	"${Cmake_Utils}"
+	
+)
 
-    find_package(${lib})
-                        
-    foreach (target ${ARGN})
+include(Workspace)
+include(multiConfig)
 
-        get_target_property(dirs ${target} INTERFACE_INCLUDE_DIRECTORIES)
-        include_directories(${dirs})
+multiConfig(%1) 
 
-    endforeach()
 
-endfunction(include_library)
-
-include_library(Madgine Interfaces OgreMadgine MadgineServer)
 
 set(SERVER_LIBRARIES MadgineServer Interfaces)
 set(CLIENT_LIBRARIES OgreMadgine Interfaces)
 
 function(setup_target_config target config)
-	target_link_libraries(${target} PRIVATE ${${config}_LIBRARIES})
+	include_library(${target} Madgine PRIVATE ${${config}_LIBRARIES})
 endfunction(setup_target_config)
+
 
 %2
 

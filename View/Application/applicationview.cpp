@@ -13,19 +13,21 @@
 namespace Maditor {
 namespace View {
 
+	const QString ApplicationView::sRemoteSuffix = " (remote)";
+
 	ApplicationView::ApplicationView() :
 		mUi(nullptr),
-		mList(nullptr),
-		mCurrentWidget(nullptr){
-
-
+		mList(nullptr), mCurrentConfigSelector(nullptr),
+		mCurrentWidget(nullptr), mApplicationInitialActionCount(0), mCurrentConfigSeparator(nullptr)
+	{
 	}
 
 	void ApplicationView::setupUi(MainWindow * window)
 	{
 		mUi = window->ui;
 
-		WindowSpawner::setupUi(mUi);
+		WindowSpawner<Model::StandaloneLauncher, StandaloneApplicationContainerWindow>::setupUi(mUi);
+		WindowSpawner<Model::EmbeddedLauncher, EmbeddedApplicationContainerWindow>::setupUi(mUi);
 
 
 		mApplicationInitialActionCount = mUi->menuDocument->actions().count();
@@ -50,8 +52,10 @@ namespace View {
 		mList = list;
 
 		mCurrentConfigSelector->clear();
+		mCurrentConfigSeparator = mCurrentConfigSelector->addSeparator();
 		for (const QString &action : list->getConfigs()) {
-			mCurrentConfigSelector->addAction(action);
+			mCurrentConfigSelector->insertAction(mCurrentConfigSeparator, new QAction(action));
+			mCurrentConfigSelector->addAction(action + sRemoteSuffix);
 		}		
 
 		if (mCurrentConfigSelector->actions().size() > 0) {
@@ -81,7 +85,13 @@ namespace View {
 		mUi->appStatsWidget->clearModel();
 	}
 
-	void ApplicationView::currentTabSet(ApplicationContainerWindow * win)
+	void ApplicationView::currentTabSet(StandaloneApplicationContainerWindow * win)
+	{
+		setModel(win->app());
+		setCurrentTab(win);
+	}
+	
+	void ApplicationView::currentTabSet(EmbeddedApplicationContainerWindow * win)
 	{
 		setModel(win->app());
 		setCurrentTab(win);
@@ -115,14 +125,22 @@ namespace View {
 
 	void ApplicationView::selectConfig(QAction *action)
 	{
-		selectConfigName(action->text());
+		QString text = action->text();
+
+		if (text.endsWith(sRemoteSuffix))
+		{
+			selectConfigName(action->text().mid(0, text.size() - sRemoteSuffix.size()), true);
+		}else
+		{
+			selectConfigName(text, false);	
+		}		
 	}
 
-	void ApplicationView::selectConfigName(const QString &name)
+	void ApplicationView::selectConfigName(const QString &name, bool remote)
 	{
 		Model::ApplicationConfig *config = mList->getConfig(name);
 		assert(config);
-		Model::ApplicationLauncher *launcher = config->createInstace();
+		Model::ApplicationLauncher *launcher = config->createInstace(remote);
 		//setModel(launcher);
 	}
 
@@ -136,17 +154,25 @@ namespace View {
 
 	void ApplicationView::onInstanceAdded(Model::ApplicationLauncher * instance)
 	{
-		WindowSpawner::spawn(instance);
+		if (instance->isRemote()){
+			WindowSpawner<Model::StandaloneLauncher, StandaloneApplicationContainerWindow>::spawn(dynamic_cast<Model::StandaloneLauncher*>(instance));
+		}else{
+			WindowSpawner<Model::EmbeddedLauncher, EmbeddedApplicationContainerWindow>::spawn(dynamic_cast<Model::EmbeddedLauncher*>(instance));
+		}
 	}
 
 	void ApplicationView::onInstanceDestroyed(Model::ApplicationLauncher * instance)
 	{
-		WindowSpawner::remove(instance);
+		if (instance->isRemote()){
+			WindowSpawner<Model::StandaloneLauncher, StandaloneApplicationContainerWindow>::remove(dynamic_cast<Model::StandaloneLauncher*>(instance));
+		}else{
+			WindowSpawner<Model::EmbeddedLauncher, EmbeddedApplicationContainerWindow>::remove(dynamic_cast<Model::EmbeddedLauncher*>(instance));
+		}
 	}
 
 	void ApplicationView::createCurrentConfig()
 	{
-		selectConfigName(mCurrentConfigSelector->title().mid(4));
+		selectConfigName(mCurrentConfigSelector->title().mid(4), false);
 	}
 
 

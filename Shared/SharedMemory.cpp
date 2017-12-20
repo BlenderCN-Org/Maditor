@@ -50,7 +50,6 @@ namespace Maditor {
 			return "Mem_" + std::to_string(mId) + "_";
 		}
 		Shared::Shared(boost::interprocess::managed_shared_memory::segment_manager * mgr) :
-			mAppInfo(mgr),
 			mInput(mgr)
 		{}
 	}

@@ -4,7 +4,8 @@
 
 #include "ConfigList.h"
 
-#include "Application\ApplicationLauncher.h"
+#include "Application\StandaloneLauncher.h"
+#include "Application\EmbeddedLauncher.h"
 
 #include "Project.h"
 
@@ -18,15 +19,17 @@
 
 #include "serialize/container/noparentunit.h"
 
-namespace Maditor {
-	namespace Model {
-		ApplicationConfig::ApplicationConfig(ConfigList *parent, const QString & name) :
+namespace Maditor
+{
+	namespace Model
+	{
+		ApplicationConfig::ApplicationConfig(ConfigList* parent, const QString& name) :
 			ProjectElement(name, "Config", parent),
 			Document(name),
 			Generator(false),
 			mParent(parent),
 			mLauncher(MADITOR_LAUNCHER),
-			mLauncherType(CLIENT_LAUNCHER),
+			mLauncherType(Shared::CLIENT_LAUNCHER),
 			mServer(nullptr),
 			mInstanceCounter(0),
 			mModules(this)
@@ -35,7 +38,7 @@ namespace Maditor {
 			init();
 		}
 
-		ApplicationConfig::ApplicationConfig(QDomElement data, ConfigList *parent) :
+		ApplicationConfig::ApplicationConfig(QDomElement data, ConfigList* parent) :
 			ProjectElement(data, parent),
 			Document(data.attribute("name")),
 			Generator(false),
@@ -51,51 +54,63 @@ namespace Maditor {
 		{
 		}
 
-		void ApplicationConfig::generateInfo(Shared::ApplicationInfo &appInfo, QWindow * w)
+		void ApplicationConfig::generateInfo(Shared::ApplicationInfo& appInfo, QWindow* w) const
 		{
-			appInfo.mMediaDir = (mParent->path() + "Data/Media/").toStdString().c_str();
+			appInfo.mDataDir = (mParent->path() + "Data/").toStdString().c_str();
 			appInfo.mProjectDir = mParent->path().toStdString().c_str();
+			appInfo.mType = mLauncherType;
 
-			if (mLauncherType == CLIENT_LAUNCHER) {
-				assert(w);
-				appInfo.mWindowHandle = (size_t)(w->winId());
-				appInfo.mWindowWidth = w->width();
-				appInfo.mWindowHeight = w->height();
+			if (mLauncherType == Shared::CLIENT_LAUNCHER)
+			{
+				if (w){
+					appInfo.mWindowHandle = static_cast<size_t>(w->winId());
+					appInfo.mWindowWidth = w->width();
+					appInfo.mWindowHeight = w->height();
+				}
 
 				appInfo.mServerClass.clear();
 			}
-			else {
+			else
+			{
 				appInfo.mServerClass = mServer->fullName().toStdString().c_str();
 			}
 		}
 
-		bool ApplicationConfig::hasModuleEnabled(Module * module)
+		bool ApplicationConfig::hasModuleEnabled(Module* module)
 		{
 			return mModules.isEnabled(module->name());
 		}
 
-		ApplicationLauncher * ApplicationConfig::createInstace()
+		ApplicationLauncher* ApplicationConfig::createInstace(bool remote)
 		{
-			return mDocuments.createDocument<Engine::Serialize::NoParentUnit<ApplicationLauncher>>(this, name() + "-" + QString::number(++mInstanceCounter));
-			
+			if (!remote)
+			{
+				return mDocuments.createDocument<Engine::Serialize::NoParentUnit<EmbeddedLauncher>>(
+					this, name() + "-" + QString::number(++mInstanceCounter));
+			}
+			else
+			{
+				return mDocuments.createDocument<Engine::Serialize::NoParentUnit<StandaloneLauncher>>(
+					this, name() + "-" + QString::number(++mInstanceCounter));
+			}
 		}
 
-		ApplicationConfig::Launcher ApplicationConfig::launcher()
+		ApplicationConfig::Launcher ApplicationConfig::launcher() const
 		{
 			return mLauncher;
 		}
 
-		const QString & ApplicationConfig::customExecutableCmd()
+		const QString& ApplicationConfig::customExecutableCmd() const
 		{
 			return mCustomExecutableCmd;
 		}
 
-		ApplicationConfig::LauncherType ApplicationConfig::launcherType()
+		Shared::LauncherType ApplicationConfig::launcherType() const
 		{
 			return mLauncherType;
 		}
 
-		Generators::ServerClassGenerator * ApplicationConfig::server()
+		Generators::ServerClassGenerator* ApplicationConfig::server() const
 		{
 			return mServer;
 		}
@@ -117,7 +132,7 @@ namespace Maditor {
 			Document::discardChanges();
 		}
 
-		ModuleSelection * ApplicationConfig::modules()
+		ModuleSelection* ApplicationConfig::modules()
 		{
 			return &mModules;
 		}
@@ -125,50 +140,55 @@ namespace Maditor {
 		void ApplicationConfig::release()
 		{
 			generate();
-			std::string cmd = QString("\"\"" CMAKE_PATH "\" -G \"" CMAKE_GENERATOR "\" -B\"%1\" -H\"%2\"\"").arg(path() + "build/", path() + "src/").toStdString();
+			std::string cmd = QString("\"\"" CMAKE_PATH "\" -G \"" CMAKE_GENERATOR "\" -B\"%1\" -H\"%2\"\"").arg(
+				path() + "build/", path() + "src/").toStdString();
 			Generators::CommandLine::exec(cmd.c_str());
 		}
 
-		void ApplicationConfig::setLauncherType(LauncherType type)
+		void ApplicationConfig::setLauncherType(Shared::LauncherType type)
 		{
-			if (mLauncherType != type) {
+			if (mLauncherType != type)
+			{
 				emit launcherTypeChanged(type, mLauncherType);
 				mLauncherType = type;
-				setDirtyFlag(true);				
+				setDirtyFlag(true);
 			}
 		}
 
-		void ApplicationConfig::setCustomExecutableCmd(const QString & cmd)
+		void ApplicationConfig::setCustomExecutableCmd(const QString& cmd)
 		{
 			mCustomExecutableCmd = cmd;
 			setDirtyFlag(true);
 			emit customExecutableCmdChanged(cmd);
 		}
 
-		void ApplicationConfig::setServer(Generators::ServerClassGenerator * server)
+		void ApplicationConfig::setServer(Generators::ServerClassGenerator* server)
 		{
 			mServer = server;
 			setDirtyFlag(true);
 			emit serverChanged(server);
 		}
 
-		void ApplicationConfig::setServerByName(const QString & name)
+		void ApplicationConfig::setServerByName(const QString& name)
 		{
 			setServer(project()->moduleList()->getClass<Generators::ServerClassGenerator>(name));
 		}
 
 		void ApplicationConfig::setLauncher(Launcher launcher)
 		{
-			if (mLauncher != launcher) {
+			if (mLauncher != launcher)
+			{
 				emit launcherChanged(launcher, mLauncher);
 				mLauncher = launcher;
-				setDirtyFlag(true);				
-				if (launcher == MADITOR_LAUNCHER) {
+				setDirtyFlag(true);
+				if (launcher == MADITOR_LAUNCHER)
+				{
 					setContextMenuItems({
-						{ "Release", [this]() {release(); } }
+						{"Release", [this]() { release(); }}
 					});
 				}
-				else {
+				else
+				{
 					setContextMenuItems({});
 				}
 			}
@@ -191,8 +211,8 @@ namespace Maditor {
 
 		void ApplicationConfig::restoreData()
 		{
-			setLauncher((Launcher)intAttribute("launcher", MADITOR_LAUNCHER));			
-			setLauncherType((LauncherType)intAttribute("launcherType", CLIENT_LAUNCHER));			
+			setLauncher((Launcher)intAttribute("launcher", MADITOR_LAUNCHER));
+			setLauncherType((Shared::LauncherType)intAttribute("launcherType", Shared::CLIENT_LAUNCHER));
 			setCustomExecutableCmd(stringAttribute("customExecutableCmd"));
 			setServerByName(stringAttribute("server"));
 			mModules.restoreData();
@@ -205,54 +225,57 @@ namespace Maditor {
 			connect(&mDocuments, &DocumentStore::documentDestroyed, this, &ApplicationConfig::onDocumentDestroyed);
 		}
 
-		void ApplicationConfig::onDocumentCreated(Document * doc)
+		void ApplicationConfig::onDocumentCreated(Document* doc)
 		{
 			emit documentCreated(static_cast<ApplicationLauncher*>(doc));
 		}
 
-		void ApplicationConfig::onDocumentDestroyed(Document * doc)
+		void ApplicationConfig::onDocumentDestroyed(Document* doc)
 		{
 			emit documentDestroyed(static_cast<ApplicationLauncher*>(doc));
 		}
 
 		QStringList ApplicationConfig::filePaths()
 		{
-			return{ 
+			return {
 				path() + "src/CmakeLists.txt",
-				path() + "src/main.cpp"				
+				path() + "src/main.cpp"
 			};
 		}
 
-		void ApplicationConfig::write(QTextStream & stream, int index)
+		void ApplicationConfig::write(QTextStream& stream, int index)
 		{
 			assert(mLauncher == MADITOR_LAUNCHER);
 
 			QString content;
 
-			if (index == 0) {
-
+			if (index == 0)
+			{
 				QString libraries = mModules.libraries().join(" ");
 
 				QString files = mModules.files().join("\n");
 
-				QString type = (mLauncherType == SERVER_LAUNCHER ? "TRUE" : "FALSE");
+				QString type = (mLauncherType == Shared::SERVER_LAUNCHER ? "TRUE" : "FALSE");
 
 				content = templateFile("CmakeRelease.txt").arg(name(), libraries, files, project()->moduleList()->path(), type);
 			}
-			else if (index == 1) {
-				if (mLauncherType == SERVER_LAUNCHER) {
+			else if (index == 1)
+			{
+				if (mLauncherType == Shared::SERVER_LAUNCHER)
+				{
 					content = templateFile("ServerMain.cpp").arg(mServer->header(), mServer->fullName(), project()->name(), name());
 				}
-				else {
+				else
+				{
 					content = templateFile("ClientMain.cpp");
 				}
 			}
-			else {
+			else
+			{
 				throw 0;
 			}
 
 			stream << content;
 		}
-
 	}
 }

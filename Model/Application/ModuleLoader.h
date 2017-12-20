@@ -68,7 +68,7 @@ namespace Maditor {
 			const ModuleList &mModules;
 
 			std::map<const Module *, Shared::ModuleInstance*> mMap;
-			Engine::Serialize::ObservableList<ModuleImpl, Engine::Serialize::ContainerPolicy::allowAll, Engine::Serialize::CustomCreator<decltype(&ModuleLoader::createModule)>> mInstances;
+			Engine::Serialize::ObservableList<ModuleImpl, Engine::Serialize::ContainerPolicies::allowAll, Engine::Serialize::CustomCreator<decltype(&ModuleLoader::createModule)>> mInstances;
 
 			Engine::Serialize::Action<decltype(&ModuleLoader::setupDoneImpl), &ModuleLoader::setupDoneImpl, Engine::Serialize::ActionPolicy::request> setupDone;
 			

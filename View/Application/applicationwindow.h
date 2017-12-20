@@ -4,6 +4,9 @@
 
 #include "ComponentView.h"
 
+#include "Model/Application/EmbeddedLauncher.h"
+#include "Model/Application/StandaloneLauncher.h"
+
 namespace Maditor {
 namespace View {
 
@@ -17,29 +20,75 @@ namespace View {
 		Model::ApplicationLauncher *app();
 
 	protected:
-		virtual void clearModel() override;
+		void clearModel() override;
 
-	private slots:
-		void onApplicationSettingup();
-		void onApplicationSetup();
-		void onApplicationStarted();
-		void onApplicationStopped();
-		void onApplicationShutdown();
+		ApplicationLog *logWindow();
 
-		void clicked();
+	protected slots:
+		virtual void onApplicationSettingup();
+		virtual void onApplicationSetup();
+		virtual void onApplicationShutdown();
+		virtual void onApplicationStarted();
+		virtual void onApplicationStopped();
 
-	private:
+
+
+
+	protected:
 		QAction *actionSetup;
+		QAction *actionShutdown;
+		QAction *actionKill;
 		QAction *actionStart;
 		QAction *actionPause;
 		QAction *actionStop;
-		QAction *actionSetup_No_Debug;
-		QAction *actionShutdown;
-		QAction *actionKill;
+		
+
 
 
 		Model::ApplicationLauncher *mApp;
+		ApplicationLog *mLog;
+
+	};
+
+	class StandaloneApplicationContainerWindow : public ApplicationContainerWindow, public ComponentView<Model::StandaloneLauncher>
+	{
+		Q_OBJECT
+	public:
+		StandaloneApplicationContainerWindow(Model::StandaloneLauncher *model);
+
+	protected slots:
+		void onConnecting();
+		void onConnected();
+		void onDisconnected();
+
+	private:
+		QAction *actionConnect;		
+	};
+
+	class EmbeddedApplicationContainerWindow : public ApplicationContainerWindow, public ComponentView<Model::EmbeddedLauncher>
+	{
+		Q_OBJECT
+	public:
+		EmbeddedApplicationContainerWindow(Model::EmbeddedLauncher* model);
+
+	protected:
+		void clearModel() override;
+
+	protected slots:
+		void onApplicationSettingup() override;
+		void onApplicationSetup() override;
+		void onApplicationShutdown() override;
+		void onApplicationStarted() override;
+		void onApplicationStopped() override;
+
+		void clicked();
+
+	private:		
+		QAction *actionSetup_No_Debug;
+		
+
 		ApplicationWindow *mAppWindow;
+
 	};
 
 
@@ -48,7 +97,7 @@ class ApplicationWindow : public QStackedWidget
     Q_OBJECT
 
 public:
-	ApplicationWindow(Model::ApplicationLauncher *app);
+	ApplicationWindow(Model::EmbeddedLauncher *app, ApplicationLog *log);
 
 public slots:
 	void toggleLog();

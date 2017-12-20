@@ -9,77 +9,81 @@
 #include "Shared\errorcodes.h"
 #include "Inspector\Inspector.h"
 #include "Shared/SharedMemory.h"
-#include "Shared/IPCManager/boostIPCmanager.h"
+
 
 namespace Maditor {
 
 
 	namespace Model {
 
-		class MADITOR_MODEL_EXPORT ApplicationLauncher : public Document, public Shared::AppControl {
+		class MADITOR_MODEL_EXPORT ApplicationLauncher : public Document, public Engine::Serialize::SerializableUnit<ApplicationLauncher, Shared::AppControl> {
 			Q_OBJECT
 
 		public:
 			ApplicationLauncher(ApplicationConfig *config, const QString &uniqueName);
 			virtual ~ApplicationLauncher();
 
-			virtual void destroy() override;
+			void destroy() override;
 
 			void setup();
-			void setupImpl(bool debug);
-			void setupNoDebug();
+			
 			void shutdown();
 			void kill();
+
 			void start();
 			void pause();
 			void stop();
 			
-			OgreWindow *window();
+			
 			ModuleLoader *moduleLoader();
 			UtilModel *util();
 			Inspector *inspector();
-
-			DWORD pid();
+			
 
 			bool isRunning();
-			bool isLaunched();
+			
 			bool isSetup();
+			virtual bool isRemote() = 0;
 
 			bool isClient();
 			bool isLauncher();
 
-			void sendCommand(const QString &cmd);
+
 			void sendLua(const QString &cmd);
 
-			std::string runtimeDir();
+			virtual void sendCommand(const QString &) = 0;
 
 		protected:
-			virtual void timerEvent(QTimerEvent * te) override;
+			void timerEvent(QTimerEvent * te) override;			
 
-			void cleanup();
-			void checkProcess();
-
-			void onConnectionResult(bool b);
+			void onSetupResult(bool b);
+			virtual void onDisconnected();
 
 			// Inherited via AppControl
-			virtual void shutdownImpl() override;
+			void startImpl() override;
+
+			void stopImpl() override;
+
+			void pauseImpl() override;
 
 			// Inherited via AppControl
-			virtual void startImpl() override;
+			void onApplicationConnected() override;
 
-			virtual void stopImpl() override;
+			void pingImpl() override;
 
-			virtual void pauseImpl() override;
+			void luaResponseImpl(const std::string&, const std::string&, bool) override;
 
-			// Inherited via AppControl
-			virtual void onApplicationSetup() override;
+			Engine::SignalSlot::Slot<decltype(&ApplicationLauncher::onSetupResult), &ApplicationLauncher::onSetupResult> mOnSetupResult;
 
-			virtual void pingImpl() override;
+			virtual Engine::Serialize::SerializeManager *network() = 0;
+
+			virtual bool setupImpl() = 0;
+			
+			void sendData();
 
 		protected slots:
-		    void resizeWindow();
 			void timeout();
-			void kill(Shared::ErrorCode cause);
+			virtual void killImpl(Shared::ErrorCode cause) = 0;
 
 		signals:
 			void applicationSettingup();
@@ -88,47 +92,34 @@ namespace Maditor {
 			void applicationStopped();
 			void applicationShutdown();
 
-			void processStarted(DWORD, const Shared::ApplicationInfo &);
+			
 
 			void destroyApplication(ApplicationLauncher *launcher);
 
 			void outputReceived(const QString &);
 
-		private:
-
-			virtual size_t getSize() const override;
-
+		protected:
+			Shared::ApplicationInfo mAppInfo;
 			ApplicationConfig *mConfig;
 
-			DWORD mPID;
-			HANDLE mHandle;
-			HANDLE mChildOutRead, mChildOutWrite, mChildInRead, mChildInWrite;
+			Engine::Serialize::Serialized<UtilModel> mUtil;
+
+		private:
 
 			Engine::Serialize::Serialized<LogReceiver> mLog;
 			Engine::Serialize::Serialized<ModuleLoader> mLoader;
-			Engine::Serialize::Serialized<UtilModel> mUtil;
 			Engine::Serialize::Serialized<Inspector> mInspector;
 			
 			bool mWaitingForLoader;
-
-			QTimer mPingTimer;
-			bool mPong;
-
+			
 			bool mAboutToBeDestroyed;
 
 			bool mRunning;
+
 			bool mSetup;
 
-			QString mName;
-
-			QString mOutput;
-
-			Shared::SharedMemory mMemory;
-			Shared::BoostIPCManager mNetwork;
-			std::unique_ptr<InputWrapper> mInput;
-			OgreWindow *mWindow;
-
-			Engine::SignalSlot::Slot<decltype(&ApplicationLauncher::onConnectionResult), &ApplicationLauncher::onConnectionResult> mOnConnectionResult;
+			QTimer mPingTimer;
+			bool mPong;
 
 		};
 

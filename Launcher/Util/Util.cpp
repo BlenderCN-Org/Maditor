@@ -1,7 +1,8 @@
-#include "madginelib.h"
+#include "maditorlauncherlib.h"
 
 #include "Util.h"
-#include "Util/UtilMethods.h"
+
+template <> thread_local Maditor::Launcher::Util *Engine::Singleton<Maditor::Launcher::Util>::sSingleton = nullptr;
 
 namespace Maditor {
 	namespace Launcher {

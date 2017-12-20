@@ -1,31 +1,31 @@
 
 #include "maditorlauncherlib.h"
 
-#include "LogListener.h"
+#include "LauncherLogListener.h"
 
 
 namespace Maditor {
 	namespace Launcher {
 
-		LogListener::LogListener()
+		LauncherLogListener::LauncherLogListener()
 		{
 
 		}
 
-		LogListener::~LogListener() {
+		LauncherLogListener::~LauncherLogListener() {
 
 		}
 
-		void LogListener::init() {
+		void LauncherLogListener::init() {
 			mSlot = std::make_unique<SlotType>(&receiveMessage);
 		}
 
-		void LogListener::receiveImpl(const std::string & msg, Engine::Util::MessageType level, const std::string & logName, const std::string & fullTraceback, const std::string & fileName, int lineNr)
+		void LauncherLogListener::receiveImpl(const std::string & msg, Engine::Util::MessageType level, const std::string & logName, const std::string & fullTraceback, const std::string & fileName, int lineNr)
 		{
 		}
 
 #ifdef MADGINE_CLIENT_BUILD
-		void LogListener::messageLogged(const Ogre::String & message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String & logName, bool & skipThisMessage)
+		void LauncherLogListener::messageLogged(const Ogre::String & message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String & logName, bool & skipThisMessage)
 		{
 			if (lml != Ogre::LML_CRITICAL) return;
 			Engine::Util::MessageType level;
@@ -46,7 +46,7 @@ namespace Maditor {
 		}
 #endif
 
-		void LogListener::messageLogged(const std::string & message, Engine::Util::MessageType lml, const std::list<Engine::Util::TraceBack> &traceback, const std::string & logName)
+		void LauncherLogListener::messageLogged(const std::string & message, Engine::Util::MessageType lml, const std::list<Engine::Util::TraceBack> &traceback, const std::string & logName)
 		{
 			std::stringstream fullTraceback;
 			std::string fileName;

@@ -266,17 +266,17 @@ namespace Maditor {
 			
 		}
 
-		void Module::addConfigs(ApplicationConfig::Launcher newLauncher, ApplicationConfig::LauncherType newLauncherType)
+		void Module::addConfigs(ApplicationConfig::Launcher newLauncher, Shared::LauncherType newLauncherType)
 		{
 			if (newLauncher == ApplicationConfig::MADITOR_LAUNCHER) {
 				switch (newLauncherType) {
-				case ApplicationConfig::CLIENT_LAUNCHER:
+				case Shared::CLIENT_LAUNCHER:
 					if (mClientConfigCount == 0) {
 						mCmake.addConfig("CLIENT");
 					}
 					++mClientConfigCount;
 					break;
-				case ApplicationConfig::SERVER_LAUNCHER:
+				case Shared::SERVER_LAUNCHER:
 					if (mServerConfigCount == 0) {
 						mCmake.addConfig("SERVER");
 					}
@@ -288,23 +288,23 @@ namespace Maditor {
 			}
 		}
 
-		void Module::updateConfigs(ApplicationConfig::Launcher newLauncher, ApplicationConfig::Launcher oldLauncher, ApplicationConfig::LauncherType newLauncherType, ApplicationConfig::LauncherType oldLauncherType)
+		void Module::updateConfigs(ApplicationConfig::Launcher newLauncher, ApplicationConfig::Launcher oldLauncher, Shared::LauncherType newLauncherType, Shared::LauncherType oldLauncherType)
 		{
 			addConfigs(newLauncher, newLauncherType);
 			removeConfigs(oldLauncher, oldLauncherType);
 		}
 		
-		void Module::removeConfigs(ApplicationConfig::Launcher oldLauncher, ApplicationConfig::LauncherType oldLauncherType)
+		void Module::removeConfigs(ApplicationConfig::Launcher oldLauncher, Shared::LauncherType oldLauncherType)
 		{
 			if (oldLauncher == ApplicationConfig::MADITOR_LAUNCHER) {
 				switch (oldLauncherType) {
-				case ApplicationConfig::CLIENT_LAUNCHER:
+				case Shared::CLIENT_LAUNCHER:
 					--mClientConfigCount;
 					if (mClientConfigCount == 0) {
 						mCmake.removeConfig("CLIENT");
 					}
 					break;
-				case ApplicationConfig::SERVER_LAUNCHER:
+				case Shared::SERVER_LAUNCHER:
 					--mServerConfigCount;
 					if (mServerConfigCount == 0) {
 						mCmake.removeConfig("SERVER");

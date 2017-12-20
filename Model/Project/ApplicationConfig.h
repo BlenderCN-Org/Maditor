@@ -5,6 +5,7 @@
 #include "ModuleSelection.h"
 
 #include "Generators\Generator.h"
+#include "Model/Application/ApplicationLauncher.h"
 
 namespace Maditor {
 	namespace Model {
@@ -18,30 +19,26 @@ namespace Maditor {
 				CUSTOM_LAUNCHER = 1
 			};
 
-			enum LauncherType {
-				CLIENT_LAUNCHER = 0,
-				SERVER_LAUNCHER = 1
-			};
 
 		public:
 			ApplicationConfig(ConfigList *parent, const QString &name);
 			ApplicationConfig(QDomElement data, ConfigList *parent);
 			~ApplicationConfig();
 
-			void generateInfo(Shared::ApplicationInfo &appInfo, QWindow *w = nullptr);
+			void generateInfo(Shared::ApplicationInfo &appInfo, QWindow *w = nullptr) const;
 
 			bool hasModuleEnabled(Module *module);
 
-			ApplicationLauncher *createInstace();
+			ApplicationLauncher *createInstace(bool remote);
 
-			Launcher launcher();
-			const QString &customExecutableCmd();
-			LauncherType launcherType();
-			Generators::ServerClassGenerator *server();
+			Launcher launcher() const;
+			const QString &customExecutableCmd() const;
+			Shared::LauncherType launcherType() const;
+			Generators::ServerClassGenerator *server() const;
 
-			virtual QString path() const override;
-			virtual void save() override;
-			virtual void discardChanges() override;
+			QString path() const override;
+			void save() override;
+			void discardChanges() override;
 
 			ModuleSelection *modules();
 
@@ -49,19 +46,19 @@ namespace Maditor {
 
 		public slots:
 			void setLauncher(Launcher launcher);
-			void setLauncherType(LauncherType type);
+			void setLauncherType(Shared::LauncherType type);
 			void setCustomExecutableCmd(const QString &cmd);
 			void setServer(Generators::ServerClassGenerator *server);
 			void setServerByName(const QString &name);
 
 		protected:
-			virtual void doubleClicked() override;
+			void doubleClicked() override;
 
-			virtual bool storeData() override;
-			virtual void restoreData() override;
+			bool storeData() override;
+			void restoreData() override;
 
-			virtual QStringList filePaths() override;
-			virtual void write(QTextStream & stream, int index) override;
+			QStringList filePaths() override;
+			void write(QTextStream & stream, int index) override;
 
 		private:
 			void init();
@@ -71,7 +68,7 @@ namespace Maditor {
 			void documentDestroyed(ApplicationLauncher *);
 
 			void launcherChanged(Launcher newValue, Launcher old);
-			void launcherTypeChanged(LauncherType newValue, LauncherType old);
+			void launcherTypeChanged(Shared::LauncherType newValue, Shared::LauncherType old);
 			void customExecutableCmdChanged(const QString &);
 			void serverChanged(Generators::ServerClassGenerator*);
 
@@ -88,7 +85,7 @@ namespace Maditor {
 			Launcher mLauncher;
 			QString mCustomExecutableCmd;
 
-			LauncherType mLauncherType;
+			Shared::LauncherType mLauncherType;
 			Generators::ServerClassGenerator *mServer;
 
 			size_t mInstanceCounter;
