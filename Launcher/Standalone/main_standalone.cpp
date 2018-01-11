@@ -2,7 +2,7 @@
 
 #include "StandaloneWrapper.h"
 
-#include "serialize/container/noparentunit.h"
+#include "serialize/container/noparent.h"
 
 int main(int argc, char *argv[]) {
 	Engine::Serialize::NoParentUnit<Maditor::Launcher::StandaloneWrapper> app;
