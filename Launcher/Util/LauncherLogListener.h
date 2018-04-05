@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Shared\moduleinstance.h"
-#include "Serialize\Container\action.h"
-#include "Util\loglistener.h"
-#include "signalslot/slot.h"
+#include "Madgine/Serialize\Container\action.h"
+#include "Madgine/Util\loglistener.h"
+#include "Madgine/signalslot/slot.h"
 
 namespace Maditor {
 	namespace Launcher {

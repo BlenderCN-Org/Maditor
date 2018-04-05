@@ -7,7 +7,7 @@
 
 #include "SharedMemory.h"
 
-#include "Serialize/toplevelids.h"
+#include "Madgine/Serialize/toplevelids.h"
 
 namespace Maditor {
 	namespace Shared {

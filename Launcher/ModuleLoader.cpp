@@ -5,15 +5,15 @@
 
 #include <iostream>
 
-#include "Scene/Entity/entity.h"
-#include "Scene\scenecomponent.h"
-#include "scripting/types/globalapicomponent.h"
+#include "Madgine/Scene/Entity/entity.h"
+#include "Madgine/Scene\scenecomponent.h"
+#include "Madgine/scripting/types/globalapicomponent.h"
 
 #ifdef MADGINE_CLIENT_BUILD
-#include "ogreuniquecomponentcollector.h"
-#include "ui/guihandler.h"
-#include "ui/gamehandler.h"
-#include "ui/uimanager.h"
+#include "Madgine/ogreuniquecomponentcollector.h"
+#include "Madgine/ui/guihandler.h"
+#include "Madgine/ui/gamehandler.h"
+#include "Madgine/ui/uimanager.h"
 #endif
 
 namespace Maditor {

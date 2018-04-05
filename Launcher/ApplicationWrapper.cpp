@@ -4,21 +4,21 @@
 
 #include "Shared\SharedMemory.h"
 
-#include "Serialize/serializemanager.h"
+#include "Madgine/Serialize/serializemanager.h"
 
 
 #ifdef MADGINE_SERVER_BUILD
-#include "Server\serverbase.h"
+#include "Madgine/Server\serverbase.h"
 #else
-#include "Input\InputHandler.h"
-#include "gui/guisystem.h"
+#include "Madgine/Input\InputHandler.h"
+#include "Madgine/gui/guisystem.h"
 #endif
 
 #include "Shared\errorcodes.h"
 
 
 #include <iostream>
-#include "scripting/types/apihelper.h"
+#include "Madgine/scripting/types/apihelper.h"
 
 namespace Maditor
 {

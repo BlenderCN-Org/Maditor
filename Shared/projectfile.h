@@ -1,6 +1,6 @@
 #pragma once
 
-#include "serialize/serializable.h"
+#include "Madgine/serialize/serializable.h"
 
 namespace Maditor
 {

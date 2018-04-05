@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Shared\moduleinstance.h"
-#include "Serialize\Container\action.h"
+#include "Madgine/Serialize\Container\action.h"
 
 namespace Maditor {
 

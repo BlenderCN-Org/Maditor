@@ -1,8 +1,8 @@
 #pragma once
 
-#include "serialize/serializemanager.h"
+#include "Madgine/serialize/serializemanager.h"
 #include "boostIPCstream.h"
-#include "signalslot/slot.h"
+#include "Madgine/signalslot/slot.h"
 
 
 namespace Maditor {

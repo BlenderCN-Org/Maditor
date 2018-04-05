@@ -3,7 +3,7 @@
 #include "Project/Project.h"
 #include "MaditorLog.h"
 #include "Logs\LogTableModel.h"
-#include "signalslot/connectionstore.h"
+#include "Madgine/signalslot/connectionstore.h"
 
 namespace Maditor {
 	namespace Model {

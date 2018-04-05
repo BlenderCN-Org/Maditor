@@ -2,7 +2,7 @@
 
 #include "projectfile.h"
 
-#include "serialize/streams/serializestream.h"
+#include "Madgine/serialize/streams/serializestream.h"
 
 namespace Maditor
 {

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Serialize\Container\action.h"
-#include "serialize/container/map.h"
-#include "Scripting/Types/globalapicomponent.h"
+#include "Madgine/Serialize\Container\action.h"
+#include "Madgine/serialize/container/map.h"
+#include "Madgine/Scripting/Types/globalapicomponent.h"
 
-#include "signalslot/slot.h"
+#include "Madgine/signalslot/slot.h"
 
 namespace Maditor {
 	namespace Launcher {

@@ -6,7 +6,7 @@
 
 #include "Shared\InputInfo.h"
 
-#include "GUI\GUISystem.h"
+#include "Madgine/GUI\GUISystem.h"
 
 namespace Maditor {
 

@@ -4,7 +4,7 @@
 
 #include "boostIPCConnection.h"
 
-#include "Serialize\serializemanager.h"
+#include "Madgine/Serialize\serializemanager.h"
 
 namespace Maditor {
 	namespace Shared {

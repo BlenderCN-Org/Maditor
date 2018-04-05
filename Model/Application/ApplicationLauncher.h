@@ -2,7 +2,7 @@
 
 #include "Shared/AppControl.h"
 #include "ModuleLoader.h"
-#include "Serialize\Container\serialized.h"
+#include "Madgine/Serialize\Container\serialized.h"
 #include "UtilModel.h"
 #include "LogReceiver.h"
 #include "Model\Documents\Document.h"

@@ -3,7 +3,7 @@
 #include "Model/TreeModel.h"
 #include "Model/TreeItem.h"
 
-#include "Serialize\serializableunit.h"
+#include "Madgine/Serialize\serializableunit.h"
 
 namespace Maditor {
 	namespace Model {

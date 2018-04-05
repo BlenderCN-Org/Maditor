@@ -17,7 +17,7 @@
 
 #include "Generators\CommandLine.h"
 
-#include "serialize/container/noparent.h"
+#include "Madgine/serialize/container/noparent.h"
 
 namespace Maditor
 {

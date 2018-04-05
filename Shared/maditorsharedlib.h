@@ -13,7 +13,7 @@
 #include "maditorsharedforward.h"
 
 
-#include <interfaceslib.h>
+#include <Madgine/interfaceslib.h>
 
 
 

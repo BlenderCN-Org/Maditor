@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Serialize\Container\action.h"
+#include "Madgine/Serialize\Container\action.h"
 
-#include "Serialize\serializableunit.h"
+#include "Madgine/Serialize\serializableunit.h"
 
 namespace Maditor {
 	namespace Model {

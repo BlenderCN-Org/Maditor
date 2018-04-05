@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Serialize\Container\map.h"
+#include "Madgine/Serialize\Container\map.h"
 
 #include "scopewrapper.h"
 
-#include "Serialize\Container\action.h"
+#include "Madgine/Serialize\Container\action.h"
 
 namespace Maditor {
 	namespace Model {

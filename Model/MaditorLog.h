@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Util\log.h"
+#include "Madgine/Util\log.h"
 
 namespace Maditor {
 	namespace Model {

@@ -3,20 +3,20 @@
 #include "Shared/AppControl.h"
 
 #ifdef MADGINE_CLIENT_BUILD
-#include "App\Ogreappsettings.h"
-#include "App/OgreApplication.h"
+#include "Madgine/App\Ogreappsettings.h"
+#include "Madgine/App/OgreApplication.h"
 #endif
 #ifdef MADGINE_SERVER_BUILD
-#include "App/serverappsettings.h"
+#include "Madgine/App/serverappsettings.h"
 #endif
 
 #include "ModuleLoader.h"
 #include "Util\LauncherLogListener.h"
-#include "Serialize\Container\serialized.h"
+#include "Madgine/Serialize\Container\serialized.h"
 
 #include "Util\Util.h"
 
-#include "App\framelistener.h"
+#include "Madgine/App\framelistener.h"
 
 #include "Inspector.h"
 

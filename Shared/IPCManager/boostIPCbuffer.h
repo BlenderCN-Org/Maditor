@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Serialize\Streams\buffered_streambuf.h"
+#include "Madgine/Serialize\Streams\buffered_streambuf.h"
 
 #include "boostIPCConnection.h"
 

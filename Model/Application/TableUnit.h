@@ -2,7 +2,7 @@
 
 #include "Model/TableModel.h"
 
-#include "Serialize\serializableunit.h"
+#include "Madgine/Serialize\serializableunit.h"
 
 namespace Maditor {
 	namespace Model {

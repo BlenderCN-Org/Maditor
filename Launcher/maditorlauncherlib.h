@@ -5,9 +5,9 @@
 #include "maditorlauncherforward.h"
 #include "Shared/maditorsharedlib.h"
 
-#include "madginelib.h"
+#include "Madgine/madginelib.h"
 
-#include "Scene\scenemanager.h"
+#include "Madgine/Scene\scenemanager.h"
 
 #include <Windows.h>
 

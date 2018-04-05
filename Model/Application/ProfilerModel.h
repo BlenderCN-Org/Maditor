@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Serialize\Container\set.h"
-#include "Serialize\Container\observed.h"
+#include "Madgine/Serialize\Container\set.h"
+#include "Madgine/Serialize\Container\observed.h"
 
 #include "TreeUnit.h"
 
-#include "SignalSlot\slot.h"
+#include "Madgine/SignalSlot\slot.h"
 
 namespace Maditor {
 	namespace Model {

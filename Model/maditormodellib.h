@@ -11,13 +11,13 @@
 #include "maditormodelforward.h"
 #include "Shared/maditorsharedlib.h"
 
-#include "baselib.h"
+#include "Madgine/baselib.h"
 
 //before any qt because of emit
-#include "SignalSlot\signal.h"
-#include "Serialize\Container\serialized.h"
-#include "Serialize\Container\observed.h"
-#include "Serialize\Container\observablecontainer.h"
+#include "Madgine/SignalSlot\signal.h"
+#include "Madgine/Serialize\Container\serialized.h"
+#include "Madgine/Serialize\Container\observed.h"
+#include "Madgine/Serialize\Container\observablecontainer.h"
 
 #include <memory>
 

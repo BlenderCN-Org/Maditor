@@ -6,7 +6,7 @@
 
 #include "Addons\Addon.h"
 
-#include "Util\UtilMethods.h"
+#include "Madgine/Util\UtilMethods.h"
 
 namespace Maditor {
 	namespace Model {

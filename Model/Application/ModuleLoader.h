@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Serialize\Container\list.h"
+#include "Madgine/Serialize\Container\list.h"
 
 #include "Shared\moduleinstance.h"
 
-#include "Serialize\Container\action.h"
+#include "Madgine/Serialize\Container\action.h"
 
 #include "TableUnit.h"
 
-#include "SignalSlot\slot.h"
+#include "Madgine/SignalSlot\slot.h"
 
 namespace Maditor {
 	namespace Model {

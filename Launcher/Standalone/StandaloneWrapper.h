@@ -2,10 +2,10 @@
 
 #include "ApplicationWrapper.h"
 
-#include "network/networkmanager.h"
+#include "Madgine/network/networkmanager.h"
 #include "projectfile.h"
 
-#include "serialize/streams/filebuffer.h"
+#include "Madgine/serialize/streams/filebuffer.h"
 
 namespace Maditor
 {

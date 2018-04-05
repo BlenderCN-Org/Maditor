@@ -2,8 +2,8 @@
 
 #include "SharedBase.h"
 #include <boost/thread/thread_time.hpp>
-#include "Serialize/container/serialized.h"
-#include "Serialize/serializable.h"
+#include "Madgine/Serialize/container/serialized.h"
+#include "Madgine/Serialize/serializable.h"
 
 namespace Maditor {
 	namespace Shared {
