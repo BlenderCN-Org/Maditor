@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Madgine/Serialize\Streams\buffered_streambuf.h"
+#include "Madgine/serialize/streams/buffered_streambuf.h"
 
-#include "boostIPCConnection.h"
+#include "boostipcconnection.h"
 
 namespace Maditor {
 	namespace Shared {

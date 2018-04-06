@@ -1,9 +1,9 @@
 #pragma once
 
-#include "SharedBase.h"
+#include "sharedbase.h"
 #include <boost/thread/thread_time.hpp>
-#include "Madgine/Serialize/container/serialized.h"
-#include "Madgine/Serialize/serializable.h"
+#include "Madgine/serialize/container/serialized.h"
+#include "Madgine/serialize/serializable.h"
 
 namespace Maditor {
 	namespace Shared {

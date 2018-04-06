@@ -1,13 +1,13 @@
 #include "maditorsharedlib.h"
 
 
-#include "AppControl.h"
+#include "appcontrol.h"
 
-#include "IPCManager\boostIPCmanager.h"
+#include "ipcmanager/boostipcmanager.h"
 
-#include "SharedMemory.h"
+#include "sharedmemory.h"
 
-#include "Madgine/Serialize/toplevelids.h"
+#include "Madgine/serialize/toplevelids.h"
 
 namespace Maditor {
 	namespace Shared {

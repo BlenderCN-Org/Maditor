@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Madgine/Serialize/Streams/bufferedstream.h"
-#include "boostIPCbuffer.h"
+#include "Madgine/serialize/streams/bufferedstream.h"
+#include "boostipcbuffer.h"
 
 
 namespace Maditor {

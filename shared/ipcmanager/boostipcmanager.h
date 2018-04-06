@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Madgine/serialize/serializemanager.h"
-#include "boostIPCstream.h"
+#include "boostipcstream.h"
 #include "Madgine/signalslot/slot.h"
 
 

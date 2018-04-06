@@ -1,9 +1,9 @@
 #pragma once
 
 
-#include "Madgine/Serialize\toplevelserializableunit.h"
+#include "Madgine/serialize/toplevelserializableunit.h"
 
-#include "Madgine/Serialize\Container\action.h"
+#include "Madgine/serialize/container/action.h"
 
 namespace Maditor {
 	namespace Shared {

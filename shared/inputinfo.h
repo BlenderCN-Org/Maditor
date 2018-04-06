@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SharedBase.h"
+#include "sharedbase.h"
 
 namespace Maditor {
 	namespace Shared {

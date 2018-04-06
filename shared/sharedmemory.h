@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ApplicationInfo.h"
-#include "InputInfo.h"
+#include "applicationinfo.h"
+#include "inputinfo.h"
 
 
 namespace Maditor {
