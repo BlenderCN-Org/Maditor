@@ -4,7 +4,7 @@
 #include "Madgine/serialize/container/observed.h"
 #include "Madgine/serialize/container/action.h"
 
-#ifdef __WIN32
+#ifdef _WIN32
 #include <Windows.h>
 #undef min
 #undef NO_ERROR

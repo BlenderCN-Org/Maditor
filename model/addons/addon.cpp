@@ -2,7 +2,7 @@
 
 #include "addon.h"
 
-#ifdef __WIN32
+#ifdef _WIN32
 #include <Windows.h>
 #undef NO_ERROR
 #elif __linux__
@@ -74,7 +74,7 @@ void AddonCollector::load(Model::Maditor * editor)
 		{
 			QString line = in.readLine();
 			qDebug() << "Loading Addon: " << line;
-#ifdef __WIN32
+#ifdef _WIN32
 			HINSTANCE h = LoadLibrary(line.toStdString().c_str());
 #elif __linux__
 			void *h = dlopen(line.toStdString().c_str(), RTLD_LAZY);
@@ -85,7 +85,7 @@ void AddonCollector::load(Model::Maditor * editor)
 			}
 			qDebug() << "Success!";
 			typedef Addon *(*Creator)(Model::Maditor*);
-#ifdef __WIN32
+#ifdef _WIN32
 			Creator creator = (Creator)GetProcAddress(h, "createAddon");
 #elif __linux__
 			Creator creator = (Creator)dlsym(h, "createAddon");
