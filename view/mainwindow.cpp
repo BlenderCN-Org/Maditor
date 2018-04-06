@@ -105,8 +105,6 @@ void MainWindow::setModel(Model::Maditor* model)
 		onProjectOpened(model->project());
 	}
 
-	mApplication->setConfigModel(model->project()->configList());
-
 	mLogs->setModel(model->logs());
 
 	ComponentView::setModel(model);
