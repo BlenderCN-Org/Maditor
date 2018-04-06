@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Documents\DocumentView.h"
+#include "documents/documentview.h"
 
-#include "ComponentView.h"
+#include "componentview.h"
 
-#include "Model/Application/EmbeddedLauncher.h"
-#include "Model/Application/StandaloneLauncher.h"
+#include "model/application/embeddedlauncher.h"
+#include "model/application/standalonelauncher.h"
 
 namespace Maditor {
 namespace View {

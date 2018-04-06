@@ -1,6 +1,6 @@
 #include "maditormodellib.h"
 
-#include "ProfilerModel.h"
+#include "profilermodel.h"
 
 namespace Maditor {
 	namespace Model {
@@ -105,7 +105,7 @@ namespace Maditor {
 			mTopLevelItems.clear();
 		}
 
-		inline QVariant ProfilerModel::header(int col) const
+		QVariant ProfilerModel::header(int col) const
 		{
 			switch (col) {
 			case 0:

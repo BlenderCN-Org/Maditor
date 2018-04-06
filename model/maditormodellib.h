@@ -4,7 +4,7 @@
 
 
 #include "maditormodelforward.h"
-#include "Shared/maditorsharedlib.h"
+#include "shared/maditorsharedlib.h"
 
 #if defined(Maditor_Model_EXPORTS)
 #define MADITOR_MODEL_EXPORT DLL_EXPORT
@@ -16,10 +16,10 @@
 #include "Madgine/baselib.h"
 
 //before any qt because of emit
-#include "Madgine/SignalSlot\signal.h"
-#include "Madgine/Serialize\Container\serialized.h"
-#include "Madgine/Serialize\Container\observed.h"
-#include "Madgine/Serialize\Container\observablecontainer.h"
+#include "Madgine/signalslot/signal.h"
+#include "Madgine/serialize/container/serialized.h"
+#include "Madgine/serialize/container/observed.h"
+#include "Madgine/serialize/container/observablecontainer.h"
 
 #include <memory>
 

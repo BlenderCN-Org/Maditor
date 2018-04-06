@@ -1,7 +1,7 @@
 #include "maditorviewlib.h"
 #include "valuetypeedit.h"
 
-#include <qtoolbutton>
+#include <QToolButton>
 
 VectorWidget::VectorWidget(int size) {
 	QGridLayout *layout = new QGridLayout(this);

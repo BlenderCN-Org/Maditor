@@ -1,6 +1,6 @@
 #include "maditormodellib.h"
 
-#include "LogSorterFilter.h"
+#include "logsorterfilter.h"
 
 namespace Maditor {
 	namespace Model {

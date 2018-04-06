@@ -1,6 +1,6 @@
 #include "maditormodellib.h"
 
-#include "SceneComponentGenerator.h"
+#include "scenecomponentgenerator.h"
 
 namespace Maditor {
 	namespace Model {

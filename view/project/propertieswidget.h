@@ -1,7 +1,7 @@
 #ifndef MODULEPROPERTIESDIALOG_H
 #define MODULEPROPERTIESDIALOG_H
 
-#include "Documents\DocumentView.h"
+#include "documents/documentview.h"
 
 namespace Maditor {
 	namespace View {

@@ -1,7 +1,7 @@
 
 #include "../maditorlauncherlib.h"
 
-#include "LauncherLogListener.h"
+#include "launcherloglistener.h"
 
 
 namespace Maditor {

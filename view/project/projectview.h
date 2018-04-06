@@ -1,14 +1,14 @@
 #pragma once
 
-#include "ComponentView.h"
+#include "componentview.h"
 
-#include "Model\Project\Project.h"
+#include "model/project/project.h"
 
-#include "Documents\IndependentWindowSpawner.h"
-#include "Documents\WindowSpawner.h"
+#include "documents/independentwindowspawner.h"
+#include "documents/windowspawner.h"
 
 #include "propertieswidget.h"
-#include "Application\configwidget.h"
+#include "application/configwidget.h"
 
 namespace Maditor {
 namespace View {

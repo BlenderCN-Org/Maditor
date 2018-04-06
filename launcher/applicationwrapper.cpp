@@ -1,20 +1,20 @@
 #include "maditorlauncherlib.h"
 
-#include "ApplicationWrapper.h"
+#include "applicationwrapper.h"
 
-#include "Shared\SharedMemory.h"
+#include "shared/sharedmemory.h"
 
-#include "Madgine/Serialize/serializemanager.h"
+#include "Madgine/serialize/serializemanager.h"
 
 
 #ifdef MADGINE_SERVER_BUILD
-#include "Madgine/Server\serverbase.h"
+#include "Madgine/server/serverbase.h"
 #else
-#include "Madgine/Input\InputHandler.h"
+#include "Madgine/input/inputhandler.h"
 #include "Madgine/gui/guisystem.h"
 #endif
 
-#include "Shared\errorcodes.h"
+#include "shared/errorcodes.h"
 
 
 #include <iostream>
@@ -68,6 +68,7 @@ namespace Maditor
 
 			if (mAppInfo.mDebugged)
 			{
+#ifdef _WIN32
 				end = std::chrono::system_clock::now() + 5000ms; // this is the end point
 				while (!IsDebuggerPresent() &&
 					!GetAsyncKeyState(VK_F10) &&
@@ -75,7 +76,7 @@ namespace Maditor
 				{
 					std::this_thread::yield();
 				}
-
+#endif
 				if (std::chrono::system_clock::now() >= end)
 				{
 					return Shared::DEBUGGER_CONNECTION_TIMEOUT;

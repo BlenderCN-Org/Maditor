@@ -1,11 +1,11 @@
 #pragma once
 
-#include "ProjectElement.h"
-#include "Model\Documents\DocumentStore.h"
-#include "ModuleSelection.h"
+#include "projectelement.h"
+#include "model/documents/documentstore.h"
+#include "moduleselection.h"
 
-#include "Generators\Generator.h"
-#include "Model/Application/ApplicationLauncher.h"
+#include "generators/generator.h"
+#include "model/application/applicationlauncher.h"
 
 namespace Maditor {
 	namespace Model {

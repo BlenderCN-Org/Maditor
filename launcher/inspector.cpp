@@ -1,16 +1,16 @@
 #include "maditorlauncherlib.h"
-#include "Inspector.h"
+#include "inspector.h"
 
-#include "Madgine/Scripting\Types\globalscopebase.h"
-#include "Madgine/App/application.h"
+#include "Madgine/scripting/types/globalscopebase.h"
+#include "Madgine/app/application.h"
 
-#include "Madgine/Scripting/Parsing/scriptparser.h"
+#include "Madgine/scripting/parsing/scriptparser.h"
 
 extern "C"
 {
-#include <Lua/lua.h>                                /* Always include this when calling Lua */
-#include <Lua/lauxlib.h>                            /* Always include this when calling Lua */
-#include <Lua/lualib.h>                             /* Always include this when calling Lua */
+#include <lua/lua.h>                                /* Always include this when calling Lua */
+#include <lua/lauxlib.h>                            /* Always include this when calling Lua */
+#include <lua/lualib.h>                             /* Always include this when calling Lua */
 }
 
 API_IMPL(Maditor::Launcher::InspectorThreadInstance);

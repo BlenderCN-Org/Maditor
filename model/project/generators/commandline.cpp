@@ -1,7 +1,12 @@
 #include "maditormodellib.h"
 
-#include "CommandLine.h"
+#include "commandline.h"
 //#include "Model\Engine\Watcher\LogWatcher.h"
+
+#ifdef __linux__
+#define _popen popen
+#define _pclose pclose
+#endif
 
 namespace Maditor {
 	namespace Model {

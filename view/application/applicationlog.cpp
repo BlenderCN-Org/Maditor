@@ -3,7 +3,7 @@
 #include "applicationlog.h"
 #include "ui_applicationlog.h"
 
-#include "Model\Application\ApplicationLauncher.h"
+#include "model/application/applicationlauncher.h"
 
 namespace Maditor {
 namespace View {

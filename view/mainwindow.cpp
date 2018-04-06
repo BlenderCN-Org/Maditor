@@ -3,20 +3,20 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "Model\maditor.h"
+#include "model/maditor.h"
 
 #include "maditorview.h"
 
-#include "Documents/DocumentView.h"
+#include "documents/documentview.h"
 
 
-#include "Application\applicationview.h"
+#include "application/applicationview.h"
 
-#include "Model\Addons\Addon.h"
+#include "model/addons/addon.h"
 
 
-#include "Logs\logsview.h"
-#include "Project\projectview.h"
+#include "logs/logsview.h"
+#include "project/projectview.h"
 
 namespace Maditor {
 namespace View {

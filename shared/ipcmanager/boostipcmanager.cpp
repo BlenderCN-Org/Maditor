@@ -1,16 +1,16 @@
 #include "maditorsharedlib.h"
 
-#include "boostIPCmanager.h"
+#include "boostipcmanager.h"
 
-#include "Madgine/Serialize\toplevelserializableunit.h"
+#include "Madgine/serialize/toplevelserializableunit.h"
 
-#include "SharedMemory.h"
+#include "sharedmemory.h"
 
-#include "boostIPCstream.h"
+#include "boostipcstream.h"
 
-#include "boostIPCServer.h"
+#include "boostipcserver.h"
 
-#include "boostIPCConnection.h"
+#include "boostipcconnection.h"
 
 namespace Maditor {
 	namespace Shared {
@@ -76,11 +76,11 @@ namespace Maditor {
 				return false;
 			}
 
-			std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::high_resolution_clock::now();
+			std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
 			mServer = mMemory->mgr()->find<BoostIPCServer>("Server").first;
 			while (!mServer) {
 				if (std::chrono::duration_cast<std::chrono::milliseconds>
-					(std::chrono::high_resolution_clock::now() - start).count() > timeout) {
+					(std::chrono::steady_clock::now() - start).count() > timeout) {
 					mConnectionResult.emit(false);
 					return false;
 				}

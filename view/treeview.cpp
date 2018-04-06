@@ -1,8 +1,8 @@
 #include "maditorviewlib.h"
 
-#include "TreeView.h"
+#include "treeview.h"
 
-#include "Model\TreeModel.h"
+#include "model/treemodel.h"
 
 namespace Maditor {
 	namespace View {

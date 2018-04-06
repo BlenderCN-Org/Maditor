@@ -13,5 +13,16 @@ add_definitions(-DCONFIG="${CONFIG}")
 add_executable(Standalone_Server_Launcher ${sources})
 target_link_libraries(Standalone_Server_Launcher PRIVATE Maditor_Shared MadgineServer lualib)
 
-add_executable(Standalone_Client_Launcher ${sources})
-target_link_libraries(Standalone_Client_Launcher PRIVATE Maditor_Shared OgreMadgine lualib)
+if (CMAKE_COMPILER_IS_GNUCXX)
+	target_link_libraries(Standalone_Server_Launcher PRIVATE dl)
+endif (CMAKE_COMPILER_IS_GNUCXX)
+
+if (BUILD_CLIENT)
+	add_executable(Standalone_Client_Launcher ${sources})
+	target_link_libraries(Standalone_Client_Launcher PRIVATE Maditor_Shared OgreMadgine lualib)
+
+	if (CMAKE_COMPILER_IS_GNUCXX)
+		target_link_libraries(Standalone_Client_Launcher PRIVATE dl)
+	endif (CMAKE_COMPILER_IS_GNUCXX)
+
+endif (BUILD_CLIENT)

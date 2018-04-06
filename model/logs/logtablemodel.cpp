@@ -1,6 +1,6 @@
 #include "maditormodellib.h"
 
-#include "LogTableModel.h"
+#include "logtablemodel.h"
 
 //#include "Model\Editors\EditorManager.h"
 

@@ -1,8 +1,8 @@
-#include "View/maditorviewlib.h"
+#include "view/maditorviewlib.h"
 
-#include "View/maditorview.h"
+#include "view/maditorview.h"
 
-#include "Model/maditor.h"
+#include "model/maditor.h"
 
 #include <QApplication>
 

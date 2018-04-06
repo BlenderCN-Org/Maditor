@@ -1,8 +1,8 @@
 #include "maditorlauncherlib.h"
 
-#include "EmbeddedWrapper.h"
+#include "embeddedwrapper.h"
 
-#include "Shared\errorcodes.h"
+#include "shared/errorcodes.h"
 
 #include "Madgine/serialize/container/noparent.h"
 

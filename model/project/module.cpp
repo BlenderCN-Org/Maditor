@@ -1,10 +1,10 @@
 #include "maditormodellib.h"
 
-#include "Module.h"
-#include "Project.h"
-#include "Generators\HeaderGuardGenerator.h"
-#include "ModuleList.h"
-#include "DialogManager.h"
+#include "module.h"
+#include "project.h"
+#include "generators/headerguardgenerator.h"
+#include "modulelist.h"
+#include "dialogmanager.h"
 
 
 

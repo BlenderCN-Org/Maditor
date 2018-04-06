@@ -1,10 +1,10 @@
 #include "maditormodellib.h"
 
-#include "CmakeProject.h"
+#include "cmakeproject.h"
 
-#include "CommandLine.h"
+#include "commandline.h"
 
-#include "CmakeGenerator.h"
+#include "cmakegenerator.h"
 
 namespace Maditor {
 	namespace Model {

@@ -1,6 +1,6 @@
 #include "maditormodellib.h"
 
-#include "EntityComponentGenerator.h"
+#include "entitycomponentgenerator.h"
 
 namespace Maditor {
 	namespace Model {

@@ -1,18 +1,18 @@
 #include "maditormodellib.h"
 
-#include "ApplicationLauncher.h"
+#include "applicationlauncher.h"
 
 
-#include "Shared\SharedMemory.h"
+#include "shared/sharedmemory.h"
 
 
 
 
-#include "Project\ApplicationConfig.h"
+#include "project/applicationconfig.h"
 
-#include "Project\Project.h"
+#include "project/project.h"
 
-#include "Madgine/Serialize/toplevelids.h"
+#include "Madgine/serialize/toplevelids.h"
 
 
 namespace Maditor

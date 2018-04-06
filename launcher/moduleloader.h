@@ -1,7 +1,11 @@
 #pragma once
 
-#include "Shared\moduleinstance.h"
-#include "Madgine/Serialize\Container\action.h"
+#include "shared/moduleinstance.h"
+#include "Madgine/serialize/container/action.h"
+
+#ifdef __linux__
+using HINSTANCE = void*;
+#endif
 
 namespace Maditor {
 

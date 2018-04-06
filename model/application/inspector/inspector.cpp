@@ -1,5 +1,5 @@
 #include "maditormodellib.h"
-#include "Inspector.h"
+#include "inspector.h"
 
 namespace Maditor {
 	namespace Model {

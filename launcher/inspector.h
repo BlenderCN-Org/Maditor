@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Madgine/Serialize\Container\action.h"
+#include "Madgine/serialize/container/action.h"
 #include "Madgine/serialize/container/map.h"
-#include "Madgine/Scripting/Types/globalapicomponent.h"
+#include "Madgine/scripting/types/globalapicomponent.h"
 
 #include "Madgine/signalslot/slot.h"
 

@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "Model\Project\Generators\ClassGeneratorFactory.h"
+#include "model/project/generators/classgeneratorfactory.h"
 
 
 namespace Maditor {

@@ -1,6 +1,6 @@
 #include "maditormodellib.h"
 
-#include "TableModel.h"
+#include "tablemodel.h"
 
 namespace Maditor {
 	namespace Model {

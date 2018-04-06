@@ -1,14 +1,15 @@
 #pragma once
 
-#include "Madgine/Serialize\Container\set.h"
-#include "Madgine/Serialize\Container\observed.h"
+#include "Madgine/serialize/container/set.h"
+#include "Madgine/serialize/container/observed.h"
 
-#include "TreeUnit.h"
+#include "treeunit.h"
 
-#include "Madgine/SignalSlot\slot.h"
+#include "Madgine/signalslot/slot.h"
 
-namespace Maditor {
-	namespace Model {
+
+namespace Maditor{
+	namespace Model{
 
 		class ProfilerItem : public TreeUnitItem<ProfilerItem> {
 		public:

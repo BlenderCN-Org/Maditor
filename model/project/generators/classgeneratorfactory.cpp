@@ -1,18 +1,18 @@
 #include "maditormodellib.h"
 
-#include "ClassGeneratorFactory.h"
+#include "classgeneratorfactory.h"
 
-#include "GuiHandlerGenerator.h"
-#include "GameHandlerGenerator.h"
-#include "GlobalAPIGenerator.h"
-#include "SceneComponentGenerator.h"
-#include "OtherClassGenerator.h"
-#include "EntityComponentGenerator.h"
-#include "ServerClassGenerator.h"
+#include "guihandlergenerator.h"
+#include "gamehandlergenerator.h"
+#include "globalapigenerator.h"
+#include "scenecomponentgenerator.h"
+#include "otherclassgenerator.h"
+#include "entitycomponentgenerator.h"
+#include "serverclassgenerator.h"
 
-#include "Model\Project\Module.h"
+#include "model/project/module.h"
 
-#include "DialogManager.h"
+#include "dialogmanager.h"
 
 namespace Maditor {
 	namespace Model {

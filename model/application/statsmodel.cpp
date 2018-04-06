@@ -1,8 +1,10 @@
 #include "maditormodellib.h"
 
-#include "StatsModel.h"
+#include "statsmodel.h"
 
+#ifdef _WIN32
 #include <Psapi.h>
+#endif
 
 namespace Maditor {
 	namespace Model {
@@ -32,6 +34,7 @@ namespace Maditor {
 
 		void StatsModel::timerEvent(QTimerEvent * evt)
 		{
+#ifdef _WIN32
 			PROCESS_MEMORY_COUNTERS memCounter;
 			BOOL result = GetProcessMemoryInfo(mHandle,
 				&memCounter,
@@ -42,6 +45,7 @@ namespace Maditor {
 					emit memoryUsageChanged(mCurrentUsage);
 				}
 			}
+#endif
 		}
 
 		void StatsModel::setProcess(HANDLE handle)

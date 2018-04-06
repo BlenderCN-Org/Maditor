@@ -20,8 +20,8 @@ public:
 	void clearModel();
 
 	void setFPS(float fps);
-	void setMemUsage(size_t mem);
-	void setOgreMem(size_t mem);
+	void setMemUsage(int mem);
+	void setOgreMem(int mem);
 
 private:
     Ui::AppStatsWidget *ui;

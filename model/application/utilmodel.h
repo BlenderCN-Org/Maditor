@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Madgine/Serialize\serializableunit.h"
+#include "Madgine/serialize/serializableunit.h"
 
-#include "Madgine/Serialize\Container\serialized.h"
+#include "Madgine/serialize/container/serialized.h"
 
-#include "ProfilerModel.h"
-#include "StatsModel.h"
+#include "profilermodel.h"
+#include "statsmodel.h"
 
 namespace Maditor {
 	namespace Model {

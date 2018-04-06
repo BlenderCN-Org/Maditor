@@ -1,11 +1,11 @@
 #include "maditormodellib.h"
 
-#include "StandaloneLauncher.h"
+#include "standalonelauncher.h"
 
-#include "Project/ApplicationConfig.h"
+#include "project/applicationconfig.h"
 #include <iostream>
-#include "Shared/projectfile.h"
-#include "Project/Project.h"
+#include "shared/projectfile.h"
+#include "project/project.h"
 
 namespace Maditor
 {

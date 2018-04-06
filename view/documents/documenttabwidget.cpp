@@ -1,11 +1,11 @@
 #include "maditorview.h"
 
-#include "DocumentTabWidget.h"
-#include "DocumentTabBar.h"
+#include "documenttabwidget.h"
+#include "documenttabbar.h"
 
 #include "mainwindow.h"
 
-#include "CentralWidget.h"
+#include "centralwidget.h"
 
 namespace Maditor {
 	namespace View {

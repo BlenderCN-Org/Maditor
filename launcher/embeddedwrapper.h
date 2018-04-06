@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ApplicationWrapper.h"
+#include "applicationwrapper.h"
 
-#include "Shared/SharedMemory.h"
-#include "Shared/IPCManager/boostIPCmanager.h"
+#include "shared/sharedmemory.h"
+#include "shared/ipcmanager/boostipcmanager.h"
 
 namespace Maditor
 {

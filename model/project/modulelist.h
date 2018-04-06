@@ -1,13 +1,13 @@
 #pragma once
 
 
-#include "ProjectElement.h"
+#include "projectelement.h"
 
-#include "Generators\CmakeProject.h"
+#include "generators/cmakeproject.h"
 
-#include "Module.h"
+#include "module.h"
 
-#include "ApplicationConfig.h"
+#include "applicationconfig.h"
 
 namespace Maditor {
 	namespace Model {

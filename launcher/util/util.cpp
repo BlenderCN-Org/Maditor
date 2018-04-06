@@ -1,6 +1,6 @@
 #include "../maditorlauncherlib.h"
 
-#include "Util.h"
+#include "util.h"
 
 template <> thread_local Maditor::Launcher::Util *Engine::Singleton<Maditor::Launcher::Util>::sSingleton = nullptr;
 

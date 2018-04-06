@@ -1,16 +1,16 @@
 #include "maditormodellib.h"
 
-#include "Project.h"
+#include "project.h"
 
-#include "Application/ApplicationLauncher.h"
+#include "application/applicationlauncher.h"
 
-#include "DialogManager.h"
+#include "dialogmanager.h"
 
-#include "ModuleList.h"
+#include "modulelist.h"
 
-#include "Generators\ServerClassGenerator.h"
+#include "generators/serverclassgenerator.h"
 
-#include "ConfigList.h"
+#include "configlist.h"
 
 namespace Maditor {
 	namespace Model {

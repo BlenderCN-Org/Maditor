@@ -1,6 +1,6 @@
 #include "maditormodellib.h"
 
-#include "ServerClassGenerator.h"
+#include "serverclassgenerator.h"
 
 namespace Maditor {
 	namespace Model {

@@ -1,6 +1,6 @@
 #include "maditormodellib.h"
 
-#include "GlobalAPIGenerator.h"
+#include "globalapigenerator.h"
 
 namespace Maditor {
 	namespace Model {

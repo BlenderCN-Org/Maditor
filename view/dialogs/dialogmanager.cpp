@@ -1,8 +1,8 @@
 #include "maditorviewlib.h"
 
-#include "DialogManager.h"
-#include "Model\Project\ModuleList.h"
-#include "Model\Project\Project.h"
+#include "dialogmanager.h"
+#include "model/project/modulelist.h"
+#include "model/project/project.h"
 
 #include "newmoduledialog.h"
 #include "newclassdialog.h"

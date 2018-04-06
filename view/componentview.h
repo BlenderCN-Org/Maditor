@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Dialogs\DialogManager.h"
-#include "Dialogs\settingsdialog.h"
+#include "dialogs/dialogmanager.h"
+#include "dialogs/settingsdialog.h"
 
 namespace Maditor {
 namespace View {

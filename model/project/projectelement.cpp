@@ -1,8 +1,8 @@
 #include "maditormodellib.h"
 
-#include "ProjectElement.h"
+#include "projectelement.h"
 
-#include "Project.h"
+#include "project.h"
 
 namespace Maditor {
 	namespace Model {

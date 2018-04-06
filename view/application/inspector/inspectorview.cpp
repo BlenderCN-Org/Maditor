@@ -3,7 +3,7 @@
 #include "inspectorview.h"
 #include "ui_inspectorview.h"
 
-#include "Model/Application/Inspector/Inspector.h"
+#include "model/application/inspector/inspector.h"
 
 #include "valuetypeedit.h"
 

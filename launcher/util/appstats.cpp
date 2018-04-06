@@ -1,8 +1,8 @@
 #include "../maditorlauncherlib.h"
 
-#include "AppStats.h"
+#include "appstats.h"
 
-#include "Madgine/App\application.h"
+#include "Madgine/app/application.h"
 
 namespace Maditor {
 	namespace Launcher {

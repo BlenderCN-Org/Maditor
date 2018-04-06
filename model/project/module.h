@@ -1,10 +1,10 @@
 
 #pragma once
 
-#include "Generators\CmakeGenerator.h"
-#include "Generators\ClassGenerator.h"
-#include "ProjectElement.h"
-#include "ApplicationConfig.h"
+#include "generators/cmakegenerator.h"
+#include "generators/classgenerator.h"
+#include "projectelement.h"
+#include "applicationconfig.h"
 
 namespace Maditor {
 	namespace Model {

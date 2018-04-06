@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Madgine/Util\UtilMethods.h"
-#include "LogSorterFilter.h"
+#include "Madgine/util/utilmethods.h"
+#include "logsorterfilter.h"
 
 namespace Maditor {
 	namespace Model {

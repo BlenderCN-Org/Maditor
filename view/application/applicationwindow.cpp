@@ -3,14 +3,14 @@
 
 #include "applicationwindow.h"
 
-#include "Model\Application\ApplicationLauncher.h"
+#include "model/application/applicationlauncher.h"
 
-#include "Model\Application\OgreWindow.h"
+#include "model/application/ogrewindow.h"
 
 #include "applicationlog.h"
 
-#include "Documents/CentralWidget.h"
-#include "Documents/DocumentTabWidget.h"
+#include "documents/centralwidget.h"
+#include "documents/documenttabwidget.h"
 
 
 namespace Maditor

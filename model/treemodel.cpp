@@ -1,7 +1,7 @@
 #include "maditormodellib.h"
 
 #include "treeitem.h"
-#include "TreeModel.h"
+#include "treemodel.h"
 
 namespace Maditor {
 	namespace Model {
@@ -88,7 +88,7 @@ namespace Maditor {
 			}
 		}
 
-		inline QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const
+		QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const
 		{
 			if (role != Qt::DisplayRole)
 				return QVariant();

@@ -1,12 +1,12 @@
 
 #include "maditorlauncherlib.h"
 
-#include "ModuleLoader.h"
+#include "moduleloader.h"
 
 #include <iostream>
 
-#include "Madgine/Scene/Entity/entity.h"
-#include "Madgine/Scene\scenecomponent.h"
+#include "Madgine/scene/entity/entity.h"
+#include "Madgine/scene/scenecomponent.h"
 #include "Madgine/scripting/types/globalapicomponent.h"
 
 #ifdef MADGINE_CLIENT_BUILD
@@ -14,6 +14,10 @@
 #include "Madgine/ui/guihandler.h"
 #include "Madgine/ui/gamehandler.h"
 #include "Madgine/ui/uimanager.h"
+#endif
+
+#ifdef __linux__
+#include <dlfcn.h>
 #endif
 
 namespace Maditor {
@@ -121,7 +125,7 @@ namespace Maditor {
 				void *symbol = it->getSymbol(std::string("create") + className);
 				if (symbol) {
 					typedef Engine::Server::ServerBase *(*Factory)(const std::string &, const std::string &);
-					return (*static_cast<Factory>(symbol))(instanceName, mediaDir + "scripts/");
+					return (*reinterpret_cast<Factory>(symbol))(instanceName, mediaDir + "scripts/");
 				}
 			}
 
@@ -194,16 +198,24 @@ namespace Maditor {
 			std::set<void *> beforeGuiHandlerHashes(beforeGuiHandlerHashesList.begin(), beforeGuiHandlerHashesList.end());
 #endif
 
+#ifdef _WIN32
 			UINT errorMode = GetErrorMode();
 			//SetErrorMode(SEM_FAILCRITICALERRORS);
+#endif
 			try {
+#ifdef _WIN32
 				mHandle = LoadLibrary(runtimePath.c_str());
+#elif __linux__
+				mHandle = dlopen(runtimePath.c_str(), RTLD_LAZY);
+#endif
 			}
 			catch (const std::exception &e) {
 				std::cout << "Load-time error: " << e.what() << std::endl;
 				mHandle = 0;
 			}
+#ifdef _WIN32
 			SetErrorMode(errorMode);
+#endif
 
 			if (!mHandle) {
 				std::cout << "failed!" << std::endl;
@@ -336,8 +348,11 @@ namespace Maditor {
 			}
 #endif
 			
-
+#ifdef _WIN32
 			bool result = (FreeLibrary(mHandle) != 0);
+#elif __linux__
+			bool result = (dlclose(mHandle) == 0);
+#endif
 			if (result)
 				setLoaded(false);
 			else
@@ -355,7 +370,11 @@ namespace Maditor {
 
 		void * ModuleLoader::ModuleLauncherInstance::getSymbol(const std::string symbolName)
 		{
+#ifdef _WIN32
 			return GetProcAddress(mHandle, symbolName.c_str());
+#elif __linux__
+			return dlsym(mHandle, symbolName.c_str());
+#endif
 		}
 
 	}

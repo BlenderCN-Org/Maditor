@@ -1,7 +1,7 @@
 
 #include "maditorsharedlib.h"
 
-#include "SharedMemory.h"
+#include "sharedmemory.h"
 
 namespace Maditor {
 	namespace Shared {

@@ -1,9 +1,9 @@
 #include "maditormodellib.h"
 
-#include "ClassGenerator.h"
-#include "Model\Project\Module.h"
-#include "HeaderGuardGenerator.h"
-#include "Model\Project\Project.h"
+#include "classgenerator.h"
+#include "model/project/module.h"
+#include "headerguardgenerator.h"
+#include "model/project/project.h"
 //#include "Model\Editors\EditorManager.h"
 
 namespace Maditor {

@@ -1,6 +1,6 @@
 #include "maditorviewlib.h"
 
-#include "FilesView.h"
+#include "filesview.h"
 
 
 namespace Maditor {

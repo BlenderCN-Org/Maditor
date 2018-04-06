@@ -3,7 +3,7 @@
 #include "appstatswidget.h"
 #include "ui_appstatswidget.h"
 
-#include "Model\Application\StatsModel.h"
+#include "model/application/statsmodel.h"
 
 namespace Maditor {
 namespace View {
@@ -47,12 +47,12 @@ void AppStatsWidget::setFPS(float fps)
 	ui->FPSValue->setText(fps == 0.0f ? "-" : QLocale().toString(fps));
 }
 
-void AppStatsWidget::setMemUsage(size_t mem)
+void AppStatsWidget::setMemUsage(int mem)
 {
 	ui->MemUsageValue->setText(mem == 0 ? "-" : QLocale().toString(mem / 1024));
 }
 
-void AppStatsWidget::setOgreMem(size_t mem)
+void AppStatsWidget::setOgreMem(int mem)
 {
 	ui->OgreMemoryValue->setText(mem == 0 ? "-" : QLocale().toString(mem / 1024));
 }

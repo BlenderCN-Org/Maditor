@@ -1,12 +1,12 @@
 #include "maditormodellib.h"
 
-#include "ModuleSelection.h"
+#include "moduleselection.h"
 
-#include "ModuleList.h"
+#include "modulelist.h"
 
-#include "ApplicationConfig.h"
+#include "applicationconfig.h"
 
-#include "Project.h"
+#include "project.h"
 
 namespace Maditor {
 	namespace Model {

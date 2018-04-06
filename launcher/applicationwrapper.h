@@ -1,26 +1,26 @@
 #pragma once
 
-#include "Shared/AppControl.h"
+#include "shared/appcontrol.h"
 
 #ifdef MADGINE_CLIENT_BUILD
-#include "Madgine/App\Ogreappsettings.h"
-#include "Madgine/App/OgreApplication.h"
+#include "Madgine/app/ogreappsettings.h"
+#include "Madgine/app/ogreapplication.h"
 #endif
 #ifdef MADGINE_SERVER_BUILD
-#include "Madgine/App/serverappsettings.h"
+#include "Madgine/app/serverappsettings.h"
 #endif
 
-#include "ModuleLoader.h"
-#include "Util\LauncherLogListener.h"
-#include "Madgine/Serialize\Container\serialized.h"
+#include "moduleloader.h"
+#include "util/launcherloglistener.h"
+#include "Madgine/serialize/container/serialized.h"
 
-#include "Util\Util.h"
+#include "util/util.h"
 
-#include "Madgine/App\framelistener.h"
+#include "Madgine/app/framelistener.h"
 
-#include "Inspector.h"
+#include "inspector.h"
 
-#include "Shared/ApplicationInfo.h"
+#include "shared/applicationinfo.h"
 
 namespace Maditor {
 

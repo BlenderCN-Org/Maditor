@@ -1,12 +1,16 @@
 #pragma once
 
-#include "Madgine/Serialize\serializableunit.h"
-#include "Madgine/Serialize\Container\observed.h"
-#include "Madgine/Serialize\Container\action.h"
+#include "Madgine/serialize/serializableunit.h"
+#include "Madgine/serialize/container/observed.h"
+#include "Madgine/serialize/container/action.h"
 
+#ifdef __WIN32
 #include <Windows.h>
 #undef min
 #undef NO_ERROR
+#elif __linux__
+using HANDLE=void*;
+#endif
 
 namespace Maditor {
 	namespace Model {

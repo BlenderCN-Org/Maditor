@@ -2,9 +2,9 @@
 #define MADITOR_VIEW_MAINWINDOW_H
 
 #include <QMainWindow>
-#include "ComponentView.h"
+#include "componentview.h"
 
-#include "Model/maditor.h"
+#include "model/maditor.h"
 
 namespace Maditor {
 namespace View {

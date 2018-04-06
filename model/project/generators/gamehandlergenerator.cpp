@@ -1,6 +1,6 @@
 #include "maditormodellib.h"
 
-#include "GameHandlerGenerator.h"
+#include "gamehandlergenerator.h"
 
 namespace Maditor {
 	namespace Model {

@@ -1,7 +1,7 @@
 #include "maditormodellib.h"
 #include "scopewrapper.h"
 
-#include "Inspector.h"
+#include "inspector.h"
 
 namespace Maditor {
 	namespace Model {

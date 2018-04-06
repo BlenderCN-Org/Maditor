@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Model/TreeModel.h"
-#include "Model/TreeItem.h"
+#include "model/treemodel.h"
+#include "model/treeitem.h"
 
-#include "Madgine/Serialize\serializableunit.h"
+#include "Madgine/serialize/serializableunit.h"
 
 namespace Maditor {
 	namespace Model {

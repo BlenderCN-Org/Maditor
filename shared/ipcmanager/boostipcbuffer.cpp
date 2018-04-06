@@ -1,10 +1,10 @@
 #include "maditorsharedlib.h"
 
-#include "boostIPCbuffer.h"
+#include "boostipcbuffer.h"
 
-#include "boostIPCConnection.h"
+#include "boostipcconnection.h"
 
-#include "Madgine/Serialize\serializemanager.h"
+#include "Madgine/serialize/serializemanager.h"
 
 namespace Maditor {
 	namespace Shared {

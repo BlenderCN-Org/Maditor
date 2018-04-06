@@ -1,8 +1,8 @@
 #include "maditormodellib.h"
 
-#include "OgreWindow.h"
+#include "ogrewindow.h"
 
-#include "InputWrapper.h"
+#include "inputwrapper.h"
 
 //#include "Model\Engine\ApplicationWrapper.h"
 

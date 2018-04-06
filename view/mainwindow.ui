@@ -351,7 +351,7 @@
   <customwidget>
    <class>Maditor::View::FilesView</class>
    <extends>QTreeView</extends>
-   <header>Project/filesview.h</header>
+   <header>project/filesview.h</header>
   </customwidget>
   <customwidget>
    <class>Maditor::View::AppStatsWidget</class>
@@ -374,13 +374,13 @@
   <customwidget>
    <class>Maditor::View::DocumentTabWidget</class>
    <extends>QTabWidget</extends>
-   <header>Documents/documenttabwidget.h</header>
+   <header>documents/documenttabwidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>Maditor::View::CentralWidget</class>
    <extends>QWidget</extends>
-   <header>Documents/centralwidget.h</header>
+   <header>documents/centralwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

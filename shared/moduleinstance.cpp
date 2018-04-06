@@ -2,7 +2,7 @@
 
 #include "moduleinstance.h"
 
-#include "Madgine/Serialize\Streams\serializestream.h"
+#include "Madgine/serialize/streams/serializestream.h"
 
 namespace Maditor {
 	namespace Shared {

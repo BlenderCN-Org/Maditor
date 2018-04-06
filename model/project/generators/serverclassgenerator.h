@@ -1,12 +1,12 @@
 #pragma once
 
-#include "ClassGenerator.h"
+#include "classgenerator.h"
 
 namespace Maditor {
 	namespace Model {
 		namespace Generators {
 
-			class ServerClassGenerator : public ClassGenerator {
+			class MADITOR_MODEL_EXPORT ServerClassGenerator : public ClassGenerator {
 			public:
 				ServerClassGenerator(Module *module, const QString &name);
 				ServerClassGenerator(Module * module, QDomElement data);

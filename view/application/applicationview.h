@@ -1,9 +1,9 @@
 #pragma once
 
 
-#include "Documents\WindowSpawner.h"
+#include "documents/windowspawner.h"
 
-#include "Model\Application\ApplicationLauncher.h"
+#include "model/application/applicationlauncher.h"
 
 #include "applicationwindow.h"
 #include "applicationlog.h"

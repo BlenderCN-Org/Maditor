@@ -1,7 +1,7 @@
 #include "maditormodellib.h"
 
-#include "Model\Project\Module.h"
-#include "HeaderGuardGenerator.h"
+#include "model/project/module.h"
+#include "headerguardgenerator.h"
 
 namespace Maditor {
 	namespace Model {

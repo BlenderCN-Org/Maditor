@@ -1,6 +1,6 @@
 #include "maditormodellib.h"
 
-#include "GuiHandlerGenerator.h"
+#include "guihandlergenerator.h"
 
 
 namespace Maditor {

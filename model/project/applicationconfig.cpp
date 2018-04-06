@@ -1,21 +1,21 @@
 #include "maditormodellib.h"
 
-#include "ApplicationConfig.h"
+#include "applicationconfig.h"
 
-#include "ConfigList.h"
+#include "configlist.h"
 
-#include "Application\StandaloneLauncher.h"
-#include "Application\EmbeddedLauncher.h"
+#include "application/standalonelauncher.h"
+#include "application/embeddedlauncher.h"
 
-#include "Project.h"
+#include "project.h"
 
-#include "Shared\ApplicationInfo.h"
+#include "shared/applicationinfo.h"
 
-#include "ModuleList.h"
+#include "modulelist.h"
 
-#include "Generators\ServerClassGenerator.h"
+#include "generators/serverclassgenerator.h"
 
-#include "Generators\CommandLine.h"
+#include "generators/commandline.h"
 
 #include "Madgine/serialize/container/noparent.h"
 

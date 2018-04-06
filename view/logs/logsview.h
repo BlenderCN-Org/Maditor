@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ComponentView.h"
+#include "componentview.h"
 
-#include "Model\Logs\LogTableModel.h"
+#include "model/logs/logtablemodel.h"
 
 namespace Maditor {
 namespace View {

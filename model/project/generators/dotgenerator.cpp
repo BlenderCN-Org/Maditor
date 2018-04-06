@@ -1,7 +1,7 @@
 #include "maditormodellib.h"
 
-#include "DotGenerator.h"
-#include "CommandLine.h"
+#include "dotgenerator.h"
+#include "commandline.h"
 
 namespace Maditor {
 	namespace Model {

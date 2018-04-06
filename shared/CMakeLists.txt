@@ -11,6 +11,8 @@ endif ()
 
 PROJECT(Maditor_Shared)
 
+find_package(Threads REQUIRED)
+
 set (sources "")
 FolderSources(sources "" "" appcontrol.cpp appcontrol.h applicationinfo.h errorcodes.cpp errorcodes.h inputinfo.h maditorsharedlib.cpp maditorsharedlib.h maditorsharedforward.h moduleinstance.cpp moduleinstance.h projectfile.cpp projectfile.h sharedbase.h sharedmemory.cpp sharedmemory.h)
 	FolderSources(sources "" ipcmanager boostipcbuffer.cpp boostipcbuffer.h boostipcconnection.cpp boostipcconnection.h boostipcmanager.cpp boostipcmanager.h boostipcserver.cpp boostipcserver.h boostipcstream.cpp boostipcstream.h)
@@ -23,6 +25,12 @@ add_precompiled_header(Maditor_Shared maditorsharedlib.h FORCEINCLUDE SOURCE_CXX
 target_include_directories(Maditor_Shared PUBLIC ${BOOST_PATH})
 
 target_link_libraries(Maditor_Shared PUBLIC Interfaces)
+
+target_link_libraries(Maditor_Shared PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+
+if (CMAKE_COMPILER_IS_GNUCXX)
+	target_link_libraries(Maditor_Shared PRIVATE rt)
+endif (CMAKE_COMPILER_IS_GNUCXX)
 
 
 

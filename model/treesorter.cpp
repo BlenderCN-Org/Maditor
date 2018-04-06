@@ -1,6 +1,6 @@
 #include "maditormodellib.h"
 
-#include "TreeSorter.h"
+#include "treesorter.h"
 
 namespace Maditor {
 	namespace Model {

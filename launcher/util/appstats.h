@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Madgine/Serialize\serializableunit.h"
-#include "Madgine/Serialize\Container\observed.h"
-#include "Madgine/Serialize\Container\action.h"
+#include "Madgine/serialize/serializableunit.h"
+#include "Madgine/serialize/container/observed.h"
+#include "Madgine/serialize/container/action.h"
 
 
 

@@ -1,17 +1,8 @@
 #include "maditormodellib.h"
 
-#include "ModuleLoader.h"
+#include "logreceiver.h"
 
-#include "Model\Project\Project.h"
-
-#include "Model\Project\Module.h"
-
-#include "Model\Project\ModuleList.h"
-
-#include "ApplicationLauncher.h"
-#include "LogReceiver.h"
-
-#include "Logs\LogTableModel.h"
+#include "logs/logtablemodel.h"
 
 namespace Maditor {
 	namespace Model {

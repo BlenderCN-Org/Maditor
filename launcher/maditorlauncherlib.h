@@ -3,12 +3,14 @@
 /// @cond
 
 #include "maditorlauncherforward.h"
-#include "Shared/maditorsharedlib.h"
+#include "shared/maditorsharedlib.h"
 
 #include "Madgine/madginelib.h"
 
-#include "Madgine/Scene\scenemanager.h"
+#include "Madgine/scene/scenemanager.h"
 
+#ifdef _WIN32
 #include <Windows.h>
+#endif
 
 /// @endcond

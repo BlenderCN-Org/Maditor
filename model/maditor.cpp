@@ -2,11 +2,11 @@
 
 #include "maditor.h"
 
-#include "DialogManager.h"
+#include "dialogmanager.h"
 
-#include "Addons\Addon.h"
+#include "addons/addon.h"
 
-#include "Madgine/Util\UtilMethods.h"
+#include "Madgine/util/utilmethods.h"
 
 namespace Maditor {
 	namespace Model {

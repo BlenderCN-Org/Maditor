@@ -1,8 +1,8 @@
 #include "maditormodellib.h"
 
-#include "InputWrapper.h"
+#include "inputwrapper.h"
 
-#include "Shared/InputInfo.h"
+#include "shared/inputinfo.h"
 
 namespace Maditor {
 	namespace Model {

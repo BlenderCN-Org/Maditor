@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Madgine/Util\Profiler.h"
-#include "AppStats.h"
+#include "Madgine/util/profiler.h"
+#include "appstats.h"
 
-#include "Madgine/Serialize\toplevelserializableunit.h"
+#include "Madgine/serialize/toplevelserializableunit.h"
 
-#include "Madgine/Serialize\Container\serialized.h"
+#include "Madgine/serialize/container/serialized.h"
 
 
 namespace Maditor {

@@ -1,6 +1,6 @@
 #include "../maditorlauncherlib.h"
 
-#include "StandaloneWrapper.h"
+#include "standalonewrapper.h"
 
 #include "Madgine/serialize/container/noparent.h"
 

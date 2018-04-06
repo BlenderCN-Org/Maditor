@@ -1,16 +1,16 @@
 #include "maditormodellib.h"
 
-#include "EmbeddedLauncher.h"
+#include "embeddedlauncher.h"
 
-#include "InputWrapper.h"
+#include "inputwrapper.h"
 
-#include "Project\ApplicationConfig.h"
+#include "project/applicationconfig.h"
 
-#include "Project\Project.h"
+#include "project/project.h"
 
-#include "OgreWindow.h"
+#include "ogrewindow.h"
 
-#include "Shared\IPCManager\boostIPCServer.h"
+#include "shared/ipcmanager/boostipcserver.h"
 
 namespace Maditor
 {
@@ -34,6 +34,9 @@ namespace Maditor
 			if (mWindow)
 				connect(mWindow, &OgreWindow::resized, this, &EmbeddedLauncher::resizeWindow);
 
+//TODO linuc
+#ifdef _WIN32
+
 			SECURITY_ATTRIBUTES sa;
 
 			sa.nLength = sizeof(sa);
@@ -51,6 +54,7 @@ namespace Maditor
 
 			if (!SetHandleInformation(mChildInWrite, HANDLE_FLAG_INHERIT, 0))
 				return;
+#endif
 
 			std::experimental::filesystem::create_directory(runtimeDir());
 		}
@@ -61,22 +65,30 @@ namespace Maditor
 
 			if (mChildInRead)
 			{
+#ifdef _WIN32
 				CloseHandle(mChildInRead);
+#endif
 				mChildInRead = NULL;
 			}
 			if (mChildInWrite)
 			{
+#ifdef _WIN32
 				CloseHandle(mChildInWrite);
+#endif
 				mChildInWrite = NULL;
 			}
 			if (mChildOutRead)
 			{
+#ifdef _WIN32
 				CloseHandle(mChildOutRead);
+#endif
 				mChildOutRead = NULL;
 			}
 			if (mChildOutWrite)
 			{
+#ifdef _WIN32
 				CloseHandle(mChildOutWrite);
+#endif
 				mChildOutWrite = NULL;
 			}
 		}
@@ -108,6 +120,7 @@ namespace Maditor
 				cmd = mConfig->customExecutableCmd().toStdString();
 			}
 
+#ifdef _WIN32
 			STARTUPINFO si;
 			PROCESS_INFORMATION pi;
 
@@ -140,6 +153,7 @@ namespace Maditor
 			mPID = pi.dwProcessId;
 			mHandle = pi.hProcess;
 			CloseHandle(pi.hThread);
+#endif
 
 			emit processStarted(mPID, mAppInfo);
 			mUtil->stats()->setProcess(mHandle);
@@ -175,7 +189,7 @@ namespace Maditor
 		}
 
 		
-		DWORD EmbeddedLauncher::pid()
+		pid_t EmbeddedLauncher::pid()
 		{
 			return mPID;
 		}
@@ -197,7 +211,9 @@ namespace Maditor
 				checkProcess();
 				if (mPID)
 				{
+#ifdef _WIN32
 					TerminateProcess(mHandle, -1);
+#endif
 					std::string msg = getName().toStdString() + ": Process killed! (" + Shared::to_string(cause) + ")";
 					LOG_ERROR(msg);
 					onDisconnected();
@@ -218,6 +234,7 @@ namespace Maditor
 				checkProcess();
 			}
 			if (mPID){
+#ifdef _WIN32
 				DWORD dwRead;
 				CHAR buffer[256];
 
@@ -241,6 +258,7 @@ namespace Maditor
 						emit outputReceived(msg.join(""));
 					}
 				}
+#endif
 			}
 		}
 
@@ -259,11 +277,13 @@ namespace Maditor
 
 		void EmbeddedLauncher::sendCommand(const QString& cmd)
 		{
+#ifdef _WIN32
 			DWORD dwWritten;
 			std::string stdCmd = cmd.toStdString();
 			stdCmd += '\n';
 			bool result = WriteFile(mChildInWrite, stdCmd.c_str(), stdCmd.size(), &dwWritten, NULL);
 			assert(result && dwWritten == stdCmd.size());
+#endif
 		}
 
 		void EmbeddedLauncher::onDisconnected()
@@ -273,7 +293,9 @@ namespace Maditor
 			if (mPID)
 			{
 				mPID = 0;
+#ifdef _WIN32
 				CloseHandle(mHandle);
+#endif
 				mHandle = NULL;
 
 				mMemory.mgr()->destroy<Shared::BoostIPCServer>("Server");
@@ -286,6 +308,7 @@ namespace Maditor
 
 		void EmbeddedLauncher::checkProcess()
 		{
+#ifdef _WIN32
 			DWORD exitCode = 0;
 			if (GetExitCodeProcess(mHandle, &exitCode) == FALSE)
 				throw 0;
@@ -297,6 +320,7 @@ namespace Maditor
 				}
 				onDisconnected();
 			}
+#endif
 		}
 
 

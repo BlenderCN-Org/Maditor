@@ -1,9 +1,9 @@
 #pragma once
 
 
-#include "ProjectElement.h"
+#include "projectelement.h"
 
-#include "Model\TreeModel.h"
+#include "model/treemodel.h"
 
 
 namespace Maditor {

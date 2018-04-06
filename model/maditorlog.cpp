@@ -1,7 +1,7 @@
 #include "maditormodellib.h"
 
-#include "MaditorLog.h"
-#include "Logs\LogTableModel.h"
+#include "maditorlog.h"
+#include "logs/logtablemodel.h"
 
 namespace Maditor {
 	namespace Model {

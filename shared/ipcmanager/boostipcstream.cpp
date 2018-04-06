@@ -1,6 +1,6 @@
 #include "maditorsharedlib.h"
 
-#include "boostIPCstream.h"
+#include "boostipcstream.h"
 
 namespace Maditor {
 	namespace Shared {

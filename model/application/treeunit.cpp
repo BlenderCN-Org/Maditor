@@ -1,8 +1,8 @@
 #include "maditormodellib.h"
 
-#include "TreeUnit.h"
+#include "treeunit.h"
 
-#include "Madgine/Serialize\Container\serializablecontainer.h"
+#include "Madgine/serialize/container/serializablecontainer.h"
 
 namespace Maditor {
 	namespace Model {

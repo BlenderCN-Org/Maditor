@@ -1,7 +1,7 @@
 #include "maditormodellib.h"
 
-#include "CmakeGenerator.h"
-#include "CmakeProject.h"
+#include "cmakegenerator.h"
+#include "cmakeproject.h"
 
 namespace Maditor {
 	namespace Model {

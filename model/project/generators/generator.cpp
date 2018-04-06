@@ -1,7 +1,7 @@
 #include "maditormodellib.h"
 
-#include "Generator.h"
-#include "DialogManager.h"
+#include "generator.h"
+#include "dialogmanager.h"
 
 namespace Maditor {
 	namespace Model {
@@ -55,7 +55,7 @@ namespace Maditor {
 				QString path = QString("templates/") + name;
 				QFile file(path);
 				if (!file.open(QFile::ReadOnly | QFile::Text)) {
-					throw std::exception((std::string("Could not open File: ") + path.toStdString()).c_str());
+					throw std::invalid_argument((std::string("Could not open File: ") + path.toStdString()).c_str());
 				}
 				QTextStream stream(&file);
 				QString result = stream.readAll();

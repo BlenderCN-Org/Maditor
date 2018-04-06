@@ -1,8 +1,12 @@
 #pragma once
 
-#include "ApplicationLauncher.h"
+#include "applicationlauncher.h"
 
-#include "Shared/IPCManager/boostIPCmanager.h"
+#include "shared/ipcmanager/boostipcmanager.h"
+
+#ifdef _WIN32
+#define pid_t DWORD
+#endif
 
 namespace Maditor
 {
@@ -27,7 +31,7 @@ namespace Maditor
 
 			OgreWindow *window();
 
-			DWORD pid();
+			pid_t pid();
 
 			void sendCommand(const QString &cmd);
 
@@ -51,11 +55,11 @@ namespace Maditor
 
 
 		signals:
-			void processStarted(DWORD, const Shared::ApplicationInfo &);
+			void processStarted(pid_t, const Shared::ApplicationInfo &);
 
 		
 		private:
-			DWORD mPID;
+			pid_t mPID;
 			HANDLE mHandle;
 			HANDLE mChildOutRead, mChildOutWrite, mChildInRead, mChildInWrite;
 

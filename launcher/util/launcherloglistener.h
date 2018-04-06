@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Shared\moduleinstance.h"
-#include "Madgine/Serialize\Container\action.h"
-#include "Madgine/Util\loglistener.h"
+#include "shared/moduleinstance.h"
+#include "Madgine/serialize/container/action.h"
+#include "Madgine/util/loglistener.h"
 #include "Madgine/signalslot/slot.h"
 
 namespace Maditor {

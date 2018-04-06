@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Project/Project.h"
-#include "MaditorLog.h"
-#include "Logs\LogTableModel.h"
+#include "project/project.h"
+#include "maditorlog.h"
+#include "logs/logtablemodel.h"
 #include "Madgine/signalslot/connectionstore.h"
 
 namespace Maditor {

@@ -1,12 +1,12 @@
 #include "maditormodellib.h"
 
-#include "ModuleList.h"
+#include "modulelist.h"
 
-#include "Project.h"
+#include "project.h"
 
-#include "Generators\DotGenerator.h"
+#include "generators/dotgenerator.h"
 
-#include "DialogManager.h"
+#include "dialogmanager.h"
 
 namespace Maditor {
 	namespace Model {

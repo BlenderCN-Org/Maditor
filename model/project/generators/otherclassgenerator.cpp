@@ -1,6 +1,6 @@
 #include "maditormodellib.h"
 
-#include "OtherClassGenerator.h"
+#include "otherclassgenerator.h"
 
 namespace Maditor {
 	namespace Model {

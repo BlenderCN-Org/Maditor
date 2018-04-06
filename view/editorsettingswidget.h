@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "Dialogs\settingstab.h"
+#include "dialogs/settingstab.h"
 
 namespace Maditor {
 namespace View {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Generator.h"
+#include "generator.h"
 
 namespace Maditor {
 	namespace Model {

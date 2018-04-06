@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TreeSorter.h"
+#include "treesorter.h"
 
 namespace Maditor {
 	namespace Model {

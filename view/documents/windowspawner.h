@@ -1,7 +1,7 @@
 #pragma once
 
 #include "mainwindow_ui.h"
-#include "DocumentView.h"
+#include "documentview.h"
 
 namespace Maditor{
 	namespace View{

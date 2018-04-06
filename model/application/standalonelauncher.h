@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ApplicationLauncher.h"
+#include "applicationlauncher.h"
 
 #include "Madgine/network/networkmanager.h"
 #include "shared/projectfile.h"

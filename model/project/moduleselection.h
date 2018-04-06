@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ProjectElement.h"
+#include "projectelement.h"
 
 namespace Maditor {
 	namespace Model {

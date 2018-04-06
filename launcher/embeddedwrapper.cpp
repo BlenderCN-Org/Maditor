@@ -1,11 +1,11 @@
 #include "maditorlauncherlib.h"
 
-#include "EmbeddedWrapper.h"
+#include "embeddedwrapper.h"
 
-#include "Shared\errorcodes.h"
+#include "shared/errorcodes.h"
 
 #ifdef MADGINE_CLIENT_BUILD
-#include "InputWrapper.h"
+#include "inputwrapper.h"
 #endif
 
 namespace Maditor
