@@ -1,5 +1,5 @@
 
-#include "maditorlauncherlib.h"
+#include "../maditorlauncherlib.h"
 
 #include "LauncherLogListener.h"
 

@@ -1,4 +1,4 @@
-#include <maditorlauncherlib.h>
+#include "maditorlauncherlib.h"
 #include "Inspector.h"
 
 #include "Madgine/Scripting\Types\globalscopebase.h"

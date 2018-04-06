@@ -20,9 +20,9 @@ include_directories(${Maditor_Shared_SOURCE_DIR})
 add_library(Maditor_Shared SHARED ${sources})
 add_precompiled_header(Maditor_Shared maditorsharedlib.h FORCEINCLUDE SOURCE_CXX maditorsharedlib.cpp)
 
-target_include_directories(Maditor_Shared PRIVATE ${BOOST_PATH})
+target_include_directories(Maditor_Shared PUBLIC ${BOOST_PATH})
 
-include_library(Maditor_Shared Madgine PUBLIC Interfaces)
+target_link_libraries(Maditor_Shared PUBLIC Interfaces)
 
 
 

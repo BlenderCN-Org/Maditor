@@ -30,9 +30,7 @@ add_library(Maditor_Model SHARED ${sources})
 
 add_precompiled_header(Maditor_Model maditormodellib.h FORCEINCLUDE SOURCE_CXX maditormodellib.cpp)
 
-target_link_libraries(Maditor_Model PUBLIC Qt5::Xml Qt5::Gui Qt5::Widgets ${QSCINTILLA2_LIBRARY})
+target_link_libraries(Maditor_Model PUBLIC Maditor_Shared Qt5::Xml Qt5::Gui Qt5::Widgets ${QSCINTILLA2_LIBRARY})
 
-include_targets(Maditor_Model Maditor_Shared)
-include_library(Maditor_Model Madgine PRIVATE Base)
 
 

@@ -37,6 +37,7 @@ namespace Maditor {
 			mInit = true;
 			
 			mBinaryDir = binaryDir;
+			std::experimental::filesystem::create_directories(binaryDir);
 
 			mReceivingModules = true;
 
@@ -156,7 +157,8 @@ namespace Maditor {
 
 			std::error_code err;
 			if (!std::experimental::filesystem::copy_file(binaryPath, runtimePath, std::experimental::filesystem::copy_options::overwrite_existing, err)) {
-				throw 0;
+				std::cout << "binary file not found!" << std::endl;
+				return false;
 			}
 
 			if (!std::experimental::filesystem::copy_file(binaryPdbPath, runtimePdbPath, std::experimental::filesystem::copy_options::overwrite_existing, err)) {

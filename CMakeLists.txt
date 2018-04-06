@@ -7,8 +7,6 @@ cmake_policy(SET CMP0022 NEW)
 
 set (CMAKE_CXX_STANDARD 17)
 
-add_compile_options(/std:c++latest)
-
 add_definitions(-D_HAS_TR1_NAMESPACE)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin)
@@ -33,6 +31,8 @@ set(CMAKE_MODULE_PATH
 include(Workspace)
 include(PrecompiledHeader)
 include(Project)
+
+load_workspace_package(Madgine)
 
 
 #Find the QtWidgets library

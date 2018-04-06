@@ -1,4 +1,4 @@
-#include "maditorlauncherlib.h"
+#include "../maditorlauncherlib.h"
 
 #include "StandaloneWrapper.h"
 
@@ -6,7 +6,7 @@
 #include <iostream>
 
 #ifdef MADGINE_CLIENT_BUILD
-#include "InputWrapper.h"
+#include "../InputWrapper.h"
 #endif
 
 namespace Maditor
