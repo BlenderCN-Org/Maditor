@@ -31,7 +31,7 @@ if(${Qt5Widgets_FOUND})
 
         # Add library
         set(LIBRARYPATH ${QT5_WIDGETSLIBRARYPATH} "/usr/lib/" "/usr/local/lib")
-        find_library(QSCINTILLA2_LIBRARY NAMES libqscintilla2.a qscintilla2d.lib PATHS ${LIBRARYPATH})
+	find_library(QSCINTILLA2_LIBRARY NAMES libqscintilla2 qscintilla2 qscintilla2_qt5 PATHS ${LIBRARYPATH})
 
         # Check
         if(QSCINTILLA2_LIBRARY)

@@ -25,7 +25,7 @@ set(CMAKE_PREFIX_PATH
 
 set(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH}
-	"${CMAKE_SOURCE_DIR}/CMake"
+	"${CMAKE_SOURCE_DIR}/cmake"
 	
 )
 
@@ -43,15 +43,15 @@ find_package(Qt5Network REQUIRED)
 
 include_directories(${Maditor_SOURCE_DIR})
 
-add_subdirectory(Shared)
+add_subdirectory(shared)
 
-add_subdirectory(Launcher)
+add_subdirectory(launcher)
 
-add_subdirectory(Model)
+add_subdirectory(model)
 
-add_subdirectory(Tools)
+add_subdirectory(tools)
 
-add_subdirectory(View)
+add_subdirectory(view)
 
 
 if (BUILD_TESTS)
@@ -69,7 +69,6 @@ file(REMOVE_RECURSE ${CMAKE_CURRENT_BINARY_DIR}/templates)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/templates)
 
 FILE(GLOB_RECURSE files "templates/*")
-MESSAGE(STATUS ${files})
 FOREACH(item ${files})
 	if (item MATCHES "(.*)\\.in")
 		FILE(RELATIVE_PATH rel ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_MATCH_1})
@@ -79,7 +78,7 @@ FOREACH(item ${files})
 	endif()
 ENDFOREACH(item)
 
-FILE(COPY templateProject DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+FILE(COPY templateproject DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 file(GENERATE OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/addons.txt INPUT ${CMAKE_CURRENT_SOURCE_DIR}/addons.txt.in)
 
