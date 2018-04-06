@@ -2,14 +2,14 @@
 
 /// @cond
 
-#if Maditor_View_EXPORTS
-#define MADITOR_VIEW_EXPORT __declspec(dllexport)
+#include "Model/maditormodellib.h"
+
+#if defined(Maditor_View_EXPORTS)
+#define MADITOR_VIEW_EXPORT DLL_EXPORT
 #else
-#define MADITOR_VIEW_EXPORT __declspec(dllimport)
+#define MADITOR_VIEW_EXPORT DLL_IMPORT
 #endif
 
-
-#include "Model/maditormodellib.h"
 
 #include "maditorviewforward.h"
 

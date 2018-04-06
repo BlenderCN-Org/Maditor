@@ -2,14 +2,16 @@
 
 /// @cond
 
-#if Maditor_Model_EXPORTS
-#define MADITOR_MODEL_EXPORT __declspec(dllexport)
-#else
-#define MADITOR_MODEL_EXPORT __declspec(dllimport)
-#endif
 
 #include "maditormodelforward.h"
 #include "Shared/maditorsharedlib.h"
+
+#if defined(Maditor_Model_EXPORTS)
+#define MADITOR_MODEL_EXPORT DLL_EXPORT
+#else
+#define MADITOR_MODEL_EXPORT DLL_IMPORT
+#endif
+
 
 #include "Madgine/baselib.h"
 
