@@ -12,8 +12,8 @@ endif ()
 PROJECT(Maditor_Shared)
 
 set (sources "")
-FolderSources(sources "" "" AppControl.cpp AppControl.h ApplicationInfo.h errorcodes.cpp errorcodes.h InputInfo.h maditorsharedlib.cpp maditorsharedlib.h maditorsharedforward.h moduleinstance.cpp moduleinstance.h projectfile.cpp projectfile.h SharedBase.h sharedmemory.cpp sharedmemory.h)
-	FolderSources(sources "" IPCManager boostIPCbuffer.cpp boostIPCbuffer.h boostIPCConnection.cpp boostIPCConnection.h boostIPCmanager.cpp boostIPCmanager.h boostIPCServer.cpp boostIPCServer.h boostIPCstream.cpp boostIPCstream.h)
+FolderSources(sources "" "" appcontrol.cpp appcontrol.h applicationinfo.h errorcodes.cpp errorcodes.h inputinfo.h maditorsharedlib.cpp maditorsharedlib.h maditorsharedforward.h moduleinstance.cpp moduleinstance.h projectfile.cpp projectfile.h sharedbase.h sharedmemory.cpp sharedmemory.h)
+	FolderSources(sources "" ipcmanager boostipcbuffer.cpp boostipcbuffer.h boostipcconnection.cpp boostipcconnection.h boostipcmanager.cpp boostipcmanager.h boostipcserver.cpp boostipcserver.h boostipcstream.cpp boostipcstream.h)
 
 include_directories(${Maditor_Shared_SOURCE_DIR})
 
