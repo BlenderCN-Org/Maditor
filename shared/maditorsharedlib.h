@@ -29,7 +29,6 @@
 #endif
 
 
-#define _HAS_AUTO_PTR_ETC 1
 
 #include "maditorsharedforward.h"
 
