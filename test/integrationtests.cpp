@@ -11,7 +11,7 @@ using namespace ::testing;
 
 TEST(MaditorFullTest, GenerateNewProject) {
 	int argc = 0;
-	QApplication app(argc, 0);
+	//QApplication app(argc, 0);
 	Maditor::Model::MockDialogManager dialogManager;
 
 	EXPECT_CALL(dialogManager, confirmFileOverwrite(_, _))

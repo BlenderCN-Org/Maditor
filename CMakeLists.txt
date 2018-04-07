@@ -33,7 +33,7 @@ include(PrecompiledHeader)
 include(Project)
 include(Testing)
 
-load_workspace_package(Madgine https://github.com/MadManRises/Madgine.git GIT_TAG 91e8cfa DEFINITIONS -DBUILD_OGRE:BOOL=FALSE)
+load_workspace_package(Madgine https://github.com/MadManRises/Madgine.git GIT_TAG 57b4880 DEFINITIONS -DBUILD_OGRE:BOOL=FALSE)
 
 
 #Find the QtWidgets library
