@@ -1,10 +1,10 @@
 
-#include "gtest\gtest.h"
+#include <gtest/gtest.h>
 
-#include <madgineinclude.h>
-#include "Model\Editor.h"
+#include "model/maditormodellib.h"
+#include "model/maditor.h"
 
-#include "mocks\DialogManagerMock.h"
+#include "mocks/dialogmanagermock.h"
 
 
 using namespace ::testing;
@@ -12,13 +12,13 @@ using namespace ::testing;
 TEST(MaditorFullTest, GenerateNewProject) {
 	int argc = 0;
 	QApplication app(argc, 0);
-	DialogManagerMock dialogManager;
+	Maditor::Model::MockDialogManager dialogManager;
 
 	EXPECT_CALL(dialogManager, confirmFileOverwrite(_, _))
 		.WillRepeatedly(Return(true));
 	
-	Maditor::Model::Editor editor;
-	editor.newProject("", "TestProject");
+	//Maditor::Model::Maditor editor;
+	//editor.newProject("", "TestProject");
 
 	
 }

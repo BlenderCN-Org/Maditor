@@ -31,6 +31,7 @@ set(CMAKE_MODULE_PATH
 include(Workspace)
 include(PrecompiledHeader)
 include(Project)
+include(Testing)
 
 load_workspace_package(Madgine https://github.com/MadManRises/Madgine.git GIT_TAG 91e8cfa DEFINITIONS -DBUILD_OGRE:BOOL=FALSE)
 
@@ -54,9 +55,9 @@ add_subdirectory(tools)
 add_subdirectory(view)
 
 
-if (BUILD_TESTS)
+if (BUILD_TESTING)
 	add_subdirectory(test)
-endif(BUILD_TESTS)
+endif(BUILD_TESTING)
 
 add_executable(Maditor main.cpp)
 add_dependencies(Maditor Embedded_Client_Launcher Embedded_Server_Launcher ${TOOLS_LIBS})
