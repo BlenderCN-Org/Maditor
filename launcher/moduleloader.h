@@ -80,6 +80,8 @@ private:
 	Engine::Serialize::ObservableList<ModuleLauncherInstance, Engine::Serialize::ContainerPolicies::allowAll, Engine::Serialize::CustomCreator<decltype(&ModuleLoader::createModule)>> mInstances;
 	Engine::Serialize::Action<decltype(&ModuleLoader::setupDoneImpl), &ModuleLoader::setupDoneImpl, Engine::Serialize::ActionPolicy::request> setupDone;
 
+	Engine::Scripting::GlobalScopeBase *mGlobal;
+
 };
 
 	}

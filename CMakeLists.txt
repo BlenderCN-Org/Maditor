@@ -66,20 +66,20 @@ target_link_libraries(Maditor Maditor_Model Maditor_View)
 
 
 
-file(REMOVE_RECURSE ${CMAKE_CURRENT_BINARY_DIR}/templates)
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/templates)
-
-FILE(GLOB_RECURSE files "templates/*")
-FOREACH(item ${files})
-	if (item MATCHES "(.*)\\.in")
-		FILE(RELATIVE_PATH rel ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_MATCH_1})
-		configure_file(${item} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/${rel}) 
-	else()
-		FILE(COPY ${item} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/templates)
-	endif()
-ENDFOREACH(item)
-
-FILE(COPY templateproject DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 file(GENERATE OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/addons.txt CONTENT "${TOOLS_LIBS}")
+
+file(REMOVE_RECURSE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/templates)
+file(REMOVE_RECURSE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/templateproject)
+
+configure_file(Dependencies.cmake.in ${CMAKE_BINARY_DIR}/Dependencies.cmake) 
+
+
+add_custom_target(CopyTemplates ALL
+	COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/templateproject
+	COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/templates
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/templateproject ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/templateproject
+	COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/templates ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/templates
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/Dependencies.cmake ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/templates
+)
 

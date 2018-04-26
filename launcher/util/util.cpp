@@ -2,8 +2,6 @@
 
 #include "util.h"
 
-template <> thread_local Maditor::Launcher::Util *Engine::Singleton<Maditor::Launcher::Util>::sSingleton = nullptr;
-
 namespace Maditor {
 	namespace Launcher {
 

@@ -7,9 +7,6 @@ set (CMAKE_CXX_STANDARD 17)
 
 PROJECT(%1)
 
-if (MSVC)
-	add_compile_options(/std:c++latest)
-endif()
 
 add_definitions(-D_HAS_TR1_NAMESPACE)
 
@@ -26,13 +23,13 @@ include(multiConfig)
 
 multiConfig(%1) 
 
-
+load_workspace_package(Madgine)
 
 set(SERVER_LIBRARIES MadgineServer Interfaces)
 set(CLIENT_LIBRARIES OgreMadgine Interfaces)
 
 function(setup_target_config target config)
-	include_library(${target} Madgine PRIVATE ${${config}_LIBRARIES})
+	target_link_libraries(${target} PRIVATE ${${config}_LIBRARIES})
 endfunction(setup_target_config)
 
 
@@ -41,7 +38,7 @@ endfunction(setup_target_config)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/../debug/bin)
 
 set(CMAKE_MODULE_PATH
-	"${CMAKE_SOURCE_DIR}/../CMake"
+	"${CMAKE_SOURCE_DIR}/../cmake"
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

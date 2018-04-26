@@ -5,6 +5,9 @@
 #include "Madgine/app/application.h"
 
 #include "Madgine/scripting/parsing/scriptparser.h"
+#include "../../../Workspace/Madgine/include/Madgine/signalslot/connectionstore.h"
+
+#include "Madgine/scripting/types/luastate.h"
 
 extern "C"
 {
@@ -15,10 +18,6 @@ extern "C"
 
 API_IMPL(Maditor::Launcher::InspectorThreadInstance);
 
-
-template <>
-thread_local Maditor::Launcher::InspectorThreadInstance* Engine::Singleton<Maditor::Launcher::InspectorThreadInstance>::
-	sSingleton = nullptr;
 
 namespace Maditor
 {
@@ -45,9 +44,9 @@ namespace Maditor
 		}
 
 
-		InspectorThreadInstance::InspectorThreadInstance() :
-			mUpdate(this),
-			mGlobalScope(&Engine::Scripting::GlobalScopeBase::getSingleton()),
+		InspectorThreadInstance::InspectorThreadInstance(Engine::Scripting::GlobalScopeBase &global) :
+			Engine::Scripting::GlobalAPIComponent<InspectorThreadInstance>(global),
+			mUpdate(this),			
 			mState(nullptr)
 		{
 		}
@@ -74,7 +73,7 @@ namespace Maditor
 		{
 			if (Engine::Scripting::GlobalAPIComponent<InspectorThreadInstance>::init())
 			{
-				mState = Engine::App::Application::getSingleton().lua_state();
+				mState = globalScope().lua_state();
 				sMappingsMutex.lock();
 				sMappings[mState] = this;
 				sMappingsMutex.unlock();
@@ -104,7 +103,8 @@ namespace Maditor
 			inspector->getUpdate(ptr, this);
 		}
 
-		Inspector::Inspector()
+		Inspector::Inspector() :
+		mGlobal(nullptr)
 		{
 		}
 
@@ -144,7 +144,7 @@ namespace Maditor
 					InspectorThreadInstance* otherThread = InspectorThreadInstance::getInstance(luaThread);
 					if (otherThread)
 					{
-						Engine::Scripting::ScopeBase* global = otherThread->globalScope();
+						Engine::Scripting::ScopeBase* global = &otherThread->globalScope();
 						attributes.try_emplace(it->key(), Engine::ValueType(Engine::InvScopePtr(global)), it->flags());
 						mItemsMutex.lock();
 						auto it = mItems.find(global);
@@ -166,9 +166,11 @@ namespace Maditor
 			mItemUpdate->queue(ptr, attributes);
 		}
 
-		void Inspector::init()
+		void Inspector::init(Engine::Scripting::GlobalScopeBase &global)
 		{
-			lua_State* state = Engine::Scripting::GlobalScopeBase::getSingleton().lua_state();
+			mGlobal = &global;
+
+			lua_State *state = global.lua_state();
 
 			luaL_newmetatable(state, "Maditor.InspectorMarkMetatable");
 
@@ -207,11 +209,9 @@ namespace Maditor
 				{
 					InspectorThreadInstance* thread = std::get<0>(it->second);
 					mItemsMutex.unlock();
-					if (thread)
-					{
+					if (thread) {
 						thread->getUpdate(ptr, this);
-					}
-					else
+					}else
 					{
 						getUpdate(ptr, nullptr);
 					}
@@ -240,7 +240,7 @@ namespace Maditor
 				auto it = mItems.find(ptr);
 				InspectorThreadInstance* thread = std::get<0>(it->second);
 				mItemsMutex.unlock();
-				lua_State* state = thread ? thread->state() : Engine::Scripting::GlobalScopeBase::getSingleton().lua_state();
+				lua_State* state = thread ? thread->state() : mGlobal->lua_state();
 				lua_gc(state, LUA_GCCOLLECT, 0);
 				mItemsMutex.lock();
 				bool valid = std::get<1>(it->second);
@@ -255,7 +255,7 @@ namespace Maditor
 
 			ptr->push();
 
-			lua_State* state = thread ? thread->state() : Engine::Scripting::GlobalScopeBase::getSingleton().lua_state();
+			lua_State* state = thread ? thread->state() : mGlobal->lua_state();
 
 			bool** bPtr = static_cast<bool**>(lua_newuserdata(state, sizeof(bool*)));
 			*bPtr = &std::get<1>(p);
@@ -274,12 +274,8 @@ namespace Maditor
 			if (ptr)
 				return ptr.validate();
 			else
-				return &Engine::Scripting::GlobalScopeBase::getSingleton();
+				return mGlobal;
 		}
 
-		Engine::Scripting::GlobalScopeBase* InspectorThreadInstance::globalScope()
-		{
-			return mGlobalScope;
-		}
 	}
 }

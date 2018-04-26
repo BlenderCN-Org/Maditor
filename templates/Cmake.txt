@@ -15,7 +15,9 @@ if (NOT sources STREQUAL "")
 		setup_target_config(${config}_%1 ${config})
 
 		if (MSVC)
-			set_target_properties(${config}_%1 PROPERTIES LINKER_LANGUAGE CXX LINK_FLAGS /PDBALTPATH:./${config}_%1.pdb)
+			set_target_properties(${config}_%1 PROPERTIES LINKER_LANGUAGE CXX 
+				LINK_FLAGS_DEBUG /PDBALTPATH:./${config}_%1_d.pdb
+				LINK_FLAGS_RELEASE /PDBALTPATH:./${config}_%1.pdb)
 		else()
 			set_target_properties(${config}_%1 PROPERTIES LINKER_LANGUAGE CXX)
 		endif()

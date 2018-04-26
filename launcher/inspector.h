@@ -5,13 +5,14 @@
 #include "Madgine/scripting/types/globalapicomponent.h"
 
 #include "Madgine/signalslot/slot.h"
+#include "../../../Workspace/Madgine/include/Madgine/scripting/datatypes/luatable.h"
 
 namespace Maditor {
 	namespace Launcher {
 
 		class InspectorThreadInstance : public Engine::Scripting::GlobalAPIComponent<InspectorThreadInstance> {
 		public:
-			InspectorThreadInstance();
+			InspectorThreadInstance(Engine::Scripting::GlobalScopeBase &global);
 
 			void getUpdate(Engine::InvScopePtr ptr, Inspector *inspector);
 
@@ -20,8 +21,7 @@ namespace Maditor {
 			virtual bool init() override;
 			virtual void finalize() override;
 
-			static InspectorThreadInstance *getInstance(lua_State *thread);
-			Engine::Scripting::GlobalScopeBase *globalScope();
+			static InspectorThreadInstance *getInstance(lua_State *thread);			
 
 		protected:
 			void update(Engine::InvScopePtr ptr, Inspector *inspector);
@@ -33,15 +33,13 @@ namespace Maditor {
 			static std::map<lua_State *, InspectorThreadInstance*> sMappings;
 
 			lua_State *mState;
-
-			Engine::Scripting::GlobalScopeBase *mGlobalScope;
 		};
 
 		class Inspector : public Engine::Serialize::SerializableUnit<Inspector> {
 		public:
 			Inspector();
 
-			void init();
+			void init(Engine::Scripting::GlobalScopeBase &global);
 			void getUpdate(Engine::InvScopePtr ptr, InspectorThreadInstance *thread);
 		
 		protected:
@@ -67,6 +65,8 @@ namespace Maditor {
 
 			static const luaL_Reg sMarkMetafunctions[];
 			static int lua_scopeGc(lua_State *);
+
+			Engine::Scripting::GlobalScopeBase *mGlobal;
 		};
 	}
 }

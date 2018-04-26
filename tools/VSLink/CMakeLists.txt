@@ -20,4 +20,4 @@ add_library(VSLink SHARED VSCommands.cs VSLink.cpp VSLink.h VSLinkView.cpp VSLin
 
 target_link_libraries(VSLink Qt5::Widgets Maditor_Model Maditor_View)
 
-set(TOOLS_LIBS ${TOOLS_LIBS} VSLink PARENT_SCOPE)
+set(TOOLS_LIBS ${TOOLS_LIBS} $<TARGET_FILE:VSLink> PARENT_SCOPE)

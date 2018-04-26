@@ -6,6 +6,8 @@
 
 #include "Madgine/serialize/serializemanager.h"
 
+#undef min
+
 namespace Maditor {
 	namespace Shared {
 
@@ -75,8 +77,9 @@ namespace Maditor {
 
 		size_t BoostIPCBuffer::send(char *buf, size_t len)
 		{
-			if (mWriteQueue.try_send(buf, len, 0))
-				return len;
+			size_t num = std::min(sMaxMessageSize, len);
+			if (mWriteQueue.try_send(buf, num, 0))
+				return num;
 			else {
 				if (mConnection.use_count() == 1)
 					return 0;

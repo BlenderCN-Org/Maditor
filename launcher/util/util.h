@@ -11,7 +11,7 @@
 namespace Maditor {
 	namespace Launcher {
 
-		class Util : public Engine::Singleton<Util>, public Engine::Serialize::SerializableUnit<Util> {
+		class Util : public Engine::Serialize::SerializableUnit<Util> {
 		public:
 			Util();
 

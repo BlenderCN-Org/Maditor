@@ -217,7 +217,11 @@ namespace Maditor
 
 		void ApplicationWrapper::onApplicationConnected()
 		{
-			mInspector->init();
+#ifdef MADGINE_SERVER_BUILD
+			mInspector->init(*mServer.get());
+#elif MADGINE_CLIENT_BUILD
+			mInspector->init(*mApplication.get());
+#endif
 		}
 
 		bool ApplicationWrapper::frameRenderingQueued(float timeSinceLastFrame)
