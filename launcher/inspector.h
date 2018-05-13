@@ -5,7 +5,7 @@
 #include "Madgine/scripting/types/globalapicomponent.h"
 
 #include "Madgine/signalslot/slot.h"
-#include "../../../Workspace/Madgine/include/Madgine/scripting/datatypes/luatable.h"
+#include "Madgine/scripting/datatypes/luatable.h"
 
 namespace Maditor {
 	namespace Launcher {
