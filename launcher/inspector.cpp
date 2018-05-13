@@ -5,7 +5,7 @@
 #include "Madgine/app/application.h"
 
 #include "Madgine/scripting/parsing/scriptparser.h"
-#include "../../../Workspace/Madgine/include/Madgine/signalslot/connectionstore.h"
+#include "Madgine/signalslot/connectionstore.h"
 
 #include "Madgine/scripting/types/luastate.h"
 
