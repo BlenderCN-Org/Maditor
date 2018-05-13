@@ -8,7 +8,7 @@
 #include "Madgine/scene/entity/entity.h"
 #include "Madgine/scene/scenecomponent.h"
 #include "Madgine/scripting/types/globalapicomponent.h"
-#include "ApplicationWrapper.h"
+#include "applicationwrapper.h"
 
 #include "Madgine/scripting/types/globalscopebase.h"
 
