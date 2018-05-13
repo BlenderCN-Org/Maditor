@@ -69,6 +69,11 @@ namespace Maditor {
 			return mBinaryDir;
 		}
 
+		Engine::Plugins::PluginManager & ModuleLoader::pluginMgr()
+		{
+			return mPluginMgr;
+		}
+
 		void ModuleLoader::setupDoneImpl()
 		{
 			for (ModuleLauncherInstance &instance : mInstances) {
@@ -128,8 +133,8 @@ namespace Maditor {
 			if (it != mInstances.end() && it->isLoaded()) {
 				void *symbol = it->getSymbol(std::string("create") + className);
 				if (symbol) {
-					typedef Engine::Server::ServerBase *(*Factory)(const std::string &, const std::string &);
-					return (*reinterpret_cast<Factory>(symbol))(instanceName, mediaDir + "scripts/");
+					typedef Engine::Server::ServerBase *(*Factory)(const std::string &, const std::string &, Engine::Plugins::PluginManager &);
+					return (*reinterpret_cast<Factory>(symbol))(instanceName, mediaDir + "scripts/", mPluginMgr);
 				}
 			}
 

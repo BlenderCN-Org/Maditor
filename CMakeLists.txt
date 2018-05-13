@@ -5,7 +5,9 @@ cmake_policy(SET CMP0020 OLD)
 cmake_policy(SET CMP0049 OLD)
 cmake_policy(SET CMP0022 NEW)
 
-set (CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_definitions(-D_HAS_TR1_NAMESPACE)
 
@@ -33,7 +35,7 @@ include(PrecompiledHeader)
 include(Project)
 include(Testing)
 
-load_workspace_package(Madgine https://github.com/MadManRises/Madgine.git GIT_TAG 57b4880 DEFINITIONS -DBUILD_OGRE:BOOL=FALSE)
+load_workspace_package(Madgine https://github.com/MadManRises/Madgine.git GIT_TAG 6afc306 DEFINITIONS -DBUILD_OGRE:BOOL=FALSE)
 
 
 #Find the QtWidgets library
@@ -67,7 +69,7 @@ target_link_libraries(Maditor Maditor_Model Maditor_View)
 
 
 
-file(GENERATE OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/addons.txt CONTENT "${TOOLS_LIBS}")
+file(GENERATE OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/addons.txt CONTENT "${TOOLS_BINS}")
 
 file(REMOVE_RECURSE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/templates)
 file(REMOVE_RECURSE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/templateproject)

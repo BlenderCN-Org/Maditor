@@ -12,7 +12,7 @@ namespace Maditor {
 
 		class InspectorThreadInstance : public Engine::Scripting::GlobalAPIComponent<InspectorThreadInstance> {
 		public:
-			InspectorThreadInstance(Engine::Scripting::GlobalScopeBase &global);
+			InspectorThreadInstance(Engine::App::Application &app);
 
 			void getUpdate(Engine::InvScopePtr ptr, Inspector *inspector);
 

@@ -20,6 +20,8 @@
 #include <iostream>
 #include "Madgine/scripting/types/apihelper.h"
 
+#include "Madgine/util/log.h"
+
 namespace Maditor
 {
 	namespace Launcher
@@ -140,7 +142,9 @@ namespace Maditor
 				parameters["macAPICocoaUseNSView"] = "true";
 #endif
 
-				mApplication = std::make_unique<Engine::App::OgreApplication>();
+				mLoader->pluginMgr().getPlugin("OgreMadgine").load();
+
+				mApplication = std::make_unique<Engine::App::OgreApplication>(mLoader->pluginMgr());
 
 				mApplication->setGlobalMethod("print", &ApplicationWrapper::lua_log);
 
@@ -149,7 +153,7 @@ namespace Maditor
 
 				mLog->init();
 
-				Engine::Util::UtilMethods::addListener(mLog.ptr());
+				mApplication->log().addListener(mLog.ptr());
 
 
 
@@ -193,7 +197,7 @@ namespace Maditor
 
 					mLog->init();
 
-					Engine::Util::UtilMethods::addListener(mLog.ptr());
+					mServer->log().addListener(mLog.ptr());
 
 					mServer->addFrameListener(this);
 					applicationConnected({});
@@ -279,7 +283,7 @@ namespace Maditor
 		{
 #ifdef MADGINE_CLIENT_BUILD
 			if (mApplication)
-				mApplication->resizeWindow();
+				mApplication->gui().resizeWindow();
 #endif
 		}
 

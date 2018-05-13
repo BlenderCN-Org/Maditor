@@ -2,6 +2,7 @@
 
 #include "shared/moduleinstance.h"
 #include "Madgine/serialize/container/action.h"
+#include "Madgine/plugins/madginepluginmanager.h"
 
 #ifdef __linux__
 using HINSTANCE = void*;
@@ -25,6 +26,8 @@ public:
 	bool receiving();
 
 	const std::string &binaryDir();
+
+	Engine::Plugins::PluginManager &pluginMgr();
 
 #ifdef MADGINE_SERVER_BUILD
 	Engine::Server::ServerBase * createServer(const std::string & fullName, const std::string &instanceName, const std::string &mediaDir);
@@ -82,6 +85,8 @@ private:
 
 	Engine::Scripting::GlobalScopeBase *mGlobal;
 
+
+	Engine::Plugins::MadginePluginManager mPluginMgr;
 };
 
 	}

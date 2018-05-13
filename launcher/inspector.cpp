@@ -44,8 +44,8 @@ namespace Maditor
 		}
 
 
-		InspectorThreadInstance::InspectorThreadInstance(Engine::Scripting::GlobalScopeBase &global) :
-			Engine::Scripting::GlobalAPIComponent<InspectorThreadInstance>(global),
+		InspectorThreadInstance::InspectorThreadInstance(Engine::App::Application &app) :
+			Engine::Scripting::GlobalAPIComponent<InspectorThreadInstance>(app),
 			mUpdate(this),			
 			mState(nullptr)
 		{

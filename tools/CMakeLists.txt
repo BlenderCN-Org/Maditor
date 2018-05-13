@@ -9,6 +9,8 @@ Project(Tools)
 
 set (TOOLS_LIBS "")
 
+set (TOOLS_BINS "")
+
 if (BLENDER_TOOL)
 endif (BLENDER_TOOL)
 
@@ -17,5 +19,6 @@ if (VS_TOOL)
 endif (VS_TOOL)
 
 set(TOOLS_LIBS ${TOOLS_LIBS} PARENT_SCOPE)
+set(TOOLS_BINS ${TOOLS_BINS} PARENT_SCOPE)
 
 
