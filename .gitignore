@@ -250,3 +250,5 @@ packages/
 .idea/*
 
 !Tools/VSLink/Plugin/MaditorPlugin/app.config
+
+CMakeSettings.json

@@ -26,6 +26,7 @@ include(multiConfig)
 multiConfig(%1) 
 
 load_workspace_package(Madgine)
+load_workspace_package(OgreMadgine)
 
 set(SERVER_LIBRARIES MadgineServer Interfaces)
 set(CLIENT_LIBRARIES OgreMadgine Interfaces)

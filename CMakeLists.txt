@@ -34,6 +34,9 @@ include(Workspace)
 include(PrecompiledHeader)
 include(Project)
 include(Testing)
+include(Packaging)
+
+
 
 load_workspace_package(Madgine https://github.com/MadManRises/Madgine.git GIT_TAG 6afc306 DEFINITIONS -DBUILD_CLIENT:BOOL=FALSE)
 
@@ -77,7 +80,7 @@ file(REMOVE_RECURSE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/templateproject)
 configure_file(Dependencies.cmake.in ${CMAKE_BINARY_DIR}/Dependencies.cmake) 
 
 
-add_custom_target(CopyTemplates ALL
+add_custom_command(TARGET Maditor POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/templateproject
 	COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/templates
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/templateproject ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/templateproject
@@ -85,3 +88,21 @@ add_custom_target(CopyTemplates ALL
 	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/Dependencies.cmake ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/templates
 )
 
+
+# Windows specific build steps
+if(WIN32)
+    # Run winddeployqt if it can be found
+    find_program(WINDEPLOYQT_EXECUTABLE NAMES windeployqt HINTS ${QT_PATH} ENV QTDIR PATH_SUFFIXES bin)
+    add_custom_command(TARGET Maditor POST_BUILD
+    COMMAND ${WINDEPLOYQT_EXECUTABLE} $<TARGET_FILE:Maditor> --dir ${CMAKE_BINARY_DIR}/qt_dep/bin)
+
+	install(DIRECTORY ${CMAKE_BINARY_DIR}/qt_dep/bin DESTINATION .)
+endif()
+
+install(FILES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}/addons.txt DESTINATION bin)
+
+install_to_workspace(Maditor Maditor)
+export_to_workspace(Maditor)
+
+
+enable_packaging()

@@ -2,7 +2,7 @@
 
 #include "shared/moduleinstance.h"
 #include "Madgine/serialize/container/action.h"
-#include "Madgine/plugins/madginepluginmanager.h"
+#include "Madgine/plugins/pluginmanager.h"
 
 #ifdef __linux__
 using HINSTANCE = void*;
@@ -86,7 +86,7 @@ private:
 	Engine::Scripting::GlobalScopeBase *mGlobal;
 
 
-	Engine::Plugins::MadginePluginManager mPluginMgr;
+	Engine::Plugins::PluginManager mPluginMgr;
 };
 
 	}

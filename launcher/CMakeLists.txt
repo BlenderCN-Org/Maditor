@@ -25,7 +25,7 @@ endif (CMAKE_COMPILER_IS_GNUCXX)
 
 if (BUILD_CLIENT)
 	add_executable(Embedded_Client_Launcher ${sources})
-	target_link_libraries(Embedded_Client_Launcher PRIVATE Maditor_Shared OgreMadgine lualib)
+	target_link_libraries(Embedded_Client_Launcher PRIVATE Maditor_Shared Client lualib)
 
 	if (CMAKE_COMPILER_IS_GNUCXX)
 		target_link_libraries(Embedded_Client_Launcher PRIVATE dl)
@@ -33,3 +33,6 @@ if (BUILD_CLIENT)
 endif (BUILD_CLIENT)
 
 add_subdirectory(standalone)
+
+
+install_to_workspace(Maditor Embedded_Client_Launcher Embedded_Server_Launcher)

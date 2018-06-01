@@ -19,7 +19,7 @@ endif (CMAKE_COMPILER_IS_GNUCXX)
 
 if (BUILD_CLIENT)
 	add_executable(Standalone_Client_Launcher ${sources})
-	target_link_libraries(Standalone_Client_Launcher PRIVATE Maditor_Shared OgreMadgine lualib)
+	target_link_libraries(Standalone_Client_Launcher PRIVATE Maditor_Shared Client lualib)
 
 	if (CMAKE_COMPILER_IS_GNUCXX)
 		target_link_libraries(Standalone_Client_Launcher PRIVATE dl)

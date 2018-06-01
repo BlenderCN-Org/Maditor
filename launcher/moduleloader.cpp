@@ -29,7 +29,8 @@ namespace Maditor {
 
 		ModuleLoader::ModuleLoader() :
 			mInit(false),
-		mGlobal(nullptr)
+		mGlobal(nullptr),
+			mPluginMgr("Madgine", "Renderer")
 		{
 			mInstances.setCreator(std::bind(&ModuleLoader::createModule, this, std::placeholders::_1));
 		}

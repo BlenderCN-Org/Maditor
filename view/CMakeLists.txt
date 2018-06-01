@@ -28,4 +28,4 @@ add_precompiled_header(Maditor_View maditorviewlib.h FORCEINCLUDE SOURCE_CXX mad
 target_link_libraries(Maditor_View PRIVATE Maditor_Model)
 
 
-
+install_to_workspace(Maditor Maditor_View)

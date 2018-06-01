@@ -38,4 +38,4 @@ if (CMAKE_COMPILER_IS_GNUCXX)
 	target_link_libraries(Maditor_Model PRIVATE dl)
 endif (CMAKE_COMPILER_IS_GNUCXX)
 
-
+install_to_workspace(Maditor Maditor_Model)
